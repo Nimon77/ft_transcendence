@@ -1,0 +1,54 @@
+version: '3.9'
+
+services:
+  adminer:
+    image: adminer
+    restart: unless-stopped
+    ports:
+      - 8080:8080
+  db:
+    image: 'postgres'
+    environment:
+      - POSTGRES_USER=transcendence
+      - POSTGRES_PASSWORD=transcendence
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: ./nestjs-docker
+      target: development
+      dockerfile: ./Dockerfile
+    command: npm run start:debug
+    ports:
+      - 3000:3000
+      - 9229:9229
+    networks:
+      - nestjs-network
+    volumes:
+      - ./nestjs-docker:/usr/src/app
+      - /usr/src/app/node_modules
+    restart: unless-stopped
+    depends_on:
+      - db
+
+  frontend:
+    build:
+      context: ./nuxtjs-docker
+      dockerfile: ./Dockerfile
+    volumes:
+      - ./nestjs-docker:/usr/src/app
+    ports:
+      - 80:80
+    networks:
+      - nestjs-network
+    environment:
+      NODE_ENV: development
+      PORT: 80
+    command: yarn start
+    restart: unless-stopped
+    depends_on:
+      - db
+      - backend
+
+networks:
+  nestjs-network:
