@@ -1,17 +1,17 @@
 version: '3.9'
 
 services:
-  adminer:
-    image: adminer
+  pgadmin:
+    image: 'dpage/pgadmin4'
     restart: unless-stopped
     ports:
-      - 8080:8080
-  db:
-    image: 'postgres'
+      - 5050:80
     environment:
-      - POSTGRES_USER=transcendence
-      - POSTGRES_PASSWORD=transcendence
-    restart: unless-stopped
+      - 'PGADMIN_DEFAULT_EMAIL=nimon@42paris.fr'
+      - 'PGADMIN_DEFAULT_PASSWORD=transcendence'
+    networks:
+      - backend
+#TODO: add persistent storage
 
   backend:
     build:
@@ -23,32 +23,38 @@ services:
       - 3000:3000
       - 9229:9229
     networks:
-      - nestjs-network
+      - backend
     volumes:
       - ./nestjs-docker:/usr/src/app
       - /usr/src/app/node_modules
     restart: unless-stopped
     depends_on:
-      - db
-
+      - pgadmin
+#TODO: switch to yarn
   frontend:
     build:
-      context: ./nuxtjs-docker
+      context: ./vuejs-docker
       dockerfile: ./Dockerfile
-    volumes:
-      - ./nestjs-docker:/usr/src/app
     ports:
-      - 80:80
+      - 8080:8080
+      # - 8081:8081
     networks:
-      - nestjs-network
+      - backend
+    volumes:
+      - ./vuejs-docker:/app
+      - /app/node_modules
+    stdin_open: true
+    tty: true
     environment:
-      NODE_ENV: development
-      PORT: 80
-    command: yarn start
+      - PORT=8080
+      - HOST=0.0.0.0
+      - NODE_ENV=development
+      - VUE_APP_BACKEND_URL=http://backend:3000
+      - CHOKIDAR_USEPOLLING=true
     restart: unless-stopped
     depends_on:
-      - db
+      - pgadmin
       - backend
-
+#TODO: make Hot reload work
 networks:
-  nestjs-network:
+  backend:
