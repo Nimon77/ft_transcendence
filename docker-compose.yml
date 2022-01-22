@@ -30,7 +30,7 @@ services:
     restart: unless-stopped
     depends_on:
       - pgadmin
-#TODO: switch to yarn
+
   frontend:
     build:
       context: ./vuejs-docker
@@ -55,6 +55,5 @@ services:
     depends_on:
       - pgadmin
       - backend
-#TODO: make Hot reload work
 networks:
   backend:
