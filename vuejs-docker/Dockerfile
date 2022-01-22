@@ -5,7 +5,7 @@ EXPOSE 8080
 
 WORKDIR /app
 COPY package.json /app/package.json
-RUN yarn install; \
+RUN yarn install && \
 	yarn global add @vue/cli
 
 USER node

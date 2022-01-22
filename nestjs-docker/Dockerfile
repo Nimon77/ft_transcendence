@@ -4,13 +4,12 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install @nestjs/swagger swagger-ui-express
-
-RUN npm install --only=development
+RUN yarn install && \
+	yarn add @nestjs/swagger swagger-ui-express
 
 COPY . .
 
-RUN npm run build
+RUN yarn start
 
 FROM node:latest as production
 
@@ -21,7 +20,7 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN npm install --only=production
+RUN yarn install --only=production
 
 COPY . .
 
