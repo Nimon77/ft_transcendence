@@ -1,24 +1,38 @@
 version: '3.9'
 
 services:
+  postgres:
+    image: postgres:latest
+    env_file:
+      - docker.env
+    restart: unless-stopped
+    ports : 
+      - "5432:5432"
+    volumes :
+      - /data/postgres:/data/postgres
+    networks :
+      - backend
+
   pgadmin:
-    image: 'dpage/pgadmin4'
+    image: dpage/pgadmin4
     restart: unless-stopped
     ports:
       - 5050:80
-    environment:
-      - 'PGADMIN_DEFAULT_EMAIL=nimon@42paris.fr'
-      - 'PGADMIN_DEFAULT_PASSWORD=transcendence'
+    volumes :
+      - /data/pgadmin:/root/.pgadmin
+    env_file:
+      - docker.env
     networks:
       - backend
-#TODO: add persistent storage
+    depends_on:
+      - postgres
 
   backend:
     build:
       context: ./nestjs-docker
       target: development
       dockerfile: ./Dockerfile
-    command: npm run start:debug
+    command: npm run start:dev
     ports:
       - 3000:3000
       - 9229:9229
@@ -29,7 +43,7 @@ services:
       - /usr/src/app/node_modules
     restart: unless-stopped
     depends_on:
-      - pgadmin
+      - postgres
 
   frontend:
     build:
@@ -37,7 +51,6 @@ services:
       dockerfile: ./Dockerfile
     ports:
       - 8080:8080
-      # - 8081:8081
     networks:
       - backend
     volumes:
@@ -45,15 +58,11 @@ services:
       - /app/node_modules
     stdin_open: true
     tty: true
-    environment:
-      - PORT=8080
-      - HOST=0.0.0.0
-      - NODE_ENV=development
-      - VUE_APP_BACKEND_URL=http://backend:3000
-      - CHOKIDAR_USEPOLLING=true
+    env_file:
+      - docker.env
     restart: unless-stopped
     depends_on:
-      - pgadmin
+      - postgres
       - backend
 networks:
   backend:
