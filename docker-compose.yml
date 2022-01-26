@@ -13,23 +13,23 @@ services:
       - backend
 #TODO: add persistent storage
 
-  backend:
-    build:
-      context: ./nestjs-docker
-      target: development
-      dockerfile: ./Dockerfile
-    command: npm run start:debug
-    ports:
-      - 3000:3000
-      - 9229:9229
-    networks:
-      - backend
-    volumes:
-      - ./nestjs-docker:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: unless-stopped
-    depends_on:
-      - pgadmin
+  # backend:
+  #   build:
+  #     context: ./nestjs-docker
+  #     target: development
+  #     dockerfile: ./Dockerfile
+  #   command: npm run start:debug
+  #   ports:
+  #     - 3000:3000
+  #     - 9229:9229
+  #   networks:
+  #     - backend
+  #   volumes:
+  #     - ./nestjs-docker:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - pgadmin
 
   frontend:
     build:
@@ -54,6 +54,6 @@ services:
     restart: unless-stopped
     depends_on:
       - pgadmin
-      - backend
+      # - backend
 networks:
   backend:
