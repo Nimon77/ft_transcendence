@@ -1,17 +1,17 @@
 version: '3.9'
 
 services:
-  postgres:
-    image: postgres:latest
-    env_file:
-      - docker.env
-    restart: unless-stopped
-    ports : 
-      - "5432:5432"
-    volumes :
-      - /data/postgres:/data/postgres
-    networks :
-      - backend
+  # postgres:
+  #   image: postgres:latest
+  #   env_file:
+  #     - docker.env
+  #   restart: unless-stopped
+  #   ports : 
+  #     - "5432:5432"
+  #   volumes :
+  #     - /data/postgres:/data/postgres
+  #   networks :
+  #     - backend
 
   pgadmin:
     image: dpage/pgadmin4
@@ -24,26 +24,26 @@ services:
       - docker.env
     networks:
       - backend
-    depends_on:
-      - postgres
+    # depends_on:
+    #   - postgres
 
-  backend:
-    build:
-      context: ./nestjs-docker
-      target: development
-      dockerfile: ./Dockerfile
-    command: npm run start:dev
-    ports:
-      - 3000:3000
-      - 9229:9229
-    networks:
-      - backend
-    volumes:
-      - ./nestjs-docker:/usr/src/app
-      - /usr/src/app/node_modules
-    restart: unless-stopped
-    depends_on:
-      - postgres
+  # backend:
+  #   build:
+  #     context: ./nestjs-docker
+  #     target: development
+  #     dockerfile: ./Dockerfile
+  #   command: npm run start:dev
+  #   ports:
+  #     - 3000:3000
+  #     - 9229:9229
+  #   networks:
+  #     - backend
+  #   volumes:
+  #     - ./nestjs-docker:/usr/src/app
+  #     - /usr/src/app/node_modules
+  #   restart: unless-stopped
+  #   depends_on:
+  #     - postgres
 
   frontend:
     build:
@@ -61,8 +61,8 @@ services:
     env_file:
       - docker.env
     restart: unless-stopped
-    depends_on:
-      - postgres
-      - backend
+    # depends_on:
+    #   - postgres
+    #   - backend
 networks:
   backend:
