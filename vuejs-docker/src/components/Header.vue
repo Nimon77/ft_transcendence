@@ -1,23 +1,21 @@
-
 <template>
     <header>
-        <h1>{{ title }}</h1>
-        <Button buttonName="getClient" />
+    <h1>{{title}}</h1>
+    <Button text="AddClient"/>
     </header>
 </template>
 
 <script>
-import Button from './Button.vue'
-
+    import Button from './Button.vue'
     export default {
         name: 'Header',
+        components: {
+            Button,
+        },
         props: {
             title: {
-                type: String,
+                type: String
             }
-        },
-        components: {
-            Button
         }
     }
 </script>

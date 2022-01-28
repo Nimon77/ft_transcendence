@@ -4,12 +4,11 @@ WORKDIR /usr/src/app
 
 COPY package*.json ./
 
-RUN yarn install && \
-	yarn add @nestjs/swagger swagger-ui-express
+RUN yarn install
+
+RUN yarn add @nestjs/swagger swagger-ui-express
 
 COPY . .
-
-RUN yarn start
 
 FROM node:latest as production
 
@@ -26,4 +25,4 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-CMD ["node", "dist/main"]
+CMD tail -F /dev/null
