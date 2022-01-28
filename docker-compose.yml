@@ -32,6 +32,7 @@ services:
   #     context: ./nestjs-docker
   #     target: development
   #     dockerfile: ./Dockerfile
+  #   command: npm run start:debug
   #   command: npm run start:dev
   #   ports:
   #     - 3000:3000
@@ -43,6 +44,7 @@ services:
   #     - /usr/src/app/node_modules
   #   restart: unless-stopped
   #   depends_on:
+  #     - pgadmin
   #     - postgres
 
   frontend:
@@ -63,6 +65,8 @@ services:
     restart: unless-stopped
     depends_on:
       - pgadmin
+      # - backend
+    # depends_on:
     #   - postgres
     #   - backend
 networks:
