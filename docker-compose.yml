@@ -25,35 +25,29 @@ services:
 
   backend:
     build:
-      context: ./nestjs-docker
-      target: development
-      dockerfile: ./Dockerfile
-    command: npm run start:dev
+      context: ./docker
+      dockerfile: ./backend.dockerfile
     ports:
       - 3000:3000
       - 9229:9229
     networks:
       - backend
     volumes:
-      - ./nestjs-docker:/usr/src/app
-      - /usr/src/app/node_modules
+      - ./backend:/app
     restart: unless-stopped
     depends_on:
       - postgres
 
   frontend:
     build:
-      context: ./vuejs-docker
-      dockerfile: ./Dockerfile
+      context: ./docker
+      dockerfile: ./frontend.dockerfile
     ports:
       - 8080:8080
     networks:
       - backend
     volumes:
-      - ./vuejs-docker:/app
-      - /app/node_modules
-    stdin_open: true
-    tty: true
+      - ./frontend:/app
     env_file:
       - docker.env
     restart: unless-stopped
