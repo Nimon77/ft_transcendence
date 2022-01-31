@@ -11,6 +11,8 @@ RUN yarn install
 
 RUN yarn global add @vue/cli
 
+# RUN vue add vuetify
+
 USER node
 
 CMD ["yarn", "serve"]
