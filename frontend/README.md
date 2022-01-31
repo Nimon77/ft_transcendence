@@ -1,4 +1,4 @@
-# vuejs-docker
+# frontend
 
 ## Project setup
 ```
