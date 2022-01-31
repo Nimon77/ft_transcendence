@@ -25,4 +25,10 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
+RUN	npm install @nestjs/config
+
+RUN npm install @hapi/joi @types/hapi__joi
+
+RUN npm install @nestjs/typeorm typeorm pg
+
 CMD tail -F /dev/null
