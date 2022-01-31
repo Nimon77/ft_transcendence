@@ -1,15 +1,29 @@
+
 <template>
-  <div id="app">
-    <div id="nav">
-      <router-link to="/">Home</router-link> |
-      <router-link to="/about">About</router-link>
-    </div>
-    <router-view/>
-  </div>
+  <router-link to="/" class="app">
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@6.x/css/materialdesignicons.min.css" rel="stylesheet">
+      <Main/>
+  </router-link>
 </template>
 
+<script lang="ts">
+  import Main from './components/Main.vue'
+
+  export default {
+    name: 'App',
+    components: {
+      Main,
+    },
+    data() {
+      return {
+      }
+    },
+  }
+</script>
+
 <style>
-#app {
+.app {
   font-family: Avenir, Helvetica, Arial, sans-serif;
   -webkit-font-smoothing: antialiased;
   -moz-osx-font-smoothing: grayscale;
