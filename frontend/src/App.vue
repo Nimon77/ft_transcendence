@@ -1,12 +1,13 @@
+
 <template>
   <v-app>
 
-    <v-app-bar app elevation="0" color="green">
-      <h1 style="color: white">BananaPong</h1>
-    </v-app-bar>
-
+    <Header/>
+    
     <v-main >
-      <Twobuttons style="margin-top: 200px;"/>
+      <v-img src="./assets/main/Background.png" style="height:100%">
+      <Twobuttons class="twbtn"/>
+      </v-img>
     </v-main>
 
   </v-app>
@@ -14,10 +15,12 @@
 
 <script lang="ts">
   import Twobuttons from './components/Twobuttons.vue'
+  import Header from './components/Header.vue'
 
   export default {
     components: {
       Twobuttons,
+      Header,
     },
     data: () => {
       return {
@@ -27,3 +30,11 @@
   };
 </script>
 
+<style scoped>
+
+.twbtn {
+  margin-top: 300px;
+  transform: scale(1.75);
+}
+
+</style>
