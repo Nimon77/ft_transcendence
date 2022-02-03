@@ -2,14 +2,15 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { User } from '../infrastructure/user.entity';
+import { PhotoService } from '../photo/photo.service';
 
 
 @Injectable()
 export class UserService {
-    constructor(@InjectRepository(User) private readonly repo: Repository<User>){}
+    constructor(@InjectRepository(User) private readonly repo: Repository<User>,
+    private readonly photoService: PhotoService,
+    ){}
     private lastUserId = 0;
-
-    
 
     async getAllUsers()
     {
@@ -46,5 +47,13 @@ export class UserService {
         }
         else
             throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
+    async addAvatar(userId: number, imageBuffer: Buffer, filename: string){
+        const avatar = await this.photoService.uploadPhoto(imageBuffer, filename);
+        await this.repo.update(userId, {
+            avatarId: avatar.id
+        });
+        return avatar;
     }
 }
