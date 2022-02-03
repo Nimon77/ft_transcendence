@@ -1,7 +1,14 @@
 <template>
-    <v-app-bar app elevation="0" height="115px" style="background: #97D490;">
-        <v-app-bar-title> <v-btn class="titl" text x-large depressed max-width="150" height="32">BananaPong</v-btn> </v-app-bar-title>
-        <v-spacer></v-spacer>
+    <v-app-bar app elevation="0" height="115px" style="background-color: #97D490;">
+        <!-- <v-app-bar-title> -->
+          <v-btn
+            class="titl"
+            x-large depressed text
+            width="400" height="60">
+            BananaPong
+          </v-btn>
+        <!-- </v-app-bar-title> -->
+          <v-spacer></v-spacer>
         <FriendButton />
         <FriendButton />
         <FriendButton />
@@ -30,8 +37,8 @@
 
 .titl {
   font-family: "lemon_milkmedium";
+  font-size: 44px !important;
   color: white !important;
-  transform: scale(2);
-  margin-left: 60px;
+  /* margin-left: 60px; */
 }
 </style>
