@@ -1,19 +1,13 @@
 <template>
-  <v-app>
+  <v-app id="main" :style="{background: $vuetify.theme.themes[theme].background}">
     <v-app-bar
       app
       color="primary"
-      dark
+      v-if="$route.name !== 'Login' ? true : false"
+      light
     >
       <div class="d-flex align-center">
-        <v-img
-          alt="Vuetify Logo"
-          class="shrink mr-2"
-          contain
-          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
-          transition="scale-transition"
-          width="40"
-        />
+        <v-toolbar-title>Banana Pong</v-toolbar-title>
 
         <v-img
           alt="Vuetify Name"
@@ -50,7 +44,16 @@ export default Vue.extend({
   name: 'App',
 
   data: () => ({
-    //
   }),
+
+  mounted: () => {
+    console.log(localStorage.getItem('token'));
+  },
+
+  computed: {
+    theme() {
+      return this.$vuetify.theme.dark ? 'dark' : 'light';
+    },
+  }
 });
 </script>
