@@ -15,7 +15,7 @@ import { User } from './user.entity';
             password: configService.get('POSTGRES_PASSWORD'),
             database: configService.get('POSTGRES_DB'),
             entities: [User],
-            synchronize: true,//false for production, else destroy/recreate data in the db
+            synchronize: false,//false for production, else destroy/recreate data in the db
           })
         }),
       ],
