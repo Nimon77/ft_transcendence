@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from './user.entity';
+import { Photo } from 'src/photo/photo.entity';
+import PhotoService from 'src/photo/photo.service';
 
 @Module({
     imports: [
@@ -14,8 +16,8 @@ import { User } from './user.entity';
             username: configService.get('POSTGRES_USER'),
             password: configService.get('POSTGRES_PASSWORD'),
             database: configService.get('POSTGRES_DB'),
-            entities: [User],
-            synchronize: false,//false for production, else destroy/recreate data in the db
+            entities: [User, Photo],
+            synchronize: true,//false for production, else destroy/recreate data in the db
           })
         }),
       ],
