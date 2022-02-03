@@ -5,10 +5,8 @@
         <div class="white--text text-h1 mb-15 font-weight-bold">BANANAPONG</div>
         <v-btn
           :href="api42Url"
-          target="_blank"
           class="subheading mx-3 white--text"
-          outline
-          color="primary"
+          outlined
           x-large
         >
           <v-img
@@ -42,8 +40,12 @@ export default Vue.extend({
 
   computed: {
     api42Url(): string {
-      return `${process.env.VUE_APP_BACKEND_URL}/api/login/auth`;
+      return `http://${location.hostname}:${process.env.VUE_APP_API42_PORT}/login/auth`;
     },
+  },
+
+  mounted: () => {
+    //
   },
 });
 </script>

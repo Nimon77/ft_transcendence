@@ -47,7 +47,7 @@ export default Vue.extend({
   }),
 
   mounted: () => {
-    console.log(localStorage.getItem('token'));
+    // console.log(localStorage.getItem('token'));
   },
 
   computed: {
