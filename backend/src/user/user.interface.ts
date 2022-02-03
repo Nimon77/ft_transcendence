@@ -3,4 +3,6 @@ export interface User {
     log: string;
     username: string;
     rank: number;
+    friends: number[];
+    blocked: number[];
 }
