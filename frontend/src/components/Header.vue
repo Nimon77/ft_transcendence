@@ -1,28 +1,25 @@
 <template>
-    <v-app-bar app elevation="0" height="115px" style="background-color: #97D490;">
-        <!-- <v-app-bar-title> -->
+    <v-app-bar app elevation="0" height="90px" color="green">
           <v-btn
             class="titl"
             x-large depressed text
             width="400" height="60">
             BananaPong
           </v-btn>
-        <!-- </v-app-bar-title> -->
           <v-spacer></v-spacer>
-        <FriendButton />
-        <FriendButton />
-        <FriendButton />
-        <Player/>
+        <FriendList class="mr-3"/>
+        <Player class="ml-2"/>
     </v-app-bar>
 </template>
 
 <script>
-  import FriendButton from './FriendButton.vue'
+  import FriendList from './FriendList.vue'
   import Player from './Player.vue'
+
   export default {
     name: 'Header',
     components: {
-        FriendButton,
+        FriendList,
         Player,
     },
     data() {

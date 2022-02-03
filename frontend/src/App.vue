@@ -4,7 +4,7 @@
 
     <Header/>
     
-    <v-main style="background-color:#F6D42A;">
+    <v-main class="yellow">
       <Twobuttons class="twbtn"/>
     </v-main>
 
@@ -31,8 +31,8 @@
 <style scoped>
 
 .twbtn {
-  margin-top: 250px;
-  /* transform: scale(1.75); */
+  margin-top: 200px;
+  /* margin-left: -45px; */
 }
 
 </style>

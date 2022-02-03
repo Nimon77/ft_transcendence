@@ -3,8 +3,8 @@
   <v-container fluid class="ctn">
     <v-row style="justify-content: center;">
       <v-col cols="2" >
-        <p> <v-btn class="btn" color="yellow--text" tile x-large depressed width="295" height="115"> PLAY </v-btn> </p>
-        <p> <v-btn class="btn" color="yellow--text" tile x-large depressed width="295" height="115"> COMMUNITY </v-btn> </p>
+        <p> <v-btn class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> PLAY </v-btn> </p>
+        <p> <v-btn class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn> </p>
       </v-col>
     </v-row>
   </v-container>
