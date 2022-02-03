@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { Repository } from 'typeorm';
+import { In, Repository } from 'typeorm';
 import { User } from '../infrastructure/user.entity';
 import { PhotoService } from '../photo/photo.service';
 
@@ -55,5 +55,28 @@ export class UserService {
             avatarId: avatar.id
         });
         return avatar;
+    }
+
+    async updateBlock(user: User, blocked_user: User){
+        const userBlock = await this.repo.find({where: {id: In(user.blocked)}});
+        if (userBlock)
+        {
+            var filtered = user.blocked.filter(function(value, index, array)
+            {
+                return blocked_user.id == value;
+            })
+            await this.repo.update(user.id,
+                {
+                    blocked: filtered
+                });
+        }
+        else
+        {
+            user.blocked.push(blocked_user.id);
+            await this.repo.update(user.id,
+                {
+                    blocked: user.blocked
+                });
+        }
     }
 }
