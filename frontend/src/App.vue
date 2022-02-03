@@ -4,10 +4,8 @@
 
     <Header/>
     
-    <v-main >
-      <v-img src="./assets/main/Background.png" style="height:100%">
+    <v-main style="background-color:#F6D42A;">
       <Twobuttons class="twbtn"/>
-      </v-img>
     </v-main>
 
   </v-app>
@@ -33,8 +31,8 @@
 <style scoped>
 
 .twbtn {
-  margin-top: 300px;
-  transform: scale(1.75);
+  margin-top: 250px;
+  /* transform: scale(1.75); */
 }
 
 </style>
