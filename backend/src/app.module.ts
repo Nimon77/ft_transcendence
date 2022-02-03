@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
-import { AppController } from './app.controller';
-import { AppService } from './app.service';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './infrastructure/database.module';
 import { PhotoModule } from './photo/photo.module';
 import { UserModule } from './user/user.module';
+import { LoginModule } from './login/login.module';
 import * as Joi from '@hapi/joi';
 
 @Module({
@@ -17,9 +16,7 @@ import * as Joi from '@hapi/joi';
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
       })
-    }), DatabaseModule, UserModule, PhotoModule
+    }), DatabaseModule, UserModule, LoginModule, PhotoModule,
   ],
-  controllers: [AppController],
-  providers: [AppService],
 })
 export class AppModule {}
