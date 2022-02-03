@@ -36,8 +36,6 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log(to.name)
-  console.log(!isAuthenticated())
   if (to.name !== 'Login' && !isAuthenticated())
     next({ name: 'Login' })
   else
