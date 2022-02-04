@@ -1,14 +1,16 @@
 <template>
 <div>
   <v-container fluid>
-    <v-row align-sm="center">
+    <v-row align="center">
 
-        <v-avatar class="mr-n4" tile color="blue" size="65">
+        <v-avatar class="mr-n2" tile color="blue" size="65">
           <v-img src="../assets/header/RectangleWhite.png">
           </v-img>
         </v-avatar>
-        <v-icon class="mr-n8" color="blue" size="70"> mdi-circle-small </v-icon>
-        <v-btn class="name" text> STEVEE </v-btn>
+        <v-btn class="name" text width="150">
+          <v-badge inline left color="blue"> </v-badge>
+          STEVEE
+        </v-btn>
     </v-row>
   </v-container>
 
