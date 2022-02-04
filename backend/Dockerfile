@@ -25,10 +25,12 @@ COPY . .
 
 COPY --from=development /usr/src/app/dist ./dist
 
-RUN	npm install @nestjs/config
+RUN	yarn install @nestjs/config
 
-RUN npm install @hapi/joi @types/hapi__joi
+RUN yarn install @hapi/joi @types/hapi__joi
 
-RUN npm install @nestjs/typeorm typeorm pg
+RUN yarn install @nestjs/typeorm typeorm pg
+
+RUN yarn install @nestjs/passport passport passport-local
 
 CMD tail -F /dev/null

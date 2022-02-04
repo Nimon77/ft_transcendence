@@ -1,7 +1,7 @@
 import { Injectable } from '@nestjs/common';
 
 @Injectable()
-export class LoginService {
+export class AuthService {
     genURL() : string {
         let myURL = new URL(`https://${process.env['42_URL']}`);
 
