@@ -5,7 +5,7 @@
     <Header/>
     
     <v-main class="yellow">
-      <Twobuttons class="twbtn"/>
+      <Twobuttons class="text-center mt-16"/>
     </v-main>
 
   </v-app>
