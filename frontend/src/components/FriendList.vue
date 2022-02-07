@@ -26,20 +26,32 @@
           <v-list>
                 <v-list-item-group>
                   <v-list-item v-for="friend in friends" v-bind:key="friend.id">
-                    <FriendDisplay :pN="friend.playerName" :stat="friend.statut"/>
+
+                  <v-list-item-content>
+                  <v-menu offset-y>
+                    <template v-slot:activator="{ on}">
+                      <FriendDisplay v-on:click="on" :pN="friend.playerName" :stat="friend.statut"/>
+                      <v-btn
+                        color="primary"
+                        dark
+                        v-on="on"
+                      >
+                        OPTIONS
+                      </v-btn>
+                    </template>
+                    <v-list class="text-center">
+                      <v-list-item
+                        v-for="(item, index) in items"
+                        :key="index"
+                      >
+                        <v-list-item-title>{{ item.title }}</v-list-item-title>
+                      </v-list-item>
+                    </v-list>
+                  </v-menu>
+                  </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
           </v-list>
-          <v-card-actions>
-            <!-- <v-spacer></v-spacer>
-            <v-btn
-              color="primary"
-              text
-              @click="dialog = false"
-            >
-              I accept
-            </v-btn> -->
-          </v-card-actions>
         </v-card>
     </v-dialog>
 
@@ -67,6 +79,12 @@ export default {
       return {
         dialog: false,
         friends,
+        items: [
+        { title: 'Profil Player' },
+        { title: 'Invite to Game' },
+        { title: 'Chat' },
+        { title: 'Remove Player' },
+        ],
       }
     },
     computed: {

@@ -6,15 +6,15 @@
       </v-avatar>
 
       <v-badge class="ml-3" inline left v-if="stat==0" color="grey">
-      {{pN}}
+      {{pN}} - disconnected
       </v-badge>
 
       <v-badge class="ml-3" inline left v-if="stat==1" color="blue">
-      {{pN}}
+      {{pN}} - connected
       </v-badge>
 
       <v-badge class="ml-3" inline left v-if="stat==2" color="red">
-      {{pN}}
+      {{pN}} - in game
       </v-badge>
     </v-row>
   <v-divider class="mb-1"></v-divider>
@@ -30,9 +30,6 @@
     },
     data() {
       return {
-        friends: [
-          {playerName: 'Billyyyyy', avatar: '../assets/header/avatarExample.png', statut: 1} // 0 : disconnected | 1 : connected | 2 : in game
-        ]
       }
     },
   }
