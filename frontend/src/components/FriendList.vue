@@ -6,8 +6,9 @@
     transition="dialog-top-transition"
     width="800"
     height="200"
-    scrollable>
-      
+    scrollable
+    multiple>
+
       <template v-slot:activator="{ on, attrs}">
         <v-btn elevation="0" width="130" text dark
         v-bind="attrs"
@@ -23,25 +24,21 @@
           </v-card-title>
 
           <v-list>
-                <v-list-item-group v-model="model">
-                  <v-list-item v->
-                    <v-list-item-content>
-                      {{Friends[1].Friend}}
-                    </v-list-item-content>
-                  </v-list-item>                  
+                <v-list-item-group>
+                  <v-list-item v-for="friend in friends" v-bind:key="friend.id">
+                    <FriendDisplay :pN="friend.playerName" :stat="friend.statut"/>
+                  </v-list-item>
                 </v-list-item-group>
           </v-list>
-
-          <Friend/>
           <v-card-actions>
-            <v-spacer></v-spacer>
+            <!-- <v-spacer></v-spacer>
             <v-btn
               color="primary"
               text
               @click="dialog = false"
             >
               I accept
-            </v-btn>
+            </v-btn> -->
           </v-card-actions>
         </v-card>
     </v-dialog>
@@ -50,23 +47,31 @@
 </template>
 
 <script lang="ts">
-import Friend from './Friend.vue'
+import FriendDisplay from './FriendDisplay.vue'
+
+const friends = [
+  {id: 1, playerName: 'chèvre', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0},
+  {id: 2, playerName: 'Byllyy34', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2},
+  {id: 3, playerName: 'Gertrude', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1},
+  {id: 4, playerName: 'AM GOD', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0},
+  {id: 5, playerName: 'oke', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2},
+  {id: 6, playerName: 'NOÏCE', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1},
+  {id: 7, playerName: 'gneeee', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2},
+];
 
 export default {
     components: {
-      Friend,
+      FriendDisplay,
     },
     data () {
       return {
         dialog: false,
-        Friends: [
-          {
-            Friend
-          },
-          {
-            Friend
-          },
-        ]
+        friends,
+      }
+    },
+    computed: {
+      imageSrc() {
+        return {};
       }
     }
 }
