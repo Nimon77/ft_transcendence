@@ -2,7 +2,6 @@ FROM node:lts
 RUN npm i -g pnpm
 
 WORKDIR /app
-COPY . .
 RUN rm -r node_modules
 
 RUN pnpm i
