@@ -1,9 +1,10 @@
 <template>
     <v-app-bar app elevation="0" height="90px" color="green">
           <v-btn
+            router to="/main"
             class="titl"
             x-large depressed text
-            width="400" height="60">
+            width="385" height="60">
             BananaPong
           </v-btn>
           <v-spacer></v-spacer>

@@ -2,6 +2,8 @@ import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 // import Home from '../views/Home.vue'
 import App from '../App.vue'
+import Community from '../components/community/Community.vue'
+import Main from '../components/Main.vue'
 
 Vue.use(VueRouter)
 
@@ -10,6 +12,16 @@ const routes: Array<RouteConfig> = [
     path: '/',
     name: 'App',
     component: App
+  },
+  {
+    path: '/community',
+    name: 'community',
+    component: Community
+  },
+  {
+    path: '/main',
+    name: 'main',
+    component: Main
   },
   {
     path: '/about',
@@ -24,7 +36,18 @@ const routes: Array<RouteConfig> = [
 const router = new VueRouter({
   mode: 'history',
   base: process.env.BASE_URL,
-  routes
+  routes : [
+    {
+      path: '/community',
+      name: 'community',
+      component: Community
+    },
+    {
+      path: '/main',
+      name: 'main',
+      component: Main
+    },
+  ]
 })
 
 export default router
