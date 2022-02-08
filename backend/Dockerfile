@@ -1,36 +1,12 @@
-FROM node:latest AS development
+FROM node:lts
+RUN npm i -g pnpm
 
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN yarn install
-
-RUN yarn add @nestjs/swagger swagger-ui-express
-
+WORKDIR /app
 COPY . .
+RUN rm -r node_modules
 
-FROM node:latest as production
+RUN pnpm i
 
-ARG NODE_ENV=production
-ENV NODE_ENV=${NODE_ENV}
+EXPOSE 3000
 
-WORKDIR /usr/src/app
-
-COPY package*.json ./
-
-RUN yarn install --only=production
-
-COPY . .
-
-COPY --from=development /usr/src/app/dist ./dist
-
-RUN	yarn install @nestjs/config
-
-RUN yarn install @hapi/joi @types/hapi__joi
-
-RUN yarn install @nestjs/typeorm typeorm pg
-
-RUN yarn install @nestjs/passport passport passport-local
-
-CMD tail -F /dev/null
+CMD ["pnpm","start:prod"]
