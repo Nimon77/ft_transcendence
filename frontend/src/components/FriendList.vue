@@ -10,7 +10,7 @@
     multiple>
 
       <template v-slot:activator="{ on, attrs}">
-        <v-btn elevation="0" width="130" text dark
+        <v-btn elevation="0" width="130" text dark style="font-size:20px"
         v-bind="attrs"
         v-on="on">
             FRIENDS
@@ -62,13 +62,13 @@
 import FriendDisplay from './FriendDisplay.vue'
 
 const friends = [
-  {id: 1, playerName: 'chèvre', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0},
-  {id: 2, playerName: 'Byllyy34', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2},
-  {id: 3, playerName: 'Gertrude', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1},
-  {id: 4, playerName: 'AM GOD', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0},
-  {id: 5, playerName: 'oke', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2},
-  {id: 6, playerName: 'NOÏCE', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1},
-  {id: 7, playerName: 'gneeee', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2},
+  {id: 1, playerName: 'chèvre', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
+  {id: 2, playerName: 'Byllyy34', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
+  {id: 3, playerName: 'Gertrude', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
+  {id: 4, playerName: 'AM GOD', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
+  {id: 5, playerName: 'oke', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
+  {id: 6, playerName: 'NOÏCE', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
+  {id: 7, playerName: 'gneeee', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
 ];
 
 export default {

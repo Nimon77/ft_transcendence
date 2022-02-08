@@ -1,24 +1,22 @@
 
 <template>
   <v-app>
-
     <Header/>
-    
     <v-main class="yellow">
-      <Twobuttons class="text-center mt-16"/>
+      <router-view></router-view>
     </v-main>
-
+    <Footer/>
   </v-app>
 </template>
 
 <script lang="ts">
-  import Twobuttons from './components/Twobuttons.vue'
   import Header from './components/Header.vue'
+  import Footer from './components/Footer.vue'
 
   export default {
     components: {
-      Twobuttons,
       Header,
+      Footer
     },
     data: () => {
       return {
