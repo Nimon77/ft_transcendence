@@ -9,4 +9,4 @@ RUN pnpm i
 
 EXPOSE 3000
 
-CMD ["pnpm","start:prod"]
+CMD ["pnpm","start:dev"]
