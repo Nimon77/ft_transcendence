@@ -1,64 +1,47 @@
 <template>
 <div>
-    <v-card
-        class="mx-16 mt-12"
-        max-width="344"
-    >
+    <v-container>
+    <v-row class="mt-12" style="justify-content: center;">
+    <v-cols>
+    <v-card >
         <v-list-item three-line>
         <v-list-item-content>
-            <div class="text-overline mb-4">
-            Player Profile
+            <div class="text-overline mb-n4">
+            <p class="font-weight-bold text-h5" > Player Profile </p>
             </div>
-            <v-list-item-title class="text-h5 mb-1">
-            {{playerItems[0].name}}
+            <v-list-item-title class="text-h5 my-2">
+            {{playerItems[0].name}} <span class="text-h6 font-weight-bold" > 56  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
             </v-list-item-title>
-            <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
+            <v-list-item-subtitle class="font-weight-bold green--text">
+                WINS : {{playerItems[0].nbWin}} <span class="font-weight-bold black--text"> | </span>
+                <span class="red--text"> LOSSES : {{playerItems[0].nbLoss}} </span>
+            </v-list-item-subtitle>
         </v-list-item-content>
 
-        <v-list-item-avatar
-            tile
-            size="80"
-        >
-            <v-img :src="require('../../assets/header/' + playerItems[0].avt)">
-            </v-img>
+        <v-list-item-avatar tile size="80">
+            <v-img :src="require('../../assets/header/' + playerItems[0].avt)"> </v-img>
         </v-list-item-avatar>
         </v-list-item>
     </v-card>
 
-<!-- IN V-ROW! -->
-    <v-card
-    class="mt-left"
-    max-width="344"
-    outlined
-  >
-    <v-list-item three-line>
+    <v-card class="mt-6" max-width="700">
+    <v-list-item>
       <v-list-item-content>
-        <div class="text-overline mb-4">
-          OVERLINE
+        <div class="text-overline mb-4" style="margin-left:290px">
+          Match History
         </div>
-        <v-list-item-title class="text-h5 mb-1">
-          Headline 5
-        </v-list-item-title>
-        <v-list-item-subtitle>Greyhound divisely hello coldly fonwderfully</v-list-item-subtitle>
+        <div v-for="ph in playerHistory" v-bind:key="ph.name" class="text-h mb-1" style="margin-left:250px">
+            {{playerItems[0].name}}
+            <span v-if="ph.win==1" class="green--text"> has won against </span>
+            <span v-if="ph.win==0" class="red--text"> has lose against </span>
+            {{ph.name}}
+        </div>
       </v-list-item-content>
-
-      <v-list-item-avatar
-        tile
-        size="80"
-        color="grey"
-      ></v-list-item-avatar>
     </v-list-item>
-
-    <v-card-actions>
-      <v-btn
-        outlined
-        rounded
-        text
-      >
-        Button
-      </v-btn>
-    </v-card-actions>
   </v-card>
+</v-cols>
+</v-row>
+</v-container>
 </div>
 </template>
 
@@ -69,8 +52,17 @@ import Player from '../Player.vue'
 const playerItems = [
     {
         name: 'DUDE',
-        avt: 'avatarExample.png'
+        avt: 'avatarExample.png',
+        nbWin: 50,
+        nbLoss: 26,
     }
+]
+
+const playerHistory = [
+    { name: 'bill', win: 1 },
+    { name: 'chevre', win: 0 },
+    { name: 'MACRON', win: 0 },
+    { name: 'plume', win: 1 }
 ]
 
 export default {
@@ -79,6 +71,7 @@ export default {
     data() {
         return {
             playerItems,
+            playerHistory,
         }
     }
 }
