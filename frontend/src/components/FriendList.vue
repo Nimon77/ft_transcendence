@@ -29,7 +29,7 @@
 
                   <v-list-item-content>
                   <v-menu offset-y>
-                    <template v-slot:activator="{ on}">
+                    <template v-slot:activator="{on}">
                       <FriendDisplay v-on:click="on" :pN="friend.playerName" :stat="friend.statut"/>
                       <v-btn
                         color="primary"
