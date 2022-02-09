@@ -7,7 +7,7 @@
           <v-img src="../assets/header/RectangleWhite.png">
           </v-img>
         </v-avatar>
-        <v-btn class="name" text width="150">
+        <v-btn router to="/profilPlayer" class="name" text width="150">
           <v-badge inline left color="blue"> </v-badge>
           STEVEE
         </v-btn>
