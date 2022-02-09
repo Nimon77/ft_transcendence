@@ -1,7 +1,7 @@
 
 <template>
   <v-container fluid>
-    <v-row style="justify-content: center;">
+    <v-row class="my-16" style="justify-content: center;">
       <v-col cols="2" >
         
         <v-dialog width="500" max-height="500" v-model="dialog">

@@ -34,3 +34,12 @@
 }
 
 </style>
+
+/*
+Note/bugs:
+-Au demarrage, faire en sorte que Main s'affiche
+-Est-ce que set des routes dans le header ca va afficher dans le main ? A test
+-"searching for player dialog" => le dialog doit s'enlever seulement avec "cancel" pas avec click outside
+-trouver moyen de rechercher parmi TOUS les joueurs
+-ajouter bouton option avec menu
+*/
