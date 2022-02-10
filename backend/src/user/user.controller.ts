@@ -31,7 +31,8 @@ export class UserController {
 
     @Get(':id/avatar')
     async getPhotoById(@Res({passthrough: true}) response: Response, @Param('id', ParseIntPipe) id: number) {
-      const file = await this.photoService.getPhotoById(id);
+      const photoid = await this.userService.getUserById(id);
+      const file = await this.photoService.getPhotoById(photoid.avatarId);
       const stream = Readable.from(file.data);
       stream.pipe(response);
       response.set({
