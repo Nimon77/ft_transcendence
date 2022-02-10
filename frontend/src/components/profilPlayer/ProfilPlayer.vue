@@ -27,10 +27,10 @@
     <v-card class="mt-6" max-width="700">
     <v-list-item>
       <v-list-item-content>
-        <div class="text-overline mb-4" style="margin-left:290px">
+        <div class="text-overline text-center mb-4">
           Match History
         </div>
-        <div v-for="ph in playerHistory" v-bind:key="ph.name" class="text-h mb-1" style="margin-left:250px">
+        <div v-for="ph in playerHistory" v-bind:key="ph.name" class="text-h text-center mb-3">
             {{playerItems[0].name}}
             <span v-if="ph.win==1" class="green--text"> has won against </span>
             <span v-if="ph.win==0" class="red--text"> has lose against </span>

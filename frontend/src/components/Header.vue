@@ -1,5 +1,5 @@
 <template>
-    <v-app-bar app elevation="0" height="90px" color="green">
+    <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right>
           <v-btn
             router to="/main"
             class="titl"
