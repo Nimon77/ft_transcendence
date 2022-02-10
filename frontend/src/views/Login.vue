@@ -40,7 +40,7 @@ export default Vue.extend({
 
   computed: {
     api42Url(): string {
-      return `http://${location.hostname}:${process.env.VUE_APP_API42_PORT}/login/auth`;
+      return `http://${location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
     },
   },
 
