@@ -6,20 +6,23 @@ export class User {
   @PrimaryGeneratedColumn()
   public id: number;
  
-  @Column()
+  @Column({nullable: true})
   public username: string;
 
   @Column()
   public log: string;
 
-  @Column()
+  @Column({default: 0})
   public rank: number;
 
-  @Column('int', {array: true})
+  @Column('int', {array: true, nullable: true})
   public friends: number[];
 
-  @Column('int', {array: true})
+  @Column('int', {array: true, nullable: true})
   public blocked: number[];
+
+  @Column('boolean', {default: false})
+  public profileCompleted: boolean;
 
   @JoinColumn({ name: 'avatarId'})
   @OneToOne(
