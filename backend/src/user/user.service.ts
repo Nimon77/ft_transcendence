@@ -10,7 +10,6 @@ export class UserService {
     constructor(@InjectRepository(User) private readonly repo: Repository<User>,
     private readonly photoService: PhotoService,
     ){}
-    private lastUserId = 0;
 
     async getAllUsers()
     {
@@ -20,7 +19,6 @@ export class UserService {
     async getUserById(id: number)
     {
         const user = await this.repo.findOne(id);    
-        console.log(user);
         if (user){
             return user;
         }
@@ -30,17 +28,33 @@ export class UserService {
 
     async createUser(user: User)
     {
+        console.log(user);
         const newUser = {
-            id: ++(this.lastUserId),
-            ...user
+            id: user.id,
+            ... user
         }
         await this.repo.save(newUser);
         return user;
     }
 
+    async updateUser(userid: number,user: User)
+    {
+        const updatedUser = await this.repo.findOne(userid);
+        const newUser = {
+            id: userid,
+            ... user
+        }
+        if (updatedUser)
+        {
+            return await this.repo.update({id: userid}, newUser);
+        }
+        else
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     async deleteUser(id: number)
     {
-        const firstUser = await this.repo.findOne(1);
+        const firstUser = await this.repo.findOne(id);
         if (firstUser)
         {
             await this.repo.remove(firstUser);
