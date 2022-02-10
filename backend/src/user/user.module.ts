@@ -9,6 +9,7 @@ import { PhotoModule } from 'src/photo/photo.module';
 @Module({
   imports: [TypeOrmModule.forFeature([User]), PhotoModule],
   providers: [UserService],
-  controllers: [UserController]
+  controllers: [UserController],
+  exports: [UserService],
 })
 export class UserModule {}
