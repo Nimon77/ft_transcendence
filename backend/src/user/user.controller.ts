@@ -1,4 +1,8 @@
-import { Controller, Get, Post, Param, Body, Delete, Put, UseGuards, UseInterceptors, UploadedFile, Req, ParseIntPipe } from '@nestjs/common';
+import {    Controller, Get, Post, Param, Body,
+            Delete, Put, UseGuards, UseInterceptors, UploadedFile, Req,ParseIntPipe,
+            StreamableFile, Res} from '@nestjs/common';
+import { Readable } from 'stream';
+import { Response } from 'express';
 import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../infrastructure/user.entity';
@@ -12,6 +16,7 @@ import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
 export class UserController {
     constructor(
         private userService: UserService,
+        private photoService: PhotoService
     ) {}
 
     @Get()
@@ -22,6 +27,18 @@ export class UserController {
     @Get(':id')
     getUserById(@Param('id') id: number){
         return this.userService.getUserById(Number(id));
+    }
+
+    @Get(':id/avatar')
+    async getPhotoById(@Res({passthrough: true}) response: Response, @Param('id', ParseIntPipe) id: number) {
+      const file = await this.photoService.getPhotoById(id);
+      const stream = Readable.from(file.data);
+      stream.pipe(response);
+      response.set({
+        'Content-Disposition': `inline; filename="${file.filename}"`,
+        'Content-Type': 'image'
+      })
+      return new StreamableFile(stream);
     }
 
     @Post()
@@ -35,11 +52,10 @@ export class UserController {
         return this.userService.updateUser(id, user);
     }
 
-    @Post('avatar')
-    @UseGuards(JwtAuthGuard)
+    @Post(':id/avatar')
     @UseInterceptors(FileInterceptor('file'))
-    async addAvatar(@Req() request: RequestWithUser ,@UploadedFile() file: Express.Multer.File){
-        return this.userService.addAvatar(request.user.id, file.buffer, file.originalname);
+    async addAvatar(@Param('id') id: number,@UploadedFile() file: Express.Multer.File){
+        return this.userService.addAvatar(id, file.buffer, file.originalname);
     }
 
     @Delete(':id')

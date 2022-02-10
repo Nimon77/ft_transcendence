@@ -32,6 +32,7 @@ export class UserService {
             id: user.id,
             log: user.log,
         }
+        newUser.id = user.id;
         await this.repo.save(newUser);
         return user;
     }
