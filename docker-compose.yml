@@ -1,21 +1,21 @@
-version: '3.9'
+version: "3.9"
 
 services:
   postgres:
-    image : postgres:latest
+    image: postgres:latest
     env_file:
-      - docker.env
+      - ./docker.env
     restart: unless-stopped
-    ports : 
-      - "5432:5432"
-    networks :
+    ports:
+      - 5432:5432
+    networks:
       - backend
 
   pgadmin:
     image: dpage/pgadmin4:latest
     restart: unless-stopped
     env_file:
-      - docker.env
+      - ./docker.env
     ports:
       - 5050:80
     networks:
@@ -29,11 +29,13 @@ services:
       dockerfile: ./backend.dockerfile
     ports:
       - 3000:3000
-      - 9229:9229
     networks:
       - backend
     volumes:
       - ./backend:/app
+    env_file:
+      - ./docker.env
+      - ./docker/backend.env
     restart: unless-stopped
     depends_on:
       - postgres
@@ -49,7 +51,8 @@ services:
     volumes:
       - ./frontend:/app
     env_file:
-      - docker.env
+      - ./docker.env
+      - ./docker/frontend.env
     restart: unless-stopped
     depends_on:
       - postgres
