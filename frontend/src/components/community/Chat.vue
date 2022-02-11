@@ -1,5 +1,5 @@
 <template>
-    <v-card flat class="mx-10 d-flex flex-column" color="white" min-width="50%" max-width="50%" height="645">
+    <v-card tile flat class="mx-10 d-flex flex-column" color="white" min-width="50%" max-width="50%" height="645">
     <v-container fluid>
     
         <v-sheet color="green" height="100" dark width="100%" class="text-center">
@@ -9,42 +9,21 @@
         
         <v-card elevation="2" class="pt-3 mt-3" color="white" min-width="100%" max-width="100%" height="440">
             <v-list>
-                <v-card flat tile width="400px" color="white" >
+                <div v-for="cM in chatMsg" :key="cM.sender">
+                <v-card v-if="cM.sender != 'MOI'" flat tile width="400px" color="white" >
                 <v-card-text>
-                        Joebul :
-                        <div> MES SAGEeeeee eeefefeegegegegege gegegegege gegegegeg ethetbdfbdgndgqet bwdbwdqet!!</div>
+                        {{cM.sender}}
+                        <div> {{cM.msg}} </div>
                 </v-card-text>
-                </v-card >
-                <v-divider class="mt-1"></v-divider>
-                <v-card flat tile width="400px" color="white" >
-                <v-card-text>
-                        Joebul :
-                        <div> MES SAGEeeeee eeefefeegegegegege gegegegege gegegegeg ethetbdfbdgndgqet bwdbwdqet!!</div>
-                </v-card-text>
-                </v-card >
-                <v-divider class="mt-1"></v-divider>
-                
-                <v-card flat tile width="100%" color="blue" dark style="justify: right">
+                </v-card >                
+                <v-card v-if="cM.sender == 'MOI'" flat tile width="100%" color="blue" dark style="justify: right">
                 <v-card-text class="text-right">
-                        MOI :
-                        <div> MES SAGEeeeee eeefefeegegegegege gegegegege gegegegeg ethetbdfbdgndgqet bwdbwdqet!!</div>
+                    {{cM.sender}}
+                    <div> {{cM.msg}} </div>
                 </v-card-text>
                 </v-card >
                 <v-divider class="mt-1"></v-divider>
-                <v-card flat tile width="100%" color="blue" dark style="justify: right">
-                    <v-card-text class="text-right">
-                            MOI :
-                            <div> MES SAGEeeeee eeefefeegegegegege gegegegege gegegegeg ethetbdfbdgndgqet bwdbwdqet!!</div>
-                    </v-card-text>
-                    </v-card >
-                <v-divider class="mt-1"></v-divider>
-                <v-card flat tile width="400px" color="white" >
-                <v-card-text>
-                        Joebul :
-                        <div> MES SAGEeeeee eeefefeegegegegege gegegegege gegegegeg ethetbdfbdgndgqet bwdbwdqet!!</div>
-                </v-card-text>
-                </v-card >
-                <v-divider class="mt-1"></v-divider>
+                </div>
             </v-list>
         </v-card>
 
@@ -67,24 +46,25 @@
     </v-card>
 </template>
 
-    <!-- <v-card class="mt-10 mr-2" max-width="350px" color="blue" dark>
-    <v-list-item three-line>
-        <v-list-item-content>
-        <div class=" mb-4">
-            GNE
-        </div>
-        <v-list-item-subtitle>2 mins ago <span class="ml-16">Seen 1:23PM</span></v-list-item-subtitle>  
-        </v-list-item-content>
-    </v-list-item>
-    </v-card > -->
 
+<script lang="ts">
 
-<script lang="ts" >
+const chatMsg = [
+    { sender: 'Billy', msg: 'yo les copains sa va ?' },
+    { sender: 'Zidane', msg: 'youyou sa va é toi ??' },
+    { sender: 'Macron', msg: 'C4EST NOTRE PROJEEET' },
+    { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
+    { sender: 'MOI', msg: 'oh pas de spam stp' },
+    { sender: 'MOI', msg: 'oh pas de spam stp' },
+    { sender: 'MOI', msg: 'oh pas de spam stp' },
+    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+]
+
 export default {
     name: 'Chat',
     data() {
         return {
-
+            chatMsg,
         }
     }
 }
