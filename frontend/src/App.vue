@@ -41,6 +41,8 @@ Note/bugs:
 -"searching for player dialog" => le dialog doit s'enlever seulement avec "cancel" pas avec click outside
 -trouver moyen de rechercher parmi TOUS les joueurs
 -linker les elements du chat entre eux
+il y aurait une route pour chaque channel !
+
 -page de pregame (use switch)
 -game
 -endscreen
