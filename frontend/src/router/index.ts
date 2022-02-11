@@ -4,6 +4,7 @@ import VueRouter, { RouteConfig } from 'vue-router'
 import App from '../App.vue'
 import Community from '../components/community/Community.vue'
 import ProfilPlayer from '../components/profilPlayer/ProfilPlayer.vue'
+import Pregame from '../components/game/Pregame.vue'
 import Main from '../components/Main.vue'
 
 Vue.use(VueRouter)
@@ -52,6 +53,11 @@ const router = new VueRouter({
       path: '/profilPlayer',
       name: 'profilPlayer',
       component: ProfilPlayer
+    },
+    {
+      path: '/preGame',
+      name: 'preGame',
+      component: Pregame
     },
   ]
 })
