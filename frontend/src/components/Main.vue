@@ -30,6 +30,7 @@
         </v-dialog>
 
         <v-btn router to="/community" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
+      
       </v-col>
     </v-row>
   </v-container> 
@@ -37,6 +38,14 @@
 
 
 <script>
+function sleep(milliseconds) {
+  const date = Date.now();
+  let currentDate = null;
+  do {
+    currentDate = Date.now();
+  } while (currentDate - date < milliseconds);
+}
+
   export default {
     name: 'Main',
     data () {
@@ -47,6 +56,8 @@
     methods: {
       test() {
         console.log("BONJOUR");
+        sleep(2000);
+        console.log("i've slept now");
       }
     }
   }
