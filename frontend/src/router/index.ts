@@ -5,6 +5,7 @@ import App from '../App.vue'
 import Community from '../components/community/Community.vue'
 import ProfilPlayer from '../components/profilPlayer/ProfilPlayer.vue'
 import Pregame from '../components/game/Pregame.vue'
+import Game from '../components/game/Game.vue'
 import Main from '../components/Main.vue'
 
 Vue.use(VueRouter)
@@ -58,6 +59,11 @@ const router = new VueRouter({
       path: '/preGame',
       name: 'preGame',
       component: Pregame
+    },
+    {
+      path: '/game',
+      name: 'game',
+      component: Game,
     },
   ]
 })

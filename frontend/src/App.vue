@@ -28,6 +28,11 @@
 
 <style scoped>
 
+  /* html { overflow-y: auto } */
+/* .app {
+  overflow: hidden;
+} */
+
 .twbtn {
   margin-top: 200px;
   /* margin-left: -45px; */
@@ -43,9 +48,9 @@ Note/bugs:
 -linker les elements du chat entre eux
 il y aurait une route pour chaque channel !
 
--page de pregame (use switch)
--game
--endscreen
--dialog poour chaque setting
--add bouton ajout channel + dialog pour add chan
+-endgame screen
+-dialog pour chaque setting
+-dialog pour chat
+-add bouton ajout channel + dialog pour add/remove chan
+-toast for invitation/removePlayer
 */
