@@ -55,8 +55,6 @@ const chatMsg = [
     { sender: 'Macron', msg: 'C4EST NOTRE PROJEEET' },
     { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
     { sender: 'MOI', msg: 'oh pas de spam stp' },
-    { sender: 'MOI', msg: 'oh pas de spam stp' },
-    { sender: 'MOI', msg: 'oh pas de spam stp' },
     { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
 ]
 

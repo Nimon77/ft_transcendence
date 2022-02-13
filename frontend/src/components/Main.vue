@@ -4,7 +4,7 @@
     <v-row class="my-16" style="justify-content: center;">
       <v-col cols="2" >
         
-        <v-dialog width="500" max-height="500" v-model="dialog">
+        <!-- <v-dialog width="500" max-height="500" v-model="dialog">
           <template v-slot:activator="{ on, attrs }">
           <v-btn
           v-bind="attrs"
@@ -27,8 +27,8 @@
               <v-btn @click="dialog=false" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog>
-
+        </v-dialog> -->
+        <PlayButton/>
         <v-btn router to="/community" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
       
       </v-col>
@@ -38,32 +38,29 @@
 
 
 <script>
-function sleep(milliseconds) {
-  const date = Date.now();
-  let currentDate = null;
-  do {
-    currentDate = Date.now();
-  } while (currentDate - date < milliseconds);
-}
+
+  import PlayButton from './PlayButton.vue'
 
   export default {
     name: 'Main',
+    components: {
+      PlayButton,
+    },
     data () {
       return {
-        dialog: false,
       }
     },
     methods: {
       test() {
         console.log("BONJOUR");
-        sleep(2000);
+        
         console.log("i've slept now");
-      }
-    }
+      },
+    },
   }
 </script>
 
-<style scoped>
+<style>
 @import '../assets/fonts/LEMONMILK/stylesheet.css';
 
 /* .ctn { max-width: 4000px; } */
