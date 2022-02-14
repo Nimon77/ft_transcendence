@@ -60,7 +60,7 @@
 
 export default {
     name: 'Pregame',
-    data() {
+    data(): unknown {
         return {
             toggle_exclusive: undefined,
             player: [
