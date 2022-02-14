@@ -1,12 +1,14 @@
-import { Controller, Get } from '@nestjs/common';
-import { AppService } from './app.service';
+import { Controller, Get, Post, Request, UseGuards } from '@nestjs/common';
+import { AuthService } from './auth/auth.service';
+import { FortyTwoAuthGuard } from './auth/guards/42-auth.guard';
 
 @Controller()
 export class AppController {
-  constructor(private readonly appService: AppService) {}
+  constructor(private readonly authService: AuthService) {}
 
-  @Get()
-  getHello(): string {
-    return this.appService.getHello();
+  @UseGuards(FortyTwoAuthGuard)
+  @Get('auth/42/callback')
+  async login(@Request() req) {
+    return this.authService.login(req.user);
   }
 }
