@@ -2,7 +2,7 @@
   <v-container >
     <v-row align="center">
       <v-avatar class="mr-n2" tile size="65">
-        <v-img v-bind:src="require('../assets/header/avatarExample.png')"/>
+        <v-img v-bind:src="require('../../assets/header/avatarExample.png')"/>
       </v-avatar>
 
       <v-badge class="ml-3" inline left v-if="stat==0" color="grey">
