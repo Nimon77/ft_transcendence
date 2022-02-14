@@ -41,16 +41,16 @@ export default {
         }
     },
     methods: {
-      closeDialog(): void {
+      closeDialog() {
         if (this.dialog == true)
         {
-            this.dialog == false;
+            // this.dialog = false;
             this.$router.push('/pregame');
             return;
         }
         return;
       },
-      playerFund() : unknown {
+      playerFund() {
           setTimeout(this.closeDialog, 3000);
           return;
       },

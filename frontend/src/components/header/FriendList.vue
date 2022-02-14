@@ -82,6 +82,7 @@ export default {
         items: [
         { title: 'Profil Player' },
         { title: 'Invite to Game' },
+        { title: 'Spectate' },
         { title: 'Chat' },
         { title: 'Remove Player' },
         ],
@@ -97,7 +98,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../assets/fonts/LEMONMILK/stylesheet.css';
+@import '../../assets/fonts/LEMONMILK/stylesheet.css';
 
 .v-btn {
   font-family: "lemon_milkmedium";

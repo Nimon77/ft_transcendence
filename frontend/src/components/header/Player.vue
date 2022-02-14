@@ -5,7 +5,7 @@
 
         <v-badge bordered bottom left color="blue" offset-x="15" offset-y="15" >
         <v-avatar tile color="blue" size="65" class="mr-2">
-          <v-img src="../assets/header/RectangleWhite.png">
+          <v-img src="../../assets/header/RectangleWhite.png">
           </v-img>
         </v-avatar>
          </v-badge>
@@ -18,8 +18,14 @@
           </v-btn>
         </template>
         <v-list class="text-center">
-          <v-list-item v-for="(item, index) in items" :key="index">
-            <v-list-item-title> <v-btn color="blue" dark max-width="160"> {{ item.title }} </v-btn> </v-list-item-title>
+          <v-list-item>
+            <v-list-item-title> <v-btn color="blue" dark max-width="160"> Change Avatar </v-btn> </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title> <v-btn color="blue" dark max-width="160"> Two-Factor-Auth </v-btn> </v-list-item-title>
+          </v-list-item>
+          <v-list-item>
+            <v-list-item-title> <v-btn color="blue" dark max-width="160"> Delete Account </v-btn> </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>

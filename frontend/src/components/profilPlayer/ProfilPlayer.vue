@@ -47,7 +47,7 @@
 
 
 <script lang="ts">
-import Player from '../Player.vue'
+import Player from '../header/Player.vue'
 
 const playerItems = [
     {
