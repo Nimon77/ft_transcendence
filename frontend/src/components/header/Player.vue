@@ -19,13 +19,13 @@
         </template>
         <v-list class="text-center">
           <v-list-item>
-            <v-list-item-title> <v-btn color="blue" dark max-width="160"> Change Avatar </v-btn> </v-list-item-title>
+            <v-list-item-title> <ChangeAvatar/> </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> <v-btn color="blue" dark max-width="160"> Two-Factor-Auth </v-btn> </v-list-item-title>
+            <v-list-item-title> <TwoFactor/> </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> <v-btn color="blue" dark max-width="160"> Delete Account </v-btn> </v-list-item-title>
+            <v-list-item-title> <DeleteAccount/> </v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -37,8 +37,18 @@
 </template>
 
 <script>
+  import ChangeAvatar from './settingsHeader/ChangeAvatar.vue'
+  import TwoFactor from './settingsHeader/TwoFactor.vue'
+  import DeleteAccount from './settingsHeader/DeleteAccount.vue'
+
   export default {
     name: 'Player',
+    components: {
+      ChangeAvatar,
+      TwoFactor,
+      DeleteAccount,
+    },
+
     data() {
       return {
         items: [
