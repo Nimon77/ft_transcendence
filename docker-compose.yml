@@ -1,42 +1,42 @@
 version: '3.9'
 
 services:
-  # postgres:
-  #   image : postgres:latest
-  #   env_file:
-  #     - docker.env
-  #   restart: unless-stopped
-  #   ports : 
-  #     - "5432:5432"
-  #   networks :
-  #     - backend
+  postgres:
+    image : postgres:latest
+    env_file:
+      - docker.env
+    restart: unless-stopped
+    ports : 
+      - "5432:5432"
+    networks :
+      - backend
 
-  # pgadmin:
-  #   image: dpage/pgadmin4:latest
-  #   restart: unless-stopped
-  #   env_file:
-  #     - docker.env
-  #   ports:
-  #     - 5050:80
-  #   networks:
-  #     - backend
-  #   depends_on:
-  #     - postgres
+  pgadmin:
+    image: dpage/pgadmin4:latest
+    restart: unless-stopped
+    env_file:
+      - docker.env
+    ports:
+      - 5050:80
+    networks:
+      - backend
+    depends_on:
+      - postgres
 
-  # backend:
-  #   build:
-  #     context: ./docker
-  #     dockerfile: ./backend.dockerfile
-  #   ports:
-  #     - 3000:3000
-  #     - 9229:9229
-  #   networks:
-  #     - backend
-  #   volumes:
-  #     - ./backend:/app
-  #   restart: unless-stopped
-  #   depends_on:
-  #     - postgres
+  backend:
+    build:
+      context: ./docker
+      dockerfile: ./backend.dockerfile
+    ports:
+      - 3000:3000
+      - 9229:9229
+    networks:
+      - backend
+    volumes:
+      - ./backend:/app
+    restart: unless-stopped
+    depends_on:
+      - postgres
 
   frontend:
     build:
@@ -51,8 +51,8 @@ services:
     env_file:
       - docker.env
     restart: unless-stopped
-    # depends_on:
-      # - postgres
-      # - backend
+    depends_on:
+      - postgres
+      - backend
 networks:
   backend:
