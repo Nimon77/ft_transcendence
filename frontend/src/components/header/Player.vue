@@ -11,9 +11,9 @@
          </v-badge>
         <v-btn router to="/profilPlayer" class="name" text width="110"> STEVEE </v-btn>
 
-        <v-menu open-on-hover>
-        <template v-slot:activator="{ on, attrs }">
-          <v-btn color="black" v-bind="attrs" v-on="on" small tile icon class="ml-2">
+        <v-menu close-on-click="false">
+        <template v-slot:activator="{ on, attrse }">
+          <v-btn color="black" v-bind="attrse" v-on="on" small tile icon class="ml-2">
           <v-icon small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>

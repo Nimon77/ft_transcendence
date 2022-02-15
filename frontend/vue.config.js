@@ -5,7 +5,8 @@ module.exports = {
 		public: '0.0.0.0:8080',
 		disableHostCheck: true,
 		// End of fix
-		progress: false
+		progress: false,
+		proxy: 'http://localhost:3000/user'
 	},
 
     transpileDependencies: [
