@@ -5,6 +5,7 @@
       <v-col cols="2" >
         <PlayButton/>
         <v-btn router to="/community" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
+        <v-btn v-on:click="fetchUsers" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> TEST </v-btn>
       
       </v-col>
     </v-row>
@@ -12,7 +13,7 @@
 </template>
 
 
-<script>
+<script lang="ts">
 
   import PlayButton from './PlayButton.vue'
 
@@ -21,13 +22,18 @@
     components: {
       PlayButton,
     },
-    data () {
+    data (): unknown {
       return {
+      info: []
       }
     },
     methods: {
-
-    },
+    fetchUsers(): void  {
+        const baseURI = 'https://jsonplaceholder.typicode.com/users'
+        this.$http.get(baseURI).then((result) => { this.info = result.data })
+        console.log('RESULT.DATA ', this.info[5].id);
+      }
+    }
   }
 </script>
 
