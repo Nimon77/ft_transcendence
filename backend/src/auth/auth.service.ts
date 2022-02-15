@@ -1,7 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
 import { UserService } from 'src/user/user.service';
-import { User } from '../infrastructure/user.entity';
 
 @Injectable()
 export class AuthService {
@@ -13,6 +12,7 @@ export class AuthService {
       log: user.username,
       ... user
   }
+    //need to check if user already exist
     this.userService.createUser(newUser);
     const payload = { sub: user.id };
     return {
