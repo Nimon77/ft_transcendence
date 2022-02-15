@@ -1,9 +1,9 @@
-import { Column, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Column,PrimaryColumn, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
 import { Photo } from 'src/photo/photo.entity';
  
 @Entity()
 export class User {
-  @PrimaryGeneratedColumn()
+  @PrimaryColumn()
   public id: number;
  
   @Column({nullable: true})
