@@ -28,11 +28,11 @@ export class UserService {
 
     async createUser(user: User)
     {
-        console.log(user);
         const newUser = {
             id: user.id,
-            ... user
+            log: user.log,
         }
+        newUser.id = user.id;
         await this.repo.save(newUser);
         return user;
     }
