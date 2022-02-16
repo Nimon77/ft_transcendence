@@ -36,7 +36,7 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
-  console.log('to', to)
+  console.log('to', to) // TODO: remove
   if (to.name !== 'Login' && !isAuthenticated()) {
     next({ name: 'Login' })
   } else if (to.name === 'Login' && to.query.code !== undefined) {
