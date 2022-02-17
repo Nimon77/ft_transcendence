@@ -14,14 +14,16 @@ export class AuthService {
       ... user
   }
     //need to check if user already exist
-    const exist = await this.userService.getUserById(newUser.id);
-    if (exist)
+    try
     {
+      const exist = await this.userService.getUserById(newUser.id);
       exist.onlineStatus = true;
       this.userService.updateUser(exist.id, exist);
     }
-    else
+    catch(error)
+    {
       this.userService.createUser(newUser);
+    }
     const payload = { sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
