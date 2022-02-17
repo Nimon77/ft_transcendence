@@ -1,7 +1,7 @@
 <template>
 <v-dialog width="500" max-height="500" v-model="dialog">
     <template v-slot:activator="{ on, attrs }">
-    <v-btn
+    <v-btn 
     v-on:click="playerFund"
     v-bind="attrs"
     v-on="on"          
@@ -59,5 +59,9 @@ export default {
 </script>
 
 <style scoped>
+
+.btn:hover {
+    transform: scale(1.1)
+}
 
 </style>

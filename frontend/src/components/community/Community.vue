@@ -34,4 +34,8 @@
   /* margin-left: 60px; */
 }
 
+.btn:hover {
+    transform: scale(1.1)
+}
+
 </style>
