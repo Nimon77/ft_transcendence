@@ -3,7 +3,7 @@ import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './infrastructure/database.module';
 import { PhotoModule } from './photo/photo.module';
 import { UserModule } from './user/user.module';
-import * as Joi from '@hapi/joi';
+import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 
