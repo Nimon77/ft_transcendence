@@ -36,7 +36,7 @@ export class UserController {
   }
 
   @Get('me')
-  getUserById(@Request() req) {
+  getUserMe(@Request() req) {
     return this.userService.getUserById(req.user.userId);
   }
 
@@ -54,6 +54,20 @@ export class UserController {
       'Content-Type': 'image',
     });
     return new StreamableFile(stream);
+  }
+
+  @Put('me')
+  updateMe(@Body() user: User, @Request() req) {
+    return this.userService.updateUser(req.user.userId, user);
+  }
+
+  @Post('me/avatar')
+  @UseInterceptors(FileInterceptor('file'))
+  async addAvatarMe(
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+  ) {
+    return this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
   }
 
   //--------------- need update
