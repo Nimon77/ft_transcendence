@@ -15,6 +15,9 @@ export class User {
   @Column({default: 0})
   public rank: number;
 
+  @Column({default: false})
+  public onlineStatus: boolean;
+
   @Column('int', {array: true, nullable: true})
   public friends: number[];
 
