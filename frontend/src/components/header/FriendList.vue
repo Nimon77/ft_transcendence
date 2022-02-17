@@ -1,18 +1,13 @@
 <template>
 <div>
-    <v-dialog
-    style="margin-top: 12px !important"
-    v-model="dialog"
-    transition="dialog-top-transition"
-    width="800"
-    height="200"
-    scrollable
-    multiple>
+    <v-dialog style="margin-top: 12px !important" v-model="dialog" transition="dialog-top-transition"
+    width="800" height="200" scrollable multiple>
 
       <template v-slot:activator="{ on, attrs}">
         <v-btn elevation="0" width="130" text dark style="font-size:20px"
         v-bind="attrs"
-        v-on="on">
+        v-on="on"
+        v-on:click="fetchUsers">
             FRIENDS
             <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
@@ -20,17 +15,17 @@
 
       <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            <v-text-field label="Search player"></v-text-field>
+            <v-text-field  label="Search player" ></v-text-field>
           </v-card-title>
 
           <v-list>
                 <v-list-item-group>
-                  <v-list-item v-for="friend in friends" v-bind:key="friend.id">
+                  <v-list-item v-for="user in users" v-bind:key="user.id">
 
                   <v-list-item-content>
                   <v-menu offset-y>
                     <template v-slot:activator="{on}">
-                      <FriendDisplay v-on:click="on" :pN="friend.playerName" :stat="friend.statut"/>
+                      <FriendDisplay v-on:click="on" :pN="user.log" stat='1'/>
                       <v-btn
                         color="primary"
                         dark
@@ -61,15 +56,15 @@
 <script lang="ts">
 import FriendDisplay from './FriendDisplay.vue'
 
-const friends = [
-  {id: 1, playerName: 'chèvre', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
-  {id: 2, playerName: 'Byllyy34', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
-  {id: 3, playerName: 'Gertrude', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
-  {id: 4, playerName: 'AM GOD', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
-  {id: 5, playerName: 'oke', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
-  {id: 6, playerName: 'NOÏCE', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
-  {id: 7, playerName: 'gneeee', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
-];
+// const friends = [
+//   {id: 1, playerName: 'chèvre', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
+//   {id: 2, playerName: 'Byllyy34', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
+//   {id: 3, playerName: 'Gertrude', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
+//   {id: 4, playerName: 'AM GOD', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
+//   {id: 5, playerName: 'oke', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
+//   {id: 6, playerName: 'NOÏCE', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
+//   {id: 7, playerName: 'gneeee', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
+// ];
 
 export default {
     components: {
@@ -77,8 +72,9 @@ export default {
     },
     data () {
       return {
+        searchInput: "",
         dialog: false,
-        friends,
+        users: [],
         items: [
         { title: 'Profil Player' },
         { title: 'Invite to Game' },
@@ -88,7 +84,18 @@ export default {
         ],
       }
     },
+    methods: {
+      async fetchUsers(): Promise<void>  {
+      const baseURI = 'http://localhost:3000/user'
+      await this.$http.get(baseURI).then((result) => { this.users = result.data })
+      // console.log('RESULT.DATA ', this.users);
+      }
+    },
     computed: {
+      manageInput(searchInput): void {
+        console.log('CHECK INPUT = ', searchInput);
+        return searchInput;
+      },
       imageSrc() {
         return {};
       }
