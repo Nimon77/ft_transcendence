@@ -1,13 +1,8 @@
 <template>
 <v-dialog width="500" max-height="500" v-model="dialog">
     <template v-slot:activator="{ on, attrs }">
-    <v-btn 
-    v-on:click="playerFund"
-    v-bind="attrs"
-    v-on="on"          
-    slot="activator"
-    class="btn" style="font-size: 60px !important;" color="yellow--text"
-    tile x-large depressed
+    <v-btn elevation="1" v-on:click="playerFund" v-bind="attrs" v-on="on" slot="activator"
+    class="btn" style="font-size: 60px !important;" color="yellow--text" tile x-large depressed
     width="395" height="170">
     PLAY
     </v-btn>

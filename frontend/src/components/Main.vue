@@ -7,7 +7,6 @@
       </v-col>
       <v-col class="d-flex justify-center" cols="12" >
         <v-btn router to="/community" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
-        <v-btn v-on:click="fetchUsers" class="btn" color="yellow--text" tile x-large depressed width="595" height="90"> TEST DE RECUP DES DONNEES </v-btn>
       </v-col>
     </v-row>
   </v-container>
@@ -32,7 +31,7 @@
     async fetchUsers(): Promise<void>  {
         const baseURI = 'http://localhost:3000/user'
         await this.$http.get(baseURI).then((result) => { this.info = result.data })
-        console.log('RESULT.DATA ', this.info[8].id);
+        console.log('RESULT.DATA ', this.info);
       }
     }
   }
