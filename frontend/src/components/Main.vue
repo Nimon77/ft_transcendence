@@ -1,15 +1,16 @@
 
 <template>
-  <v-container fluid>
-    <v-row class="my-16" style="justify-content: center;">
-      <v-col cols="2" >
+  <v-container fill-height >
+    <v-row class="justify-center mb-16">
+      <v-col class="d-flex justify-center" cols="12" >
         <PlayButton/>
+      </v-col>
+      <v-col class="d-flex justify-center" cols="12" >
         <v-btn router to="/community" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
         <v-btn v-on:click="fetchUsers" class="btn" color="yellow--text" tile x-large depressed width="595" height="90"> TEST DE RECUP DES DONNEES </v-btn>
-      
       </v-col>
     </v-row>
-  </v-container> 
+  </v-container>
 </template>
 
 

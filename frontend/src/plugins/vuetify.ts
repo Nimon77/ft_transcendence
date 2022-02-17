@@ -8,8 +8,12 @@ export default new Vuetify({
       themes: {
         light: {
             yellow: "#F6D42A",
-            green: "#97D490"
+            green: "#97D490",
+            primary: "#97D490",
+            secondary: "#FFFFFF",
+            background: "#EDCB23",
         }
       }
     }
   });
+

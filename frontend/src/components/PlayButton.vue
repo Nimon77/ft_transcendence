@@ -6,9 +6,9 @@
     v-bind="attrs"
     v-on="on"          
     slot="activator"
-    class="btn" color="yellow--text"
+    class="btn" style="font-size: 60px !important;" color="yellow--text"
     tile x-large depressed
-    width="295" height="90">
+    width="395" height="170">
     PLAY
     </v-btn>
     </template>
