@@ -6,6 +6,8 @@ import { UserModule } from './user/user.module';
 import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
+import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -18,7 +20,7 @@ import { AppController } from './app.controller';
         POSTGRES_DB: Joi.string().required(),
         PORT: Joi.number(),
         FORTYTWO_ID: Joi.string().required(),
-    	FORTYTWO_SECRET: Joi.string().required(),
+        FORTYTWO_SECRET: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
       }),
     }),
@@ -28,5 +30,11 @@ import { AppController } from './app.controller';
     AuthModule,
   ],
   controllers: [AppController],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: JwtAuthGuard,
+    },
+  ],
 })
 export class AppModule {}
