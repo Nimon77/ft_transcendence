@@ -6,10 +6,11 @@ module.exports = {
 		disableHostCheck: true,
 		// End of fix
 		progress: false,
-		proxy: 'http://localhost:3000/user'
+		// proxy: 'http://localhost:3000/user'
 	},
 
     transpileDependencies: [
-      'vuetify'
+      'vuetify',
+	  'vue-auth-image'
     ]
 }
