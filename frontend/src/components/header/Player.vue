@@ -4,14 +4,14 @@
     <v-row align="center">
 
         <v-badge bordered bottom left color="blue" offset-x="15" offset-y="15" >
-        <v-avatar tile color="blue" size="65" class="mr-2">
-          <v-img src="../../assets/header/RectangleWhite.png">
-          </v-img>
-        </v-avatar>
-         </v-badge>
-        <v-btn router to="/profilPlayer" class="name" text width="110"> STEVEE </v-btn>
+          <v-avatar tile coolor="blue" size="65" class="mr-2">
+            <!-- <v-img src="../../assets/header/RectangleWhite.png"> -->
+            <img v-auth-image="'/user/me/avatar'"/>
+          </v-avatar>
+        </v-badge>
+        <v-btn router to="/profilPlayer" class="name" text width="110"> {{username}} </v-btn>
 
-        <v-menu close-on-click="false">
+        <v-menu :close-on-click="false">
         <template v-slot:activator="{ on, attrse }">
           <v-btn color="black" v-bind="attrse" v-on="on" small tile icon class="ml-2">
           <v-icon small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
@@ -55,9 +55,15 @@
         { title: 'Change Avatar' },
         { title: 'Two-Factor-Auth' },
         { title: 'Delete Account' },
-      ],
+        ],
+        username: '',
       }
     },
+    mounted() {
+      this.$http.get('/user/me').then(response => {
+        this.username = response.data.log
+      })
+    }
   }
 </script>
 
