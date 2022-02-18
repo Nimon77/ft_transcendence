@@ -18,20 +18,6 @@
       Header,
       Footer
     },
-    data: () => {
-      return {
-
-      }
-    },
-    mounted: () => {
-      // console.log(localStorage.getItem('token'));
-    },
-
-    computed: {
-      // theme() {
-      //   return this.$vuetify.theme.dark ? 'dark' : 'light';
-      // },
-    }
   };
 </script>
 

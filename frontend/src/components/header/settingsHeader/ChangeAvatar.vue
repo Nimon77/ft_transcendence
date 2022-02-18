@@ -33,7 +33,9 @@
 </template>
 
 <script lang="ts">
-    export default {
+import Vue from 'vue';
+
+export default Vue.extend({
         name: 'ChangeAvatar',
         components: {
 
@@ -48,7 +50,7 @@
                 console.log('CHANGE AVATAR');
             } 
         }
-    };
+    });
 </script>
 
 <style scoped>

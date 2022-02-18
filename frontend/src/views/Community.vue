@@ -8,19 +8,20 @@
   </v-container>
 </template>
 
-<script>
-  import Chat from '@/components/community/Chat.vue'
-  import Channel from '@/components/community/Channel.vue'
-  import PlayerChannel from '@/components/community/PlayerChannel.vue'
-  
-  export default {
-    components: {
-      Chat,
-      Channel,
-      PlayerChannel,
-    },
+<script lang="ts">
+import Vue from 'vue';
+
+import Chat from '@/components/community/Chat.vue'
+import Channel from '@/components/community/Channel.vue'
+import PlayerChannel from '@/components/community/PlayerChannel.vue'
+
+Vue.component('Chat', Chat);
+Vue.component('Channel', Channel);
+Vue.component('PlayerChannel', PlayerChannel);
+
+export default Vue.extend({
     data: () => ({ drawer: null }),
-  }
+})
 </script>
 
 <style >

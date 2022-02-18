@@ -3,7 +3,9 @@
 </template>
 
 <script lang="ts">
-    export default {
+import Vue from 'vue';
+
+export default Vue.extend({
         name: 'TwoFactor',
         components: {
 
@@ -18,7 +20,7 @@
                 console.log('Two-Factor-Auth');
             } 
         }
-    };
+    });
 </script>
 
 <style scoped>

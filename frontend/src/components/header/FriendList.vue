@@ -15,7 +15,7 @@
 
       <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            <v-text-field  label="Search player" ></v-text-field>
+            <v-text-field  label="Search player" v-model="searchInput" ></v-text-field>
           </v-card-title>
 
           <v-list>
@@ -25,7 +25,7 @@
                   <v-list-item-content>
                   <v-menu offset-y>
                     <template v-slot:activator="{on}">
-                      <FriendDisplay v-on:click="on" :pN="user.log" :stat="user.onlineStatus"/>
+                      <FriendDisplay v-on:click="on" :user="user"/>
                       <v-btn color="primary" dark v-on="on"> OPTIONS </v-btn>
                     </template>
                     <v-list class="text-center">
@@ -45,12 +45,12 @@
 </template>
 
 <script lang="ts">
+import Vue from "vue";
 import FriendDisplay from './FriendDisplay.vue'
 
-export default {
-    components: {
-      FriendDisplay,
-    },
+Vue.component('FriendDisplay', FriendDisplay);
+
+export default Vue.extend({
     data () {
       return {
         searchInput: "",
@@ -69,23 +69,22 @@ export default {
       validTempToken(): unknown {
         return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NTEyNDQ4MSwiZXhwIjoxNjQ1NzI5MjgxfQ.EudjZqlqBVPWR0B1gyt6UZs46q_ZSqg6yLPpCPX9UT8';
       },
-
-      async fetchUsers(): Promise<void>  {
-      const baseURI = '/user'
-      await this.$http.get(baseURI).then((result) => { this.users = result.data })
-      // console.log('RESULT.DATA ', this.users);
-      }
+      async fetchUsers() {
+        await this.$http.get('/user').then(response => {
+          this.users = response.data;
+        });
+      },
     },
     computed: {
-      manageInput(searchInput): void {
-        console.log('CHECK INPUT = ', searchInput);
-        return searchInput;
+      manageInput(): string {
+        console.log('CHECK INPUT = ', this.searchInput);
+        return this.searchInput;
       },
       imageSrc() {
         return {};
       }
     }
-}
+})
 
 </script>
 
