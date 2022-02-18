@@ -39,6 +39,11 @@ export class UserController {
   getUserMe(@Request() req) {
     return this.userService.getUserById(req.user.userId);
   }
+  
+  @Get(':id')
+  getUserById(@Param('id') id: number){
+    return this.userService.getUserById(Number(id));
+  }
 
   @Get(':id/avatar')
   async getPhotoById(
