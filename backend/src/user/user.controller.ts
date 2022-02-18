@@ -6,10 +6,8 @@ import {
   Body,
   Delete,
   Put,
-  UseGuards,
   UseInterceptors,
-  UploadedFile,
-  Req,
+  UploadedFiles,
   ParseIntPipe,
   StreamableFile,
   Res,
@@ -18,10 +16,11 @@ import {
 import { Readable } from 'stream';
 import { Response } from 'express';
 import { UserService } from './user.service';
-import { FileInterceptor } from '@nestjs/platform-express';
+import { AnyFilesInterceptor } from '@nestjs/platform-express';
 import { User } from '../infrastructure/user.entity';
 import { PhotoService } from '../photo/photo.service';
 import { Express } from 'express';
+import { Public } from 'src/auth/decorators/public.decorator';
 
 @Controller('user')
 export class UserController {
@@ -37,84 +36,63 @@ export class UserController {
 
   @Get('me')
   getUserMe(@Request() req) {
-    return this.userService.getUserById(req.user.userId);
-  }
-  
-  @Get(':id')
-  getUserById(@Param('id') id: number){
-    return this.userService.getUserById(Number(id));
+    return this.getUserById(req.user.userId);
   }
 
   @Get('me/avatar')
-  async getPhotoMe(
-    @Res({ passthrough: true }) response: Response,
-    @Request() req,
-  ) {
-    console.log("uwu");
-    const photoid = await this.userService.getUserById(req.user.userId);
-    const file = await this.photoService.getPhotoById(photoid.avatarId);
-    const stream = Readable.from(file.data);
-    stream.pipe(response);
-    response.set({
-      'Content-Disposition': `inline; filename="${file.filename}"`,
-      'Content-Type': 'image',
-    });
-    return new StreamableFile(stream);
-  }
-  
-  @Get(':id/avatar')
-  async getPhotoById(
-    @Res({ passthrough: true }) response: Response,
-    @Param('id', ParseIntPipe) id: number,
-  ) {
-    const photoid = await this.userService.getUserById(id);
-    const file = await this.photoService.getPhotoById(photoid.avatarId);
-    const stream = Readable.from(file.data);
-    stream.pipe(response);
-    response.set({
-      'Content-Disposition': `inline; filename="${file.filename}"`,
-      'Content-Type': 'image',
-    });
-    return new StreamableFile(stream);
+  getPhotoMe(@Request() req, @Res({ passthrough: true }) response: Response) {
+    return this.getPhotoById(req.user.userId, response);
   }
 
   @Put('me')
-  updateMe(@Body() user: User, @Request() req) {
-    return this.userService.updateUser(req.user.userId, user);
+  updateUser(@Request() req, @Body() user: User) {
+    user.id = req.user.userId;
+    return this.userService.updateUser(user.id, user);
   }
 
+  @Delete('me')
+  deleteUser(@Request() req) {
+    this.userService.deleteUser(req.user.userId);
+  }
+
+  @UseInterceptors(AnyFilesInterceptor())
   @Post('me/avatar')
-  @UseInterceptors(FileInterceptor('file'))
-  async addAvatarMe(
-    @Request() req,
-    @UploadedFile() file: Express.Multer.File,
+  async addAvatarMe(@Request() req, @UploadedFiles() files: Express.Multer.File) {
+    this.userService.addAvatar(req.user.userId, files[0].buffer, files[0].originalname);
+  }
+
+  @Get(':id')
+  getUserById(@Param('id') id: any) {
+    return this.userService.getUserById(Number(id));
+  }
+
+  @Get(':id/avatar')
+  async getPhotoById(
+    @Param('id', ParseIntPipe) id: number,
+    @Res({ passthrough: true }) response: Response,
   ) {
-    return this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
+    const user = await this.userService.getUserById(id);
+    const photo = await this.photoService.getPhotoById(user.avatarId);
+    const stream = Readable.from(photo.data);
+    stream.pipe(response);
+    response.set({
+      'Content-Disposition': `inline; filename="${photo.filename}"`,
+      'Content-Type': 'image',
+    });
+    return new StreamableFile(stream);
   }
 
-  //--------------- need update
-  @Post()
-  createUser(@Body() user: User) {
-    return this.userService.createUser(user);
-  }
+  //   @Post()
+  //   createUser(@Body() user: User) {
+  //     return this.userService.createUser(user);
+  //   }
 
-  @Put(':id')
-  updateUser(@Body() user: User, @Param('id') id: number) {
-    return this.userService.updateUser(id, user);
-  }
-
-  @Post(':id/avatar')
-  @UseInterceptors(FileInterceptor('file'))
-  async addAvatar(
-    @Param('id') id: number,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    return this.userService.addAvatar(id, file.buffer, file.originalname);
-  }
-
-  @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    this.userService.deleteUser(Number(id));
-  }
-  //--------------- need update
+  //   @Post(':id/avatar')
+  //   @UseInterceptors(FileInterceptor('file'))
+  //   async addAvatar(
+  //     @Param('id') id: number,
+  //     @UploadedFile() file: Express.Multer.File,
+  //   ) {
+  //     return this.userService.addAvatar(id, file.buffer, file.originalname);
+  //   }
 }
