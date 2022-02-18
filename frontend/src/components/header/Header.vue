@@ -1,6 +1,6 @@
 <template>
     <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right v-if="authenticated">
-          <v-btn router to="/main" class="titl" x-large depressed text width="385" height="60">
+          <v-btn router to="/" class="titl" x-large depressed text width="385" height="60">
             BananaPong
           </v-btn>
           <v-spacer></v-spacer>

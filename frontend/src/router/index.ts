@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
+import axios from 'axios'
 // import Home from '../views/Home.vue'
 // import App from '../App.vue'
 import Community from '../components/community/Community.vue'
@@ -17,18 +18,13 @@ const isAuthenticated = () => {
 const routes: Array<RouteConfig> = [
   {
     path: '/',
-    name: 'App',
+    name: 'Main',
     component: Main
   },
   {
     path: '/community',
     name: 'community',
     component: Community
-  },
-  {
-    path: '/main',
-    name: 'main',
-    component: Main
   },
   {
     path: '/profilPlayer',
@@ -72,9 +68,10 @@ router.beforeEach((to, from, next) => {
     next({ name: 'Login' })
   } else if (to.name === 'Login' && to.query.code !== undefined) {
     localStorage.setItem('token', to.query.code.toString())
-    next({ name: 'Home' })
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString()
+    next({ name: 'Main' })
   } else if (to.name === 'Login' && isAuthenticated()) {
-    next({ name: 'Home' })
+    next({ name: 'Main' })
   } else {
     next()
   }
