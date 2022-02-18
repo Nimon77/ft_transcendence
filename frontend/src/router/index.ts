@@ -73,6 +73,8 @@ router.beforeEach((to, from, next) => {
   } else if (to.name === 'Login' && to.query.code !== undefined) {
     localStorage.setItem('token', to.query.code.toString())
     next({ name: 'Home' })
+  } else if (to.name === 'Login' && isAuthenticated()) {
+    next({ name: 'Home' })
   } else {
     next()
   }

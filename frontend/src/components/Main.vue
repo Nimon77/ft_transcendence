@@ -29,7 +29,7 @@
     },
     methods: {
     async fetchUsers(): Promise<void>  {
-        const baseURI = 'http://localhost:3000/user'
+        const baseURI = '/user'
         await this.$http.get(baseURI).then((result) => { this.info = result.data })
         console.log('RESULT.DATA ', this.info);
       }

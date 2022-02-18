@@ -71,14 +71,9 @@ export default {
       },
 
       async fetchUsers(): Promise<void>  {
-        let config: unknown = {
-          headers: {
-          'Authorization': 'Bearer ' + this.validTempToken()
-          }
-        }
-  // Axios.post('http://localhost:8000/api/v1/get_token_payloads', config)
-      await this.$http.get('http://localhost:3000/user', config).then((result) => { this.users = result.data })
-      console.log('RESULT.DATA ', this.users);
+      const baseURI = '/user'
+      await this.$http.get(baseURI).then((result) => { this.users = result.data })
+      // console.log('RESULT.DATA ', this.users);
       }
     },
     computed: {
@@ -103,13 +98,3 @@ export default {
   /* margin-left: 60px; */
 }
 </style>
-
-// const friends = [
-//   {id: 1, playerName: 'chèvre', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
-//   {id: 2, playerName: 'Byllyy34', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
-//   {id: 3, playerName: 'Gertrude', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
-//   {id: 4, playerName: 'AM GOD', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 0, route: /profilPlayer/},
-//   {id: 5, playerName: 'oke', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
-//   {id: 6, playerName: 'NOÏCE', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 1, route: /profilPlayer/},
-//   {id: 7, playerName: 'gneeee', avatarName: 'avatarExample.png', avatarFolder: '../assets/header/', statut: 2, route: /profilPlayer/},
-// ];
