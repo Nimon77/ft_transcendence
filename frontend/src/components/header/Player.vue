@@ -4,14 +4,13 @@
     <v-row align="center">
 
         <v-badge bordered bottom left color="blue" offset-x="15" offset-y="15" >
-          <v-avatar tile coolor="blue" size="65" class="mr-2">
-            <!-- <v-img src="../../assets/header/RectangleWhite.png"> -->
+          <v-avatar style="border: solid; border-color: white;" tile coolor="blue" size="65" class="mr-2 border">
             <img v-auth-image="'/user/me/avatar'"/>
           </v-avatar>
         </v-badge>
-        <v-btn router to="/profilPlayer" class="name" text width="110"> {{username}} </v-btn>
+        <v-btn router to="/profilPlayer" class="name" text> {{username}} </v-btn>
 
-        <v-menu :close-on-click="false">
+        <v-menu>
         <template v-slot:activator="{ on, attrse }">
           <v-btn color="black" v-bind="attrse" v-on="on" small tile icon class="ml-2">
           <v-icon small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>

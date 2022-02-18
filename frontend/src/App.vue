@@ -57,6 +57,14 @@ Note/bugs:
 -linker les elements du chat entre eux
 il y aurait une route pour chaque channel !
 
+profil players
+  -click sur profil player root avec une url de query param type : /profilplayer/:idPlayer=5
+  -le component recup l'id et donc sait quels informations afficher de quel joueur!
+
+de même pour les channels
+  -click sur channel root sur url type /community/:idChannel=2
+  -je sais quel channel est selectionné et peut donc accéder aux infos
+
 -endgame screen
 -button de retour doit set une alerte et faire quitter la game
 -dialog pour chaque setting
