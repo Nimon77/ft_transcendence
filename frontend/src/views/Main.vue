@@ -15,7 +15,7 @@
 
 <script lang="ts">
 
-  import PlayButton from './PlayButton.vue'
+  import PlayButton from '@/components/PlayButton.vue'
 
   export default {
     name: 'Main',
@@ -27,18 +27,11 @@
       info: []
       }
     },
-    methods: {
-    async fetchUsers(): Promise<void>  {
-        const baseURI = '/user'
-        await this.$http.get(baseURI).then((result) => { this.info = result.data })
-        console.log('RESULT.DATA ', this.info);
-      }
-    }
   }
 </script>
 
 <style>
-@import '../assets/fonts/LEMONMILK/stylesheet.css';
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
 /* .ctn { max-width: 4000px; } */
 /* p + p { margin-top: 30px; } */

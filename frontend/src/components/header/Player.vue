@@ -8,7 +8,7 @@
             <img v-auth-image="'/user/me/avatar'"/>
           </v-avatar>
         </v-badge>
-        <v-btn router to="/profilPlayer" class="name" text> {{username}} </v-btn>
+        <v-btn router to="/profile" class="name" text> {{username}} </v-btn>
 
         <v-menu>
         <template v-slot:activator="{ on, attrse }">

@@ -58,7 +58,7 @@ Note/bugs:
 il y aurait une route pour chaque channel !
 
 profil players
-  -click sur profil player root avec une url de query param type : /profilplayer/:idPlayer=5
+  -click sur profil player root avec une url de query param type : /profile/:idPlayer=5
   -le component recup l'id et donc sait quels informations afficher de quel joueur!
 
 de même pour les channels
