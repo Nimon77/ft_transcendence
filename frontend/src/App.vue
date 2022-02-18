@@ -62,9 +62,9 @@
     },
 
     computed: {
-      theme() {
-        return this.$vuetify.theme.dark ? 'dark' : 'light';
-      },
+      // theme() {
+      //   return this.$vuetify.theme.dark ? 'dark' : 'light';
+      // },
     }
   };
 </script>
@@ -100,13 +100,7 @@ il y aurait une route pour chaque channel !
 -add bouton ajout channel + dialog pour add/remove chan
 -toast for invitation/removePlayer
 
--ADMIN VIEW
-  -one website owner can set moderator with same rights (but not removing owner)
-  -destroy channels
-  -ban usersfrom website
-  -see all chat channels (without joining)
-  -give or remove rights to chat channel to user
--mettre les rules dans le footer
+-mettre les rules ds la page game
 
 Handling lags or disconnects in an efficient way is appreciated but not mandatory: 
 - Have the game pause for a set time 

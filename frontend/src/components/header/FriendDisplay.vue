@@ -2,7 +2,8 @@
   <v-container >
     <v-row align="center">
       <v-avatar class="mr-n2" tile size="65">
-        <v-img v-bind:src="require('../../assets/header/avatarExample.png')"/>
+        <!-- <v-img src="https://upload.wikimedia.org/wikipedia/commons/5/56/Paloma_brav%C3%ADa_%28Columba_livia%29%2C_Palacio_de_Nymphenburg%2C_M%C3%BAnich%2C_Alemania01.JPG"/> -->
+        <img v-auth-image="'http://localhost:3000/user/5/avatar'"/>
       </v-avatar>
 
       <v-badge class="ml-3" inline left v-if="stat==0" color="grey">
@@ -21,16 +22,19 @@
 </v-container>
 </template>
 
-<script>
+<script lang="ts">
   export default {
     name: 'FriendDisplay',
     props: {
       pN: String,
-      stat: Number,
+      stat: Boolean,
     },
-    data() {
+    data(): unknown {
       return {
+        
       }
+    },
+    methods: {      
     },
   }
 </script>
