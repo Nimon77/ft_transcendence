@@ -48,6 +48,7 @@
 
 
 <script lang="ts">
+import Vue from 'vue';
 
 const chatMsg = [
     { sender: 'Billy', msg: 'yo les copains sa va ?' },
@@ -58,14 +59,15 @@ const chatMsg = [
     { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
 ]
 
-export default {
+
+export default Vue.extend({
     name: 'Chat',
     data() {
         return {
             chatMsg,
         }
     }
-}
+})
 </script>
 
 <style scoped>

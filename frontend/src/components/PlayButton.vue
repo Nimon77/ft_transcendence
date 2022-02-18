@@ -24,19 +24,20 @@
 
 
 <script lang='ts'>
+import Vue from 'vue'
 
-let date:number = Date.now();
-
-export default {
+export default Vue.extend({
     name: 'PlayButton',
-    data() : unknown {
+    data() {
+        let date:number = Date.now();
+
         return {
             dialog: false,
             date,
         }
     },
     methods: {
-      closeDialog() {
+      closeDialog(): void {
         if (this.dialog == true)
         {
             // this.dialog = false;
@@ -50,7 +51,7 @@ export default {
           return;
       },
     },
-}
+})
 </script>
 
 <style scoped>

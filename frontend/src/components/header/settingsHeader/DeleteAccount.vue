@@ -3,7 +3,9 @@
 </template>
 
 <script lang="ts">
-    export default {
+import Vue from 'vue';
+
+export default Vue.extend({
         name: 'DeleteAccount',
         components: {
 
@@ -18,7 +20,7 @@
                 console.log('DELETE ACCOUNT');
             } 
         }
-    };
+    });
 </script>
 
 <style scoped>

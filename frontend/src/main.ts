@@ -4,11 +4,13 @@ import router from './router'
 import vuetify from './plugins/vuetify'
 import axios from 'axios'
 import VueAuthImage from 'vue-auth-image';
+import VueAxios from 'vue-axios'
 
 Vue.prototype.$http = axios;
 // Vue.prototype.$http = axios
 Vue.config.productionTip = false;
 
+Vue.use(VueAxios, axios)
 Vue.use(VueAuthImage);
 
 axios.defaults.baseURL = "http://" + location.hostname + ":" + process.env.VUE_APP_BACKEND_PORT;

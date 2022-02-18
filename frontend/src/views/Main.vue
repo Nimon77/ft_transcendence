@@ -14,20 +14,20 @@
 
 
 <script lang="ts">
+import Vue from 'vue';
 
-  import PlayButton from '@/components/PlayButton.vue'
+import PlayButton from '@/components/PlayButton.vue'
 
-  export default {
-    name: 'Main',
-    components: {
-      PlayButton,
-    },
-    data (): unknown {
-      return {
-      info: []
-      }
-    },
-  }
+Vue.component('PlayButton', PlayButton);
+
+export default Vue.extend({
+  name: 'Main',
+  data (): unknown {
+    return {
+    info: []
+    }
+  },
+})
 </script>
 
 <style>

@@ -1,33 +1,35 @@
 <template>
-    <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right v-if="authenticated">
-          <v-btn router to="/" class="titl" x-large depressed text width="385" height="60">
-            BananaPong
-          </v-btn>
-          <v-spacer></v-spacer>
-        <FriendList class="mr-3"/>
-        <Player class="ml-2"/>
-    </v-app-bar>
+  <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right v-if="authenticated">
+    <v-btn router to="/" class="titl" x-large depressed text width="385" height="60">
+      BananaPong
+    </v-btn>
+    <v-spacer></v-spacer>
+    <FriendList class="mr-3"/>
+    <Player class="ml-2"/>
+  </v-app-bar>
 </template>
 
-<script>
-  import FriendList from './FriendList.vue'
-  import Player from './Player.vue'
+<script lang="ts">
+import Vue from 'vue';
 
-  export default {
-    name: 'Header',
-    components: {
-        FriendList,
-        Player,
-    },
-    data() {
-      return {
-        authenticated: false,
-      }
-    },
-    mounted() {
-      this.authenticated = localStorage.getItem('token') !== null;
-    },
-  }
+import FriendList from './FriendList.vue'
+import Player from './Player.vue'
+
+export default Vue.extend({
+  name: 'Header',
+  components: {
+      FriendList,
+      Player,
+  },
+  data() {
+    return {
+      authenticated: false,
+    }
+  },
+  mounted() {
+    this.authenticated = localStorage.getItem('token') !== null;
+  },
+})
 </script>
 
 <style>

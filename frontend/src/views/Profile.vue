@@ -2,8 +2,7 @@
 <div>
     <v-container>
     <v-row class="mt-12" style="justify-content: center;">
-    <v-cols>
-    <v-card >
+    <v-card class="mt-6" max-width="700">
         <v-list-item three-line>
         <v-list-item-content>
             <div class="text-overline mb-n4">
@@ -23,7 +22,8 @@
         </v-list-item-avatar>
         </v-list-item>
     </v-card>
-
+    </v-row>
+    <v-row style="justify-content: center;">
     <v-card class="mt-6" max-width="700">
     <v-list-item>
       <v-list-item-content>
@@ -39,7 +39,6 @@
       </v-list-item-content>
     </v-list-item>
   </v-card>
-</v-cols>
 </v-row>
 </v-container>
 </div>
@@ -47,32 +46,31 @@
 
 
 <script lang="ts">
+import Vue from 'vue'
+
 import Player from '@/components/header/Player.vue'
 
-const playerItems = [
-    {
-        name: 'DUDE',
-        avt: 'avatarExample.png',
-        nbWin: 50,
-        nbLoss: 26,
-    }
-]
+Vue.component('Player', Player)
 
-const playerHistory = [
-    { name: 'bill', win: 1 },
-    { name: 'chevre', win: 0 },
-    { name: 'MACRON', win: 0 },
-    { name: 'plume', win: 1 }
-]
-
-export default {
+export default Vue.extend({
     name: 'Profile',
-    components: Player,
     data() {
+        const playerHistory = [
+            { name: 'bill', win: 1 },
+            { name: 'chevre', win: 0 },
+            { name: 'MACRON', win: 0 },
+            { name: 'plume', win: 1 }
+        ]
+        const playerItems = [{
+            name: 'DUDE',
+            avt: 'avatarExample.png',
+            nbWin: 50,
+            nbLoss: 26,
+        }]
         return {
             playerItems,
             playerHistory,
         }
     }
-}
+});
 </script>

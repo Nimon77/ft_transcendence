@@ -35,18 +35,19 @@
 </div>
 </template>
 
-<script>
-  import ChangeAvatar from './settingsHeader/ChangeAvatar.vue'
-  import TwoFactor from './settingsHeader/TwoFactor.vue'
-  import DeleteAccount from './settingsHeader/DeleteAccount.vue'
+<script lang="ts">
+import Vue from 'vue'
 
-  export default {
+import ChangeAvatar from './settingsHeader/ChangeAvatar.vue'
+import TwoFactor from './settingsHeader/TwoFactor.vue'
+import DeleteAccount from './settingsHeader/DeleteAccount.vue'
+
+Vue.component('ChangeAvatar', ChangeAvatar)
+Vue.component('TwoFactor', TwoFactor)
+Vue.component('DeleteAccount', DeleteAccount)
+
+export default Vue.extend({
     name: 'Player',
-    components: {
-      ChangeAvatar,
-      TwoFactor,
-      DeleteAccount,
-    },
 
     data() {
       return {
@@ -63,7 +64,7 @@
         this.username = response.data.log
       })
     }
-  }
+  })
 </script>
 
 <style scoped>
