@@ -8,6 +8,8 @@ import { AuthModule } from './auth/auth.module';
 import { AppController } from './app.controller';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
+import { PongModule } from './pong/pong.module';
+import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
@@ -22,12 +24,16 @@ import { APP_GUARD } from '@nestjs/core';
         FORTYTWO_ID: Joi.string().required(),
         FORTYTWO_SECRET: Joi.string().required(),
         JWT_SECRET: Joi.string().required(),
+        FRONT_URL: Joi.string().required(),
       }),
+      ignoreEnvFile: true,
     }),
     DatabaseModule,
     UserModule,
     PhotoModule,
     AuthModule,
+    PongModule,
+    ChatModule,
   ],
   controllers: [AppController],
   providers: [
