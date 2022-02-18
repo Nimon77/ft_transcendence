@@ -86,7 +86,7 @@ export default {
     },
     methods: {
       async fetchUsers(): Promise<void>  {
-      const baseURI = 'http://localhost:3000/user'
+      const baseURI = '/user'
       await this.$http.get(baseURI).then((result) => { this.users = result.data })
       // console.log('RESULT.DATA ', this.users);
       }
