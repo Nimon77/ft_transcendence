@@ -1,5 +1,5 @@
 <template>
-  <v-footer app padless>
+  <v-footer app padless v-if="authenticated">
     <v-col
       class="text-center green"
       cols="12"
@@ -13,7 +13,12 @@
 export default {
     name: 'Footer',
     data() {
-        return {}
+        return {
+            authenticated: false,
+        }
+    },
+    mounted() {
+      this.authenticated = localStorage.getItem('token') !== null;
     },
 }
 </script>
