@@ -4,7 +4,7 @@
       <v-col align="center">
         <div class="white--text text-h1 mb-15 font-weight-bold">BANANAPONG</div>
         <v-btn
-          :href="api42Url"
+          :href="url"
           class="subheading mx-3 white--text"
           outlined
           x-large
@@ -36,16 +36,7 @@ export default Vue.extend({
   name: 'Login',
 
   data: () => ({
+    url: `http://${location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`
   }),
-
-  computed: {
-    api42Url(): string {
-      return `http://${location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/auth/42/callback`;
-    },
-  },
-
-  mounted: () => {
-    //
-  },
 });
 </script>
