@@ -45,6 +45,23 @@ export class UserController {
     return this.userService.getUserById(Number(id));
   }
 
+  @Get('me/avatar')
+  async getPhotoMe(
+    @Res({ passthrough: true }) response: Response,
+    @Request() req,
+  ) {
+    console.log("uwu");
+    const photoid = await this.userService.getUserById(req.user.userId);
+    const file = await this.photoService.getPhotoById(photoid.avatarId);
+    const stream = Readable.from(file.data);
+    stream.pipe(response);
+    response.set({
+      'Content-Disposition': `inline; filename="${file.filename}"`,
+      'Content-Type': 'image',
+    });
+    return new StreamableFile(stream);
+  }
+  
   @Get(':id/avatar')
   async getPhotoById(
     @Res({ passthrough: true }) response: Response,
