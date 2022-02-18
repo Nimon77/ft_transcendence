@@ -70,7 +70,7 @@ export default {
 
 <style scoped>
 
-@import '../../assets/fonts/LEMONMILK/stylesheet.css';
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
 .span {
   font-family: "lemon_milkmedium";

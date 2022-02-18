@@ -90,7 +90,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../../assets/fonts/LEMONMILK/stylesheet.css';
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
 .v-btn {
   font-family: "lemon_milkmedium";

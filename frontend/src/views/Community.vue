@@ -9,9 +9,9 @@
 </template>
 
 <script>
-  import Chat from './Chat.vue'
-  import Channel from './Channel.vue'
-  import PlayerChannel from './PlayerChannel.vue'
+  import Chat from '@/components/community/Chat.vue'
+  import Channel from '@/components/community/Channel.vue'
+  import PlayerChannel from '@/components/community/PlayerChannel.vue'
   
   export default {
     components: {
@@ -25,7 +25,7 @@
 
 <style >
 
-@import '../../assets/fonts/LEMONMILK/stylesheet.css';
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
 .span {
   font-family: "lemon_milkmedium";

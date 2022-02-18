@@ -1,13 +1,13 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import axios from 'axios'
-// import Home from '../views/Home.vue'
-// import App from '../App.vue'
-import Community from '../components/community/Community.vue'
-import ProfilPlayer from '../components/profilPlayer/ProfilPlayer.vue'
-import Pregame from '../components/game/Pregame.vue'
-import Game from '../components/game/Game.vue'
-import Main from '../components/Main.vue'
+
+import Login from '@/views/Login.vue'
+import Community from '@/views/Community.vue'
+import Profile from '@/views/Profile.vue'
+import Pregame from '@/views/Pregame.vue'
+import Game from '@/views/Game.vue'
+import Main from '@/views/Main.vue'
 
 Vue.use(VueRouter)
 
@@ -27,9 +27,9 @@ const routes: Array<RouteConfig> = [
     component: Community
   },
   {
-    path: '/profilPlayer',
-    name: 'profilPlayer',
-    component: ProfilPlayer
+    path: '/profile',
+    name: 'profile',
+    component: Profile
   },
   {
     path: '/preGame',
@@ -42,17 +42,9 @@ const routes: Array<RouteConfig> = [
     component: Game,
   },
   {
-    path: '/about',
-    name: 'About',
-    // route level code-splitting
-    // this generates a separate chunk (about.[hash].js) for this route
-    // which is lazy-loaded when the route is visited.
-    component: () => import(/* webpackChunkName: "about" */ '../views/About.vue')
-  },
-  {
     path: '/login',
     name: 'Login',
-    component: () => import('../views/Login.vue')
+    component: Login,
   }
 ]
 

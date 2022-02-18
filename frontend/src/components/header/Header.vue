@@ -31,7 +31,7 @@
 </script>
 
 <style>
-@import '../../assets/fonts/LEMONMILK/stylesheet.css';
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
 .titl {
   font-family: "lemon_milkmedium";

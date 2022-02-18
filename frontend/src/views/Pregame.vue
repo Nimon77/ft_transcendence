@@ -60,7 +60,7 @@
 
 export default {
     name: 'Pregame',
-    data(): unknown {
+    data() {
         return {
             toggle_exclusive: undefined,
             player: [
@@ -72,13 +72,13 @@ export default {
         }
     },
     methods:{
-        readyStat(): void {
+        readyStat() {
             console.log("BONJOUR");
             this.loader = !this.loader;
             this.color = 'red';
             setTimeout(this.launchGame, 3000);
         },
-        launchGame(): void {
+        launchGame() {
             this.$router.push('/game');
         }
     }
@@ -86,7 +86,7 @@ export default {
 </script>
 
 <style scoped>
-@import '../../assets/fonts/LEMONMILK/stylesheet.css';
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
 p {
   font-family: "lemon_milkmedium";

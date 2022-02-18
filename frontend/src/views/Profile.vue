@@ -19,7 +19,7 @@
         </v-list-item-content>
 
         <v-list-item-avatar tile size="80">
-            <v-img :src="require('../../assets/header/' + playerItems[0].avt)"> </v-img>
+            <v-img :src="require('@/assets/header/' + playerItems[0].avt)"> </v-img>
         </v-list-item-avatar>
         </v-list-item>
     </v-card>
@@ -47,7 +47,7 @@
 
 
 <script lang="ts">
-import Player from '../header/Player.vue'
+import Player from '@/components/header/Player.vue'
 
 const playerItems = [
     {
@@ -66,7 +66,7 @@ const playerHistory = [
 ]
 
 export default {
-    name: 'ProfilPlayer',
+    name: 'Profile',
     components: Player,
     data() {
         return {
