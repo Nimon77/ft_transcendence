@@ -21,13 +21,29 @@ import { User } from '../infrastructure/user.entity';
 import { PhotoService } from '../photo/photo.service';
 import { Express } from 'express';
 import { Public } from 'src/auth/decorators/public.decorator';
+import { ChatService } from 'src/chat/chat.service';
+import { ChatRoom } from 'src/chat/chat.entity';
 
 @Controller('user')
 export class UserController {
   constructor(
     private userService: UserService,
     private photoService: PhotoService,
+    private chatService: ChatService,
   ) {}
+
+  @Get('me/community')
+  getRoomsMe(@Request() req)
+  {
+    return this.chatService.getRoomsForUser(req.user.userId, { page: 1, limit: 10 });
+  }
+
+  @Post('me/community')
+  async createRoomMe(@Request() req, @Body() room: ChatRoom)
+  {
+    const user = await this.getUserById(req.user.userId);
+    return this.chatService.createRoom(room, user);
+  }
 
   @Get()
   getAllUsers() {
@@ -58,6 +74,7 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   @Post('me/avatar')
   async addAvatarMe(@Request() req, @UploadedFile() file: Express.Multer.File) {
+    console.log(req);
     this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
   }
 
