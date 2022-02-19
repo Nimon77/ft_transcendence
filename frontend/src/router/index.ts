@@ -8,12 +8,9 @@ import Profile from '@/views/Profile.vue'
 import Pregame from '@/views/Pregame.vue'
 import Game from '@/views/Game.vue'
 import Main from '@/views/Main.vue'
+import UpdateProfile from '@/views/UpdateProfile.vue'
 
 Vue.use(VueRouter)
-
-const isAuthenticated = () => {
-  return localStorage.getItem('token') !== null
-}
 
 const routes: Array<RouteConfig> = [
   {
@@ -45,7 +42,12 @@ const routes: Array<RouteConfig> = [
     path: '/login',
     name: 'Login',
     component: Login,
-  }
+  },
+  {
+    path: '/updateprofile',
+    name: 'UpdateProfile',
+    component: UpdateProfile,
+  },
 ]
 
 const router = new VueRouter({
@@ -55,18 +57,29 @@ const router = new VueRouter({
 })
 
 router.beforeEach((to, from, next) => {
+  const LogedIn = localStorage.getItem('token') ? true : false;
   console.log('to', to) // TODO: remove
-  if (to.name !== 'Login' && !isAuthenticated()) {
-    next({ name: 'Login' })
-  } else if (to.name === 'Login' && to.query.code !== undefined) {
-    localStorage.setItem('token', to.query.code.toString())
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString()
-    next({ name: 'Main' })
-  } else if (to.name === 'Login' && isAuthenticated()) {
-    next({ name: 'Main' })
-  } else {
-    next()
+
+  if (to.name === 'Login' && to.query.code !== undefined) {
+    localStorage.setItem('token', to.query.code.toString());
+    axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
+    return;
   }
+  else if (to.name !== 'Login' && !LogedIn) {
+    return next({ name: 'Login' });
+  }
+  else if (to.name === 'Login' && LogedIn) {
+    return next({ name: 'Main' });
+  }
+  else if (to.name !== 'UpdateProfile') {
+    axios.get("/user/me").then(res => {
+      if (res.data.profileCompleted)
+        next();
+      else
+        next({ name: 'UpdateProfile' });
+    })
+  }
+  next();
 })
 
 export default router
