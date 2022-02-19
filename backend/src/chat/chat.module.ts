@@ -7,7 +7,8 @@ import { UserModule } from 'src/user/user.module';
 
 
 @Module({
-  imports: [UserModule, TypeOrmModule.forFeature([ChatRoom])],
-  providers: [ChatGateway, ChatService]
+  imports: [TypeOrmModule.forFeature([ChatRoom])],
+  providers: [ChatGateway, ChatService],
+  exports: [ChatService]
 })
 export class ChatModule {}
