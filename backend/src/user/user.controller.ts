@@ -7,7 +7,7 @@ import {
   Delete,
   Put,
   UseInterceptors,
-  UploadedFiles,
+  UploadedFile,
   ParseIntPipe,
   StreamableFile,
   Res,
@@ -16,7 +16,7 @@ import {
 import { Readable } from 'stream';
 import { Response } from 'express';
 import { UserService } from './user.service';
-import { AnyFilesInterceptor } from '@nestjs/platform-express';
+import { FileInterceptor } from '@nestjs/platform-express';
 import { User } from '../infrastructure/user.entity';
 import { PhotoService } from '../photo/photo.service';
 import { Express } from 'express';
@@ -55,10 +55,10 @@ export class UserController {
     this.userService.deleteUser(req.user.userId);
   }
 
-  @UseInterceptors(AnyFilesInterceptor())
+  @UseInterceptors(FileInterceptor('file'))
   @Post('me/avatar')
-  async addAvatarMe(@Request() req, @UploadedFiles() files: Express.Multer.File) {
-    this.userService.addAvatar(req.user.userId, files[0].buffer, files[0].originalname);
+  async addAvatarMe(@Request() req, @UploadedFile() file: Express.Multer.File) {
+    this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
   }
 
   @Get(':id')

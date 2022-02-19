@@ -1,5 +1,6 @@
-import { Column,PrimaryColumn, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne } from 'typeorm';
+import { Column,PrimaryColumn, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne, ManyToMany } from 'typeorm';
 import { Photo } from 'src/photo/photo.entity';
+import { ChatRoom } from 'src/chat/chat.entity';
  
 @Entity()
 export class User {
@@ -26,6 +27,9 @@ export class User {
 
   @Column('boolean', {default: false})
   public profileCompleted: boolean;
+
+  @ManyToMany(() => ChatRoom, room => room.users)
+  rooms: ChatRoom[];
 
   @JoinColumn({ name: 'avatarId'})
   @OneToOne(
