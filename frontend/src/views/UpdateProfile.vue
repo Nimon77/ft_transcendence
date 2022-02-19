@@ -22,11 +22,11 @@
           </v-card>
           <v-row style="justify-content: center;">
             <v-btn @click="$refs.file.click()">
-              <v-icon>mdi-upload</v-icon>
+              <v-icon>mdi-upload</v-icon> Upload Avatar
               <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
             </v-btn>
-            <v-btn @click="cropImage()">
-              <v-icon>mdi-crop</v-icon>
+            <v-btn @click="validate()">
+              <v-icon>mdi-check</v-icon>  Validate
             </v-btn>
           </v-row>
       </v-card>
@@ -76,15 +76,23 @@ export default Vue.extend({
     };
   },
   methods: {
-    cropImage() {
+    validate() {
       const { canvas } = this.$refs.cropper.getResult();
-      canvas.toBlob((blob) => {
-        const form = new FormData();
-        form.append('file', blob);
-        this.$http.post('/user/me/avatar', form).then(() => {
-          this.$refs.cropper.reset();
-        });
-      }, this.image.type);
+      if (canvas) {
+        canvas.toBlob((blob) => {
+          const form = new FormData();
+          form.append('file', blob);
+          this.$http.post('/user/me/avatar', form).then(() => {
+            this.$refs.cropper.reset();
+          });
+        }, this.image.type);
+      }
+      this.$http.put('/user/me', {
+        username: this.username,
+        profileCompleted: true,
+      }).then(() => {
+        this.$router.push('/');
+      });
     },
     reset() {
       this.image = {
