@@ -56,30 +56,47 @@ const router = new VueRouter({
   routes,
 })
 
+async function checkJWT() {
+  const token = localStorage.getItem('token')
+  if (token) {
+    return await axios.get('/user/me', {
+      headers: {
+        Authorization: 'Bearer ' + token
+    }}).then(() => {
+      return true;
+    }).catch(() => {
+      return false;
+    })
+  }
+  return false;
+}
+
 router.beforeEach((to, from, next) => {
   const LogedIn = localStorage.getItem('token') ? true : false;
   console.log('to', to) // TODO: remove
 
-  if (to.name === 'Login' && to.query.code !== undefined) {
-    localStorage.setItem('token', to.query.code.toString());
-    axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
-    return;
-  }
-  else if (to.name !== 'Login' && !LogedIn) {
-    return next({ name: 'Login' });
-  }
-  else if (to.name === 'Login' && LogedIn) {
-    return next({ name: 'Main' });
-  }
-  else if (to.name !== 'UpdateProfile') {
-    axios.get("/user/me").then(res => {
-      if (res.data.profileCompleted)
-        next();
-      else
-        next({ name: 'UpdateProfile' });
-    })
-  }
-  next();
+  checkJWT().then(JWTisValid => {
+    if (to.name === 'Login' && to.query.code !== undefined) {
+      localStorage.setItem('token', to.query.code.toString());
+      axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
+      return next({ name: 'Main' });
+    }
+    else if (to.name !== 'Login' && (!LogedIn || !JWTisValid)) {
+      return next({ name: 'Login' });
+    }
+    else if (to.name === 'Login' && LogedIn) {
+      return next({ name: 'Main' });
+    }
+    else if (to.name !== 'UpdateProfile' && LogedIn) {
+      axios.get("/user/me").then(res => {
+        if (res.data.profileCompleted)
+          next();
+        else
+          next({ name: 'UpdateProfile' });
+      })
+    }
+    next();
+  });
 })
 
 export default router
