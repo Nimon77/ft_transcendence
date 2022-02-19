@@ -5,7 +5,7 @@
 
         <v-badge bordered bottom left color="blue" offset-x="15" offset-y="15" >
           <v-avatar style="border: solid; border-color: white;" tile coolor="blue" size="65" class="mr-2 border">
-            <img v-auth-image="'/user/me/avatar'"/>
+            <img v-auth-image="'/user/me/avatar'" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
         <v-btn router to="/profile" class="name" text> {{username}} </v-btn>
