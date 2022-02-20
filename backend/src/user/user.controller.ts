@@ -53,6 +53,14 @@ export class UserController {
     return this.userService.updateFollow(user, frienduser);
   }
 
+  @Post('me/block')
+  async blockUser(@Request() req, @Body() blocked: User)
+  {
+    const user = await this.getUserById(req.user.userId);
+    const blockeduser = await this.getUserById(blocked.id);
+    return this.userService.updateBlock(user, blockeduser);
+  }
+
   @Get()
   getAllUsers() {
     return this.userService.getAllUsers();
@@ -107,10 +115,10 @@ export class UserController {
     return new StreamableFile(stream);
   }
 
-    @Post()
-    createUser(@Body() user: User) {
-      return this.userService.createUser(user);
-    }
+    // @Post()
+    // createUser(@Body() user: User) {
+    //   return this.userService.createUser(user);
+    // }
 
   //   @Post(':id/avatar')
   //   @UseInterceptors(FileInterceptor('file'))
