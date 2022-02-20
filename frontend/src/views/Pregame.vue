@@ -12,15 +12,7 @@
           </p>
           </v-col>
           <v-btn-toggle mandatory tile group>
-          <v-btn >
-            Requiem
-          </v-btn>
-          <v-btn>
-            Classic
-          </v-btn>
-          <v-btn> 
-            Electro
-          </v-btn>
+          <v-btn > Requiem </v-btn> <v-btn> Classic </v-btn> <v-btn> Electro </v-btn>
           </v-btn-toggle>
         </v-row>
         </v-card-text>
@@ -74,7 +66,6 @@ export default Vue.extend({
   },
   methods:{
     readyStat() {
-      console.log("BONJOUR");
       this.loader = !this.loader;
       this.color = 'red';
       setTimeout(this.launchGame, 3000);

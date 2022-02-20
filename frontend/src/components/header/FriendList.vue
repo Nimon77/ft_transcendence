@@ -7,7 +7,7 @@
         <v-btn elevation="0" width="130" text dark style="font-size:20px"
         v-bind="attrs"
         v-on="on"
-        v-on:click="fetchUsers">
+        v-on:click="fetchInfos">
             FRIENDS
             <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
@@ -15,28 +15,38 @@
 
       <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            <v-text-field  label="Search player" v-model="searchInput" ></v-text-field>
+            <v-text-field label="Search player" v-model="searchInput" ></v-text-field>
           </v-card-title>
 
-          <v-list>
+          <v-list v-if="searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
                 <v-list-item-group>
-                  <v-list-item v-for="user in users" v-bind:key="user.id">
-
+                  <v-list-item v-for="(friend, index) in friends" v-bind:key="index"> <!-- à changer pr afficher la friendList complete ss filter -->
                   <v-list-item-content>
+
                   <v-menu offset-y>
                     <template v-slot:activator="{on}">
-                      <FriendDisplay v-on:click="on" :user="user"/>
+                      <FriendDisplay v-on:click="on" :user="user" :id="friends.id"/>
                       <v-btn color="primary" dark v-on="on"> OPTIONS </v-btn>
                     </template>
                     <v-list class="text-center">
-                      <v-list-item v-for="(item, index) in items" :key="index">
+                      <v-list-item v-for="(item, index) in friendOptions" :key="index">
                         <v-list-item-title>{{ item.title }}</v-list-item-title>
                       </v-list-item>
                     </v-list>
                   </v-menu>
+                  
                   </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
+          </v-list>
+
+          <v-list v-if="searchInput != ''"> <!-- "si je cherche un truc, j'affiche les tout le monde sauf les amis" -->
+            <v-list-item v-for="user in filteredUsers" v-bind:key="user.id">
+              <v-list-item-content>
+                <UserDisplay :user="user"/>
+                <v-divider class="mt-1"></v-divider>
+            </v-list-item-content>
+            </v-list-item>
           </v-list>
         </v-card>
     </v-dialog>
@@ -47,8 +57,10 @@
 <script lang="ts">
 import Vue from "vue";
 import FriendDisplay from './FriendDisplay.vue'
+import UserDisplay from './UserDisplay.vue'
 
 Vue.component('FriendDisplay', FriendDisplay);
+Vue.component('UserDisplay', UserDisplay);
 
 export default Vue.extend({
     data () {
@@ -56,7 +68,8 @@ export default Vue.extend({
         searchInput: "",
         dialog: false,
         users: [],
-        items: [
+        friends: [],
+        friendOptions: [
         { title: 'Profil Player' },
         { title: 'Invite to Game' },
         { title: 'Spectate' },
@@ -69,19 +82,21 @@ export default Vue.extend({
       validTempToken(): unknown {
         return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NTEyNDQ4MSwiZXhwIjoxNjQ1NzI5MjgxfQ.EudjZqlqBVPWR0B1gyt6UZs46q_ZSqg6yLPpCPX9UT8';
       },
-      async fetchUsers() {
+      // fetch all users + la friendlist
+      async fetchInfos() { // retirer les amis des users !!
         await this.$http.get('/user').then(response => {
           this.users = response.data;
+        });
+        await this.$http.get('/user/me').then(response => {
+          this.friends = response.data.friends;
         });
       },
     },
     computed: {
-      manageInput(): string {
-        console.log('CHECK INPUT = ', this.searchInput);
-        return this.searchInput;
-      },
-      imageSrc() {
-        return {};
+      filteredUsers(): unknown {
+        return this.users.filter((user) => {
+          return user.log.match(this.searchInput);
+        })
       }
     }
 })
