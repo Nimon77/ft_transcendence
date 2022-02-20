@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, } from '@nestjs/common';
 import { ChatRoomI } from './chat.interface';
 import { ChatRoom } from './chat.entity';
 import { Repository } from 'typeorm';
@@ -16,11 +16,22 @@ export class ChatService {
         private readonly chatRepo: Repository<ChatRoom>
     ){}
 
+    async getRoomById(id: number)
+    {
+        const chat = await this.chatRepo.findOne(id);
+        console.log(chat);
+        if (chat){
+            return chat;
+        }
+        else
+            throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    }
+
     async createRoom(room: ChatRoom, admin: User)
     {
         console.log(room);
         console.log(admin);
-        const newRoom = {
+        const newRoom: ChatRoom = {
             adminId: admin.id,
             users: [],
             ... room
@@ -37,12 +48,13 @@ export class ChatService {
         .where('user.id = :userId', { userId })
         .leftJoinAndSelect('room.users', 'all_users')
         .orderBy('room.id', 'DESC');
-        console.log(query);
         return paginate(query, options);
     }
 
     async addUserToRoom(room: ChatRoom, user: User)
     {
+        console.log(user);
+        console.log(room);
         room.users.push(user);
         console.log(room.users);
         return room;

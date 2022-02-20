@@ -32,17 +32,25 @@ export class UserController {
     private chatService: ChatService,
   ) {}
 
-  @Get('me/community')
+  @Get('me/chatroom')
   getRoomsMe(@Request() req)
   {
     return this.chatService.getRoomsForUser(req.user.userId, { page: 1, limit: 10 });
   }
 
-  @Post('me/community')
+  @Post('me/chatroom')
   async createRoomMe(@Request() req, @Body() room: ChatRoom)
   {
     const user = await this.getUserById(req.user.userId);
     return this.chatService.createRoom(room, user);
+  }
+
+  @Post('me/community')
+  async followUser(@Request() req, @Body() friend: User)
+  {
+    const user = await this.getUserById(req.user.userId);
+    const frienduser = await this.getUserById(friend.id);
+    return this.userService.updateFollow(user, frienduser);
   }
 
   @Get()
@@ -99,10 +107,10 @@ export class UserController {
     return new StreamableFile(stream);
   }
 
-  //   @Post()
-  //   createUser(@Body() user: User) {
-  //     return this.userService.createUser(user);
-  //   }
+    @Post()
+    createUser(@Body() user: User) {
+      return this.userService.createUser(user);
+    }
 
   //   @Post(':id/avatar')
   //   @UseInterceptors(FileInterceptor('file'))

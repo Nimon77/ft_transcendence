@@ -19,10 +19,10 @@ export class User {
   @Column({default: false})
   public onlineStatus: boolean;
 
-  @Column('int', {array: true, nullable: true})
+  @Column('int', {array: true, default: []})
   public friends: number[];
 
-  @Column('int', {array: true, nullable: true})
+  @Column('int', {array: true, default: []})
   public blocked: number[];
 
   @Column('boolean', {default: false})
