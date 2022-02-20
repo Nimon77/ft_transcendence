@@ -71,26 +71,20 @@ export class UserService {
         return avatar;
     }
 
-    async updateBlock(user: User, blocked_user: User){
-        const userBlock = await this.repo.find({where: {id: In(user.blocked)}});
-        if (userBlock)
+    async updateFollow(user: User, followed_user: User){
+        const userBlock = await this.repo.find({where: {id: In(user.friends)}});
+        const found = userBlock.find(element => element.id == followed_user.id)
+        if (found)
         {
-            var filtered = user.blocked.filter(function(value, index, array)
-            {
-                return blocked_user.id == value;
-            })
-            await this.repo.update(user.id,
-                {
-                    blocked: filtered
-                });
+            var index = user.friends.indexOf(found.id);
+            if (index !== -1)
+                user.friends.splice(index, 1);
         }
         else
-        {
-            user.blocked.push(blocked_user.id);
-            await this.repo.update(user.id,
-                {
-                    blocked: user.blocked
-                });
-        }
+            user.friends.push(followed_user.id);
+        await this.repo.update(user.id,
+            {
+                friends: user.friends
+            });
     }
 }
