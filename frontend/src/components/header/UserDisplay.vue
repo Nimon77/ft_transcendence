@@ -2,7 +2,7 @@
   <v-container >
     <v-row align="center">
       <v-avatar class="mr-n2" tile size="65">
-        <img v-auth-image="'/user/'+ user.id +'/avatar'"/>
+        <img v-auth-image="'/user/'+user.id+'/avatar'"/>
       </v-avatar>
 
       <v-badge class="ml-3" inline left v-if="user.onlineStatus==0" color="grey">
@@ -16,8 +16,11 @@
       <v-badge class="ml-3" inline left v-if="user.onlineStatus==2" color="red">
       {{user.log}} - in game
       </v-badge>
+      <v-spacer></v-spacer>
+      <v-btn dark @click="addStat" :id="user.id" :loading="loader" :color="color" height="60" width="60">
+        ADD
+      </v-btn>
     </v-row>
-  <v-divider class="mb-1"></v-divider>
 </v-container>
 </template>
 
@@ -27,21 +30,28 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'FriendDisplay',
     props: {
-      id: {
-        type: Number,
+      user: {
+        type: Object,
         required: true,
-      }
+      },
     },
     data(): unknown {
       return {
-        user: [],
+        loader: false,
+        color: 'blue',
       }
     },
     methods: {
-    },
-    async created() {
-      await this.$http.get('/user/' + this.id).then(response => {
-        this.user = response.data; });
+      addStat(): void {
+        this.loader = !this.loader;
+        this.color = 'green';
+        setTimeout(this.setDone, 1000);
+        
+      },
+      setDone(): void {
+        document.getElementById(this.user.id).innerHTML = "DONE!";
+        this.loader = false;
+      },
     },
   })
 </script>
