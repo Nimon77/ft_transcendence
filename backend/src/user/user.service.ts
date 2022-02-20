@@ -72,8 +72,10 @@ export class UserService {
     }
 
     async updateFollow(user: User, followed_user: User){
-        const userBlock = await this.repo.find({where: {id: In(user.friends)}});
-        const found = userBlock.find(element => element.id == followed_user.id)
+        if (followed_user.id == user.id)
+            return ;
+        const userFollow = await this.repo.find({where: {id: In(user.friends)}});
+        const found = userFollow.find(element => element.id == followed_user.id)
         if (found)
         {
             var index = user.friends.indexOf(found.id);
@@ -85,6 +87,25 @@ export class UserService {
         await this.repo.update(user.id,
             {
                 friends: user.friends
+            });
+    }
+
+    async updateBlock(user: User, blocked_user: User){
+        if (user.id == blocked_user.id)
+            return ;
+        const userBlock = await this.repo.find({where: {id: In(user.blocked)}});
+        const found = userBlock.find(element => element.id == blocked_user.id)
+        if (found)
+        {
+            var index = user.blocked.indexOf(found.id);
+            if (index !== -1)
+                user.blocked.splice(index, 1);
+        }
+        else
+            user.blocked.push(blocked_user.id);
+        await this.repo.update(user.id,
+            {
+                blocked: user.blocked
             });
     }
 }
