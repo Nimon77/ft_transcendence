@@ -37,11 +37,7 @@
 
 /*
 Note/bugs:
--Au demarrage, faire en sorte que Main s'affiche
 -"searching for player dialog" => le dialog doit s'enlever seulement avec "cancel" pas avec click outside
--friendlist => la recherche doit match exactement avec le joueur rechercher
--linker les elements du chat entre eux
-il y aurait une route pour chaque channel !
 
 profil players
   -click sur profil player root avec une url de query param type : /profile/:idPlayer=5

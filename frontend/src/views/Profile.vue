@@ -9,7 +9,7 @@
             <p class="font-weight-bold text-h5" > Player Profile </p>
             </div>
             <v-list-item-title class="text-h5 my-2">
-            {{playerItems[0].name}} <span class="text-h6 font-weight-bold" > 56  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
+            {{user.log.toUpperCase()}} <span class="text-h6 font-weight-bold" > {{user.rank}}  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold green--text">
                 WINS : {{playerItems[0].nbWin}} <span class="font-weight-bold black--text"> | </span>
@@ -18,7 +18,7 @@
         </v-list-item-content>
 
         <v-list-item-avatar tile size="80">
-            <v-img :src="require('@/assets/header/' + playerItems[0].avt)"> </v-img>
+            <img v-auth-image="'/user/me/avatar'"/>
         </v-list-item-avatar>
         </v-list-item>
     </v-card>
@@ -31,7 +31,7 @@
           Match History
         </div>
         <div v-for="ph in playerHistory" v-bind:key="ph.name" class="text-h text-center mb-3">
-            {{playerItems[0].name}}
+            {{user.log}}
             <span v-if="ph.win==1" class="green--text"> has won against </span>
             <span v-if="ph.win==0" class="red--text"> has lose against </span>
             {{ph.name}}
@@ -70,7 +70,12 @@ export default Vue.extend({
         return {
             playerItems,
             playerHistory,
+            user: [],
         }
-    }
+    },
+    async created() {
+      await this.$http.get('/user/me').then(response => {
+        this.user = response.data; });
+    },
 });
 </script>
