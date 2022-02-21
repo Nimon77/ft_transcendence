@@ -10,9 +10,9 @@
         </v-badge>
         <v-btn router to="/profile" class="name" text> {{username}} </v-btn>
 
-        <v-menu>
+        <v-menu offset-y>
         <template v-slot:activator="{ on, attrse }">
-          <v-btn color="black" v-bind="attrse" v-on="on" small tile icon class="ml-2">
+          <v-btn color="black" v-bind="attrse" v-on="on" small tile width="40" icon class="ml-2">
           <v-icon small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
@@ -61,7 +61,7 @@ export default Vue.extend({
     },
     mounted() {
       this.$http.get('/user/me').then(response => {
-        this.username = response.data.log
+        this.username = response.data.username
       })
     }
   })
