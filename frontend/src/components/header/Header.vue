@@ -27,7 +27,7 @@ export default Vue.extend({
     }
   },
   mounted() {
-    this.authenticated = localStorage.getItem('token') !== null;
+    this.authenticated = localStorage.getItem('profileCompleted') === 'true';
   },
 })
 </script>
