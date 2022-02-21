@@ -1,7 +1,7 @@
 import { Injectable, HttpException, HttpStatus, } from '@nestjs/common';
 import { ChatRoomI } from './chat.interface';
 import { ChatRoom } from './chat.entity';
-import { Repository } from 'typeorm';
+import { getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/infrastructure/user.entity';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
@@ -19,7 +19,6 @@ export class ChatService {
     async getRoomById(id: number)
     {
         const chat = await this.chatRepo.findOne(id);
-        console.log(chat);
         if (chat){
             return chat;
         }
@@ -29,15 +28,14 @@ export class ChatService {
 
     async createRoom(room: ChatRoom, admin: User)
     {
-        console.log(room);
-        console.log(admin);
+        let users = [];
+        users.push(admin);
         const newRoom: ChatRoom = {
             adminId: admin.id,
-            users: [],
+            users: users,
             ... room
         }
-        console.log(newRoom);
-        await this.addUserToRoom(newRoom, admin);
+        this.addUserToRoom(newRoom.id, admin);
         return await this.chatRepo.save(newRoom);
     }
 
@@ -51,12 +49,27 @@ export class ChatService {
         return paginate(query, options);
     }
 
-    async addUserToRoom(room: ChatRoom, user: User)
+
+    async getUsersForRoom(roomId: number, options: IPaginationOptions)
     {
-        console.log(user);
-        console.log(room);
-        room.users.push(user);
-        console.log(room.users);
-        return room;
+        const query = await this.chatRepo.createQueryBuilder('room')
+        .leftJoin('room.users', 'user')
+        .where('room.id = :roomId', { roomId })
+        .leftJoinAndSelect('room.users', 'all_rooms')
+        .orderBy('user.id', 'DESC');
+        return paginate(query, options);
+    }
+
+    async addUserToRoom(roomid: number, user: User)
+    {
+        const room = await this.getRoomById(roomid);
+        const page = await this.getUsersForRoom(roomid, {page: 1, limit: 100})
+        page.items.forEach(async id => {
+            await this.chatRepo
+              .createQueryBuilder()
+              .relation(ChatRoom, 'users')
+              .of(room)
+              .add(user);
+          });
     }
 }
