@@ -79,21 +79,22 @@ router.beforeEach((to, from, next) => {
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
-      return next({ name: 'Main' });
+      axios.get("/user/me").then(res => {
+        if (res.data.profileCompleted) {
+          localStorage.setItem('profileCompleted', 'true');
+          return next({ name: 'Main' });
+        }
+        else {
+          localStorage.setItem('profileCompleted', 'false');
+          return next({ name: 'UpdateProfile' });
+        }
+      });
     }
     else if (to.name !== 'Login' && (!LogedIn || !JWTisValid)) {
       return next({ name: 'Login' });
     }
     else if (to.name === 'Login' && LogedIn) {
       return next({ name: 'Main' });
-    }
-    else if (to.name !== 'UpdateProfile' && LogedIn) {
-      axios.get("/user/me").then(res => {
-        if (res.data.profileCompleted)
-          next();
-        else
-          next({ name: 'UpdateProfile' });
-      })
     }
     next();
   });

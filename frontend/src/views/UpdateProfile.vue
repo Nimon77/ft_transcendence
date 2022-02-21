@@ -93,6 +93,7 @@ export default Vue.extend({
       }).then(() => {
         this.$router.push('/');
       });
+      localStorage.setItem('profileCompleted', 'true');
     },
     reset() {
       this.image = {
