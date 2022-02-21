@@ -6,8 +6,7 @@
       <template v-slot:activator="{ on, attrs}">
         <v-btn elevation="0" width="130" text dark style="font-size:20px"
         v-bind="attrs"
-        v-on="on"
-        v-on:click="fetchInfos">
+        v-on="on">
             FRIENDS
             <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
@@ -20,21 +19,10 @@
 
           <v-list v-if="searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
                 <v-list-item-group>
-                  <v-list-item v-for="(friend, index) in friends" v-bind:key="index"> <!-- à changer pr afficher la friendList complete ss filter -->
+                  <v-list-item v-for="(friend) in friends" v-bind:key="friend"> <!-- à changer pr afficher la friendList complete ss filter -->
                   <v-list-item-content>
-
-                  <v-menu offset-y>
-                    <template v-slot:activator="{on}">
-                      <FriendDisplay v-on:click="on" :user="user" :id="friends.id"/>
-                      <v-btn color="primary" dark v-on="on"> OPTIONS </v-btn>
-                    </template>
-                    <v-list class="text-center">
-                      <v-list-item v-for="(item, index) in friendOptions" :key="index">
-                        <v-list-item-title>{{ item.title }}</v-list-item-title>
-                      </v-list-item>
-                    </v-list>
-                  </v-menu>
-                  
+                    <FriendDisplay :id="friend"/>
+                    <v-divider class="mt-2"></v-divider>                  
                   </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
@@ -69,28 +57,19 @@ export default Vue.extend({
         dialog: false,
         users: [],
         friends: [],
-        friendOptions: [
-        { title: 'Profil Player' },
-        { title: 'Invite to Game' },
-        { title: 'Spectate' },
-        { title: 'Chat' },
-        { title: 'Remove Player' },
-        ],
       }
     },
     methods: {
-      validTempToken(): unknown {
-        return 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NTEyNDQ4MSwiZXhwIjoxNjQ1NzI5MjgxfQ.EudjZqlqBVPWR0B1gyt6UZs46q_ZSqg6yLPpCPX9UT8';
-      },
-      // fetch all users + la friendlist
-      async fetchInfos() { // retirer les amis des users !!
-        await this.$http.get('/user').then(response => {
-          this.users = response.data;
-        });
-        await this.$http.get('/user/me').then(response => {
-          this.friends = response.data.friends;
-        });
-      },
+    },
+    // fetch all users + la friendlist
+    async created() { // retirer les amis des users !!
+      await this.$http.get('/user').then(response => {
+        this.users = response.data;
+      });
+      await this.$http.get('/user/me').then(response => {
+        this.friends = response.data.friends;
+      });
+      // console.log(this.friends[0]);
     },
     computed: {
       filteredUsers(): unknown {
