@@ -15,7 +15,9 @@ services:
     image: dpage/pgadmin4:latest
     restart: unless-stopped
     env_file:
-      - ./docker.env
+      - ./docker/pgadmin.env
+    volumes:
+      - ./docker/pgadmin_servers.json:/pgadmin4/servers.json
     ports:
       - 5050:80
     networks:
