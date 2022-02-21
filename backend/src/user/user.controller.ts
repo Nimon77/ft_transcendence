@@ -77,13 +77,13 @@ export class UserController {
   }
 
   @Put('me')
-  updateUser(@Request() req, @Body() user: User) {
+  updateUserMe(@Request() req, @Body() user: User) {
     user.id = req.user.userId;
     return this.userService.updateUser(user.id, user);
   }
 
   @Delete('me')
-  deleteUser(@Request() req) {
+  deleteUserMe(@Request() req) {
     this.userService.deleteUser(req.user.userId);
   }
 
@@ -115,17 +115,27 @@ export class UserController {
     return new StreamableFile(stream);
   }
 
-    // @Post()
-    // createUser(@Body() user: User) {
-    //   return this.userService.createUser(user);
-    // }
+  // for testing
+     @Post()
+     createUser(@Body() user: User) {
+       return this.userService.createUser(user);
+     }
 
-  //   @Post(':id/avatar')
-  //   @UseInterceptors(FileInterceptor('file'))
-  //   async addAvatar(
-  //     @Param('id') id: number,
-  //     @UploadedFile() file: Express.Multer.File,
-  //   ) {
-  //     return this.userService.addAvatar(id, file.buffer, file.originalname);
-  //   }
+     @Put(':id')
+     updateUser(@Body() user: User, @Param('id') id: number) {
+    	 return this.userService.updateUser(id, user);
+     }
+
+		 @Delete(':id')
+  	 deleteUser(@Param('id') id: string) {
+    	 this.userService.deleteUser(Number(id));
+  	}
+     @Post(':id/avatar')
+     @UseInterceptors(FileInterceptor('file'))
+     async addAvatar(
+       @Param('id') id: number,
+       @UploadedFile() file: Express.Multer.File,
+     ) {
+       return this.userService.addAvatar(id, file.buffer, file.originalname);
+     }
 }
