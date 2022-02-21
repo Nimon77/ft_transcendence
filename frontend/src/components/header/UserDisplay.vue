@@ -28,7 +28,7 @@
 import Vue from 'vue';
 
 export default Vue.extend({
-    name: 'FriendDisplay',
+    name: 'UserDisplay',
     props: {
       user: {
         type: Object,
@@ -42,11 +42,14 @@ export default Vue.extend({
       }
     },
     methods: {
-      addStat(): void {
+      async addStat() {
         this.loader = !this.loader;
         this.color = 'green';
-        setTimeout(this.setDone, 1000);
-        
+        setTimeout(this.setDone, 500);
+        await this.$http.post('/user/me/community', {id: this.user.id,}).then(response => {
+          console.log('PUT REQUEST', response);
+          });
+        location.reload();
       },
       setDone(): void {
         document.getElementById(this.user.id).innerHTML = "DONE!";

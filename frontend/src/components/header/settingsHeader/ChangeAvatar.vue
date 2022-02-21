@@ -55,9 +55,7 @@ export default Vue.extend({
         methods: {
           async setNewName() {
             this.dialog = false;
-            await this.$http.put('/user/me', {
-              username: this.username,
-            }).then(response => {
+            await this.$http.put('/user/me', {username: this.username,}).then(response => {
               console.log('PUT REQUEST', response);
               });
             location.reload();
