@@ -32,31 +32,45 @@ export class UserController {
     private chatService: ChatService,
   ) {}
 
-  @Get('me/chatroom')
+  @Get('/chatroom')
   getRoomsMe(@Request() req)
   {
     return this.chatService.getRoomsForUser(req.user.userId, { page: 1, limit: 10 });
   }
 
-  @Post('me/chatroom')
+
+  @Post('/chatroom')
   async createRoomMe(@Request() req, @Body() room: ChatRoom)
   {
     const user = await this.getUserById(req.user.userId);
     return this.chatService.createRoom(room, user);
   }
 
+  @Get(':id/chatroom')
+  getUsersRoom(@Param('id', ParseIntPipe) id: number)
+  {
+      return this.chatService.getUsersForRoom(id, {page: 1, limit: 10});
+  }
+
+  @Post(':id/chatroom')
+  async addUserToRoom(@Param('id', ParseIntPipe) id: number, @Body() user: User)
+  {
+    const foundUser = await this.userService.getUserById(user.id);
+    return this.chatService.addUserToRoom(id, foundUser);
+  }
+
   @Post('me/community')
   async followUser(@Request() req, @Body() friend: User)
   {
-    const user = await this.getUserById(req.user.userId);
-    const frienduser = await this.getUserById(friend.id);
+    const user = await this.userService.getUserById(req.user.userId);
+    const frienduser = await this.userService.getUserById(friend.id);
     return this.userService.updateFollow(user, frienduser);
   }
 
   @Post('me/block')
   async blockUser(@Request() req, @Body() blocked: User)
   {
-    const user = await this.getUserById(req.user.userId);
+    const user = await this.userService.getUserById(req.user.userId);
     const blockeduser = await this.getUserById(blocked.id);
     return this.userService.updateBlock(user, blockeduser);
   }

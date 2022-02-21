@@ -12,7 +12,7 @@ export class ChatRoom{
     @Column()
     adminId: number;
 
-    @ManyToMany(() => User)
+    @ManyToMany(() => User, { cascade: true, onUpdate:'CASCADE' })
     @JoinTable()
     users: User[];
 }
