@@ -1,6 +1,6 @@
 
 <template>
-  <v-container fill-height >
+  <v-container fill-height key="gne">
     <v-row class="justify-center mb-16">
       <v-col class="d-flex justify-center" cols="12" >
         <PlayButton/>
@@ -33,8 +33,7 @@ export default Vue.extend({
 <style>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
-/* .ctn { max-width: 4000px; } */
-/* p + p { margin-top: 30px; } */
+
 
 .btn {
   font-family: "lemon_milkmedium";
