@@ -1,11 +1,11 @@
 
 <template>
   <v-app>
-    <Header/>
+    <Header v-if="isLogged()"/>
     <v-main class="yellow">
       <router-view></router-view>
     </v-main>
-    <Footer/>
+    <Footer v-if="isLogged()"/>
   </v-app>
 </template>
 
@@ -17,6 +17,11 @@
     components: {
       Header,
       Footer
+    },
+    methods: {
+      isLogged(): boolean {
+        return localStorage.getItem('profileCompleted') === 'true';
+      }
     },
   };
 </script>

@@ -68,7 +68,7 @@ export default Vue.extend({
       }
     },
     methods: {
-      toProfile(): any {
+      toProfile(): void {
         console.log('GO TO PROFILE PLAYER');
         this.$router.push('/pregame'); // supprimer le dialog avec des events
       },
