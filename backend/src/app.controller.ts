@@ -1,4 +1,11 @@
-import { Controller, Get, Post, Request, UseGuards, Res } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Request,
+  UseGuards,
+  Res,
+  Headers,
+} from '@nestjs/common';
 import { AuthService } from './auth/auth.service';
 import { Public } from './auth/decorators/public.decorator';
 import { FortyTwoAuthGuard } from './auth/guards/42-auth.guard';
@@ -17,5 +24,12 @@ export class AppController {
         'http://127.0.0.1:8080/login?code=' +
           (await this.authService.login(req.user)).access_token,
       );
+  }
+
+  @Public()
+  @Get('jwt')
+  jwt(@Headers() headers) {
+    const token = headers.authorization.split(' ')[1];
+    return this.authService.verify(token);
   }
 }

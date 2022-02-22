@@ -4,29 +4,38 @@ import { UserService } from 'src/user/user.service';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly jwtService: JwtService, private readonly userService: UserService) {}
+  constructor(
+    private readonly jwtService: JwtService,
+    private readonly userService: UserService,
+  ) {}
 
   async login(user: any) {
     const newUser = {
       id: user.id,
       log: user.username,
       onlineStatus: true,
-      ... user
-  }
+      ...user,
+    };
     //need to check if user already exist
-    try
-    {
+    try {
       const exist = await this.userService.getUserById(newUser.id);
       exist.onlineStatus = true;
       this.userService.updateUser(exist.id, exist);
-    }
-    catch(error)
-    {
+    } catch (error) {
       this.userService.createUser(newUser);
     }
     const payload = { sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
     };
+  }
+
+  verify(token: string) {
+    try {
+      this.jwtService.verify(token);
+      return true;
+    } catch {
+      return false;
+    }
   }
 }
