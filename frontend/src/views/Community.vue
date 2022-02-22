@@ -1,11 +1,15 @@
 <template>
-    <v-container fluid class="mt-1">
-    <v-row justify="center">
+    <div >
+    <v-container fluid class="mt-1" style="border: solid;">
+    <v-row align=center class="d-flex justify-center">
+      <!-- <v-col> -->
     <Channel/>
     <Chat/>
     <PlayerChannel/>
+    <!-- </v-col> -->
   </v-row>
   </v-container>
+  </div>
 </template>
 
 <script lang="ts">

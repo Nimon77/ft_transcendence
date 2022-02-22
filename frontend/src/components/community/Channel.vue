@@ -1,17 +1,24 @@
 <template>
-    <v-card flat tile min-width="20%">
+    <v-card flat tile min-width="20%" height="100%" class="d-flex flex-column">
       <v-sheet color="green" dark height="100" width="100%" class="text-center">
       <v-divider class="pt-7"></v-divider>
       <span class="span"> CHANNELS </span>
       </v-sheet>
-      
-      <v-list-item-group mandatory shaped >
-        <v-list-item v-for="n in 5" :key="n" link>
-          <v-list-item-content>
-            <v-list-item-title>chan {{ n }}</v-list-item-title>
+        <v-btn class="ma-1" color="green" bottom tile left  @click="dialog = !dialog">
+          <v-icon>mdi-plus</v-icon>
+        </v-btn>
+        <v-divider class="mt-1"></v-divider>
+  
+
+ <v-virtual-scroll :items="channels" item-height="50" height="300" >
+      <template v-slot:default="{ channels }">
+        <v-list-item>
+          <v-list-item-content :key="channels.id" :value="channels.id">
+            <v-list-item-title> gnneee {{ channels.id }}</v-list-item-title>
           </v-list-item-content>
         </v-list-item>
-      </v-list-item-group>
+      </template>
+    </v-virtual-scroll>
     </v-card>
 </template>
 
@@ -24,7 +31,26 @@ export default Vue.extend({
     name: 'Channel',
     data() {
         return {
-
+          channels : [
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            { id: 2 },
+            ]
         }
     },
 })
