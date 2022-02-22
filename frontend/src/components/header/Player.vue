@@ -8,7 +8,7 @@
             <img v-auth-image="'/user/me/avatar'" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
-        <v-btn router to="/profile" class="name" text> {{username}} </v-btn>
+        <v-btn router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
 
         <v-menu offset-y>
         <template v-slot:activator="{ on, attrse }">
@@ -56,12 +56,12 @@ export default Vue.extend({
         { title: 'Two-Factor-Auth' },
         { title: 'Delete Account' },
         ],
-        username: '',
+        user: [],
       }
     },
     mounted() {
       this.$http.get('/user/me').then(response => {
-        this.username = response.data.username
+        this.user = response.data
       })
     }
   })

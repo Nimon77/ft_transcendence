@@ -21,7 +21,7 @@
                 <v-list-item-group>
                   <v-list-item v-for="(friend) in friends" v-bind:key="friend"> <!-- à changer pr afficher la friendList complete ss filter -->
                   <v-list-item-content>
-                    <FriendDisplay :id="friend"/>
+                    <FriendDisplay :id="friend" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog"/>
                     <v-divider class="mt-2"></v-divider>                  
                   </v-list-item-content>
                   </v-list-item>
@@ -60,6 +60,16 @@ export default Vue.extend({
       }
     },
     methods: {
+      closeDialog() {
+        this.dialog=false;
+      },
+      async rmFriend(rmId: number) {
+        console.log("rmId = ", rmId);
+        await this.$http.post('/user/me/community', {id: rmId,}).then(response => {
+          console.log('POST REQUEST', response);
+          });
+        location.reload();
+      },
     },
     // fetch all users + la friendlist
     async created() { // retirer les amis des users !!
