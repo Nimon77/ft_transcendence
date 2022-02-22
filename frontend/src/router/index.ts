@@ -26,7 +26,7 @@ const routes: Array<RouteConfig> = [
   {
     path: '/profile/:id',
     name: 'profile',
-    component: Profile
+    component: Profile,
   },
   {
     path: '/preGame',
