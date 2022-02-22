@@ -6,9 +6,14 @@ import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
   },
   namespace: 'chat',
 })
+
 export class ChatGateway {
+  Chatlog = new Array;
   @SubscribeMessage('message')
-  handleMessage(client: any, payload: any): string {
-    return 'Hello world!';
+  handleMessage(client: any, data: any) {
+    if (this.Chatlog.length > 10)
+      this.Chatlog.shift();
+    this.Chatlog.push(data.data);
+    //console.log(this.Chatlog);
   }
 }
