@@ -9,7 +9,7 @@
             <p class="font-weight-bold text-h5" > Player Profile </p>
             </div>
             <v-list-item-title class="text-h5 my-2">
-            {{user.log.toUpperCase()}} <span class="text-h6 font-weight-bold" > {{user.rank}}  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
+            {{user.log | upCase}} <span class="text-h6 font-weight-bold" > {{user.rank}}  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold green--text">
                 WINS : {{playerItems[0].nbWin}} <span class="font-weight-bold black--text"> | </span>
@@ -18,7 +18,7 @@
         </v-list-item-content>
 
         <v-list-item-avatar tile size="80">
-            <img v-auth-image="'/user/me/avatar'"/>
+            <img v-auth-image="'/user/'+this.$route.params.id+'/avatar'"/>
         </v-list-item-avatar>
         </v-list-item>
     </v-card>
@@ -73,9 +73,26 @@ export default Vue.extend({
             user: [],
         }
     },
+    filters: {
+        upCase: function (value) {
+            if (!value) return ''
+            return value.toUpperCase();
+        }
+    },
+    methods: {
+        async fetchUser() {
+            await this.$http.get('/user/'+ this.$route.params.id).then(response => {
+                this.user = response.data; });
+        }
+    },
     async created() {
-      await this.$http.get('/user/me').then(response => {
-        this.user = response.data; });
+        this.$watch(
+            () => this.$route.params,
+            () => {
+                this.fetchUser();
+            },
+            { immediate: true }
+        )
     },
 });
 </script>

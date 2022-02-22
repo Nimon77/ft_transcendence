@@ -24,7 +24,7 @@ const routes: Array<RouteConfig> = [
     component: Community
   },
   {
-    path: '/profile',
+    path: '/profile/:id',
     name: 'profile',
     component: Profile
   },

@@ -37,19 +37,17 @@
 
 /*
 Note/bugs:
--"searching for player dialog" => le dialog doit s'enlever seulement avec "cancel" pas avec click outside
 
-profil players
-  -click sur profil player root avec une url de query param type : /profile/:idPlayer=5
-  -le component recup l'id et donc sait quels informations afficher de quel joueur!
-
-de même pour les channels
+channels
   -click sur channel root sur url type /community/:idChannel=2
   -je sais quel channel est selectionné et peut donc accéder aux infos
 
+-TWO F AUTHENTICATION
+
+
 -endgame screen
 -button de retour doit set une alerte et faire quitter la game
--dialog pour chaque setting
+
 -dialog pour chat
 -les msg de joueur bloques ne doivent pas s'afficher dans le chat/channel
 -ownersChannels peuvent pas etre mute/ban/kick
