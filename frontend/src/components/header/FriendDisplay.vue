@@ -23,8 +23,8 @@
           <v-btn class="mt-3" color="primary" dark v-on="on"> OPTIONS </v-btn>
         </template>
         <v-list class="text-center">
-          <v-list-item>
-            <v-list-item-title @click="toProfile">Profile Player</v-list-item-title>
+          <v-list-item @click="toProfile">
+            <v-list-item-title>Profile Player</v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>Invite to Game</v-list-item-title>
@@ -35,8 +35,8 @@
           <v-list-item>
             <v-list-item-title>Chat</v-list-item-title>
           </v-list-item>
-          <v-list-item>
-            <v-list-item-title @click="removeFriend">Remove Player</v-list-item-title>
+          <v-list-item @click="removeFriend">
+            <v-list-item-title>Remove Player</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
