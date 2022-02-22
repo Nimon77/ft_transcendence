@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right v-if="authenticated">
+  <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right>
     <v-btn router to="/" class="titl" x-large depressed text width="385" height="60">
       BananaPong
     </v-btn>
@@ -20,14 +20,6 @@ export default Vue.extend({
   components: {
       FriendList,
       Player,
-  },
-  data() {
-    return {
-      authenticated: false,
-    }
-  },
-  mounted() {
-    this.authenticated = localStorage.getItem('profileCompleted') === 'true';
   },
 })
 </script>

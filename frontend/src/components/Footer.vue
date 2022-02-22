@@ -1,5 +1,5 @@
 <template>
-  <v-footer app padless v-if="authenticated">
+  <v-footer app padless>
     <v-col
       class="text-center green"
       cols="12"
@@ -14,13 +14,5 @@ import Vue from 'vue'
 
 export default Vue.extend({
     name: 'Footer',
-    data() {
-        return {
-            authenticated: false,
-        }
-    },
-    mounted() {
-      this.authenticated = localStorage.getItem('profileCompleted') === 'true';
-    },
 })
 </script>
