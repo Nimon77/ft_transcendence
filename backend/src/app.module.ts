@@ -5,7 +5,6 @@ import { PhotoModule } from './photo/photo.module';
 import { UserModule } from './user/user.module';
 import * as Joi from 'joi';
 import { AuthModule } from './auth/auth.module';
-import { AppController } from './app.controller';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PongModule } from './pong/pong.module';
@@ -35,7 +34,6 @@ import { ChatModule } from './chat/chat.module';
     PongModule,
     ChatModule,
   ],
-  controllers: [AppController],
   providers: [
     {
       provide: APP_GUARD,

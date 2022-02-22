@@ -30,12 +30,11 @@ export class AuthService {
     };
   }
 
-  verify(token: string) {
+  verify(token: string): any {
     try {
-      this.jwtService.verify(token);
-      return true;
+      return this.jwtService.verify(token);
     } catch {
-      return false;
+      return {};
     }
   }
 }
