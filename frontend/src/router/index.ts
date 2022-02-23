@@ -57,44 +57,61 @@ const router = new VueRouter({
 })
 
 async function checkJWT() {
+  const status = {
+    loggedIn: false,
+    JWTvalide: false,
+    ProfileCompleted: false,
+  }
   const token = localStorage.getItem('token')
+  status.loggedIn = token !== null
   if (token) {
-    return await axios.get('/user/me', {
+    await axios.get('/auth/jwt', {
       headers: {
         Authorization: 'Bearer ' + token
-    }}).then(() => {
-      return true;
-    }).catch(() => {
-      return false;
-    })
+    }}).then(res => {
+      console.log(res);
+      status.JWTvalide = res.data;
+    });
+    if (status.JWTvalide) {
+      await axios.get('/user/me', {
+        headers: {
+          Authorization: 'Bearer ' + token
+      }}).then(me => {
+        status.ProfileCompleted = me.data.profileCompleted;
+      });
+    }
   }
-  return false;
+  return status;
 }
 
 router.beforeEach((to, from, next) => {
-  const LogedIn = localStorage.getItem('token') ? true : false;
   console.log('to', to) // TODO: remove
 
-  checkJWT().then(JWTisValid => {
+  checkJWT().then(Status => {
+    console.log('Status', Status) // TODO: remove
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
       axios.get("/user/me").then(res => {
         if (res.data.profileCompleted) {
-          localStorage.setItem('profileCompleted', 'true');
+          localStorage.setItem('ready', 'true');
           return next({ name: 'Main' });
         }
         else {
-          localStorage.setItem('profileCompleted', 'false');
+          localStorage.setItem('ready', 'false');
           return next({ name: 'UpdateProfile' });
         }
       });
     }
-    else if (to.name !== 'Login' && (!LogedIn || !JWTisValid)) {
+    else if (to.name !== 'Login' && (!Status.loggedIn || !Status.JWTvalide)) {
+      localStorage.setItem('ready', 'false');
       return next({ name: 'Login' });
     }
-    else if (to.name === 'Login' && LogedIn) {
-      return next({ name: 'Main' });
+    else if (to.name !== 'UpdateProfile' && !Status.ProfileCompleted && Status.loggedIn && Status.JWTvalide) {
+      return next({ name: 'UpdateProfile' })
+    }
+    else if (to.name === 'Login' && Status.loggedIn && Status.JWTvalide) {
+      return next({ name: 'Main' })
     }
     next();
   });
