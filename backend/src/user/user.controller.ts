@@ -17,7 +17,7 @@ import { Readable } from 'stream';
 import { Response } from 'express';
 import { UserService } from './user.service';
 import { FileInterceptor } from '@nestjs/platform-express';
-import { User } from '../infrastructure/user.entity';
+import { User } from '../database/user.entity';
 import { PhotoService } from '../photo/photo.service';
 import { Express } from 'express';
 import { Public } from 'src/auth/decorators/public.decorator';

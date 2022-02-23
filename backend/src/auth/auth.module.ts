@@ -9,13 +9,13 @@ import { AuthController } from './auth.controller';
 
 @Module({
   imports: [
-    PassportModule, UserModule,
     JwtModule.register({
       secret: process.env.JWT_SECRET,
       signOptions: { expiresIn: '7d' },
     }),
+    PassportModule,
   ],
-  providers: [AuthService, FortyTwoStrategy, JwtStrategy],
+  providers: [FortyTwoStrategy, JwtStrategy, AuthService],
   exports: [AuthService],
   controllers: [AuthController],
 })

@@ -3,12 +3,11 @@ import { ChatGateway } from './chat.gateway';
 import { ChatService } from './chat.service';
 import { ChatRoom } from './chat.entity';
 import { TypeOrmModule } from '@nestjs/typeorm';
-import { UserModule } from 'src/user/user.module';
-
+import { AuthModule } from 'src/auth/auth.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatRoom])],
+  imports: [TypeOrmModule.forFeature([ChatRoom]), AuthModule],
   providers: [ChatGateway, ChatService],
-  exports: [ChatService]
+  exports: [ChatService],
 })
 export class ChatModule {}
