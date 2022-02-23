@@ -1,9 +1,12 @@
 <template>
-    <v-container fluid class="mt-1">
-    <v-row justify="center">
+
+    <v-container fluid class="fill-height">
+    <v-row align=center justify="center">
+      <!-- <v-col> -->
     <Channel/>
     <Chat/>
     <PlayerChannel/>
+    <!-- </v-col> -->
   </v-row>
   </v-container>
 </template>
