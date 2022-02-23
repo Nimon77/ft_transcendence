@@ -1,7 +1,7 @@
 <template>
-    <div >
-    <v-container fluid class="mt-1" style="border: solid;">
-    <v-row align=center class="d-flex justify-center">
+
+    <v-container fluid class="fill-height">
+    <v-row align=center justify="center">
       <!-- <v-col> -->
     <Channel/>
     <Chat/>
@@ -9,7 +9,6 @@
     <!-- </v-col> -->
   </v-row>
   </v-container>
-  </div>
 </template>
 
 <script lang="ts">

@@ -1,8 +1,4 @@
 <template>
-    <!-- <template>
-    <v-btn v-on:click="test" color="blue" dark max-width="160"> Change Avatar </v-btn>
-    <template> -->
-
     <v-dialog transition="scale-transition" max-width="400" persistent>
         <template v-slot:activator="{ on, attrs }">
           <v-btn v-bind="attrs" v-on="on" color="blue" dark max-width="160"> Avatar/Username </v-btn>
@@ -15,11 +11,9 @@
               <v-row>
               <v-col align="center" cols="12" class="mt-11" >
                 
-                
                 <v-form ref="form" v-model="valid">
                 <v-text-field v-model="username" :rules="rules" label="new username" solo></v-text-field>
                 </v-form>
-              
               
               </v-col>
               <v-col cols="12">
