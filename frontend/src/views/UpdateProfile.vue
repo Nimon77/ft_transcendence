@@ -1,35 +1,38 @@
 <template>
-  <v-container fluid>
-    <h1 style="text-align: center;">
-        Complete your profile
+  <v-container >
+    <h1 style="text-align: center;titl;color: white">
+      Complete your profile
     </h1>
-    <v-row class="mt-12" style="justify-content: center;">
-      <v-card class="mt-6" width="700">
-          <v-text-field
-            v-model="username"
-            label="Username"
-            outlined
-            class="mt-2"
-          ></v-text-field>
-          <v-card class="mt-6" height="700" width="700" v-if="image.src">
-            <cropper
-              :src="image.src"
-              :stencil-props="{
-                aspectRatio: 1,
-              }"
-              ref="cropper"
-            />
-          </v-card>
-          <v-row style="justify-content: center;">
-            <v-btn @click="$refs.file.click()">
-              <v-icon>mdi-upload</v-icon> Upload Avatar
-              <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
-            </v-btn>
-            <v-btn @click="validate()">
-              <v-icon>mdi-check</v-icon>  Validate
-            </v-btn>
-          </v-row>
-      </v-card>
+    <v-row>
+      <v-col align="center" cols="12" class="mt-11">
+        <v-text-field
+          v-model="username"
+          label="Username"
+          filled
+          class="mt-2"
+          color="white"
+        ></v-text-field>
+        <v-card class="mt-6" v-if="image.src">
+          <cropper
+            :src="image.src"
+            :stencil-props="{
+              aspectRatio: 1,
+            }"
+            ref="cropper"
+          />
+        </v-card>
+      </v-col>
+    </v-row>
+    <v-row>
+      <v-col align="center" cols="12" class="mt-11">
+        <v-btn @click="$refs.file.click()">
+          <v-icon>mdi-upload</v-icon> Upload Avatar
+          <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
+        </v-btn>
+        <v-btn @click="validate()">
+          <v-icon>mdi-check</v-icon>  Validate
+        </v-btn>
+      </v-col>
     </v-row>
   </v-container>
 </template>
@@ -121,11 +124,3 @@ export default Vue.extend({
   },
 });
 </script>
-
-<style>
-.cropper {
-  height: 600px;
-  width: 600px;
-  background: #DDD;
-}
-</style>
