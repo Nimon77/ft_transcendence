@@ -104,7 +104,6 @@ export class UserController {
   @UseInterceptors(FileInterceptor('file'))
   @Post('me/avatar')
   async addAvatarMe(@Request() req, @UploadedFile() file: Express.Multer.File) {
-    console.log(req);
     this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
   }
 
