@@ -65,22 +65,20 @@ async function checkJWT() {
   const token = localStorage.getItem('token')
   status.loggedIn = token !== null
   if (token) {
-    try {
-      console.log('checking token')
-      return await axios.get('/user/me', {
+    await axios.get('/auth/jwt', {
+      headers: {
+        Authorization: 'Bearer ' + token
+    }}).then(res => {
+      console.log(res);
+      status.JWTvalide = res.data;
+    });
+    if (status.JWTvalide) {
+      await axios.get('/user/me', {
         headers: {
           Authorization: 'Bearer ' + token
-      }}).then(res => {
-        console.log(res);
-        status.JWTvalide = true;
-        status.ProfileCompleted = res.data.profileCompleted;
-        return status;
-      }).catch(() => {
-        return status;
+      }}).then(me => {
+        status.ProfileCompleted = me.data.profileCompleted;
       });
-    }
-    catch (error) {
-      return status;
     }
   }
   return status;
@@ -90,22 +88,23 @@ router.beforeEach((to, from, next) => {
   console.log('to', to) // TODO: remove
 
   checkJWT().then(Status => {
+    console.log('Status', Status) // TODO: remove
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
       axios.get("/user/me").then(res => {
         if (res.data.profileCompleted) {
-          localStorage.setItem('profileCompleted', 'true');
+          localStorage.setItem('ready', 'true');
           return next({ name: 'Main' });
         }
         else {
-          localStorage.setItem('profileCompleted', 'false');
+          localStorage.setItem('ready', 'false');
           return next({ name: 'UpdateProfile' });
         }
       });
     }
     else if (to.name !== 'Login' && (!Status.loggedIn || !Status.JWTvalide)) {
-      localStorage.setItem('profileCompleted', 'false');
+      localStorage.setItem('ready', 'false');
       return next({ name: 'Login' });
     }
     else if (to.name !== 'UpdateProfile' && !Status.ProfileCompleted && Status.loggedIn && Status.JWTvalide) {

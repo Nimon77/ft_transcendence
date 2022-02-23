@@ -91,9 +91,9 @@ export default Vue.extend({
         username: this.username,
         profileCompleted: true,
       }).then(() => {
-        this.$router.push('/');
+        localStorage.setItem('ready', 'true');
+        this.$router.push({ name: 'Main' });
       });
-      localStorage.setItem('profileCompleted', 'true');
     },
     reset() {
       this.image = {
