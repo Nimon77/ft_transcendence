@@ -77,7 +77,7 @@ channels
   -je sais quel channel est selectionné et peut donc accéder aux infos
 
 -trier la liste de user (pas de me + friends)
--add bouton ajout channel + dialog pour add/remove chan
+-ajouter option dialog sur channel items + faire ressortir les dots
 
 -TWO F AUTHENTICATION
 -SPECTATE
