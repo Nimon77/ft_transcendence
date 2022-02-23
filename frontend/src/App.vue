@@ -23,7 +23,7 @@
     },
     methods: {
       isLogged(): boolean {
-        return localStorage.getItem('profileCompleted') === 'true';
+        return localStorage.getItem('ready') === 'true';
       }
     },
   };
