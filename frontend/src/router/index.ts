@@ -90,9 +90,6 @@ router.beforeEach((to, from, next) => {
   console.log('to', to) // TODO: remove
 
   checkJWT().then(Status => {
-    console.log('JWTisValid', Status.JWTvalide) // TODO: remove
-    console.log('LogedIn', Status.loggedIn) // TODO: remove
-    console.log('ProfileComplete', Status.ProfileCompleted) // TODO: remove
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
