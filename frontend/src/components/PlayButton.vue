@@ -1,5 +1,5 @@
 <template>
-<v-dialog width="500" max-height="500" v-model="dialog">
+<v-dialog width="500" max-height="500" v-model="dialog" persistent>
     <template v-slot:activator="{ on, attrs }">
     <v-btn elevation="1" v-on:click="playerFund" v-bind="attrs" v-on="on" slot="activator"
     class="btn" style="font-size: 60px !important;" color="yellow--text" tile x-large depressed

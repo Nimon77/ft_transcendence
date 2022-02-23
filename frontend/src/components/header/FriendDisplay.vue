@@ -20,11 +20,11 @@
 
       <v-menu offset-y>
         <template v-slot:activator="{on}">
-          <v-btn block class="mt-3" color="primary" dark v-on="on"> OPTIONS </v-btn>
+          <v-btn class="mt-3" color="primary" dark v-on="on"> OPTIONS </v-btn>
         </template>
         <v-list class="text-center">
-          <v-list-item>
-            <v-list-item-title @click="toProfile">Profile Player</v-list-item-title>
+          <v-list-item @click="toProfile">
+            <v-list-item-title>Profile Player</v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>Invite to Game</v-list-item-title>
@@ -35,7 +35,7 @@
           <v-list-item>
             <v-list-item-title>Chat</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="removeFriend">
             <v-list-item-title>Remove Player</v-list-item-title>
           </v-list-item>
         </v-list>
@@ -68,10 +68,17 @@ export default Vue.extend({
       }
     },
     methods: {
-      toProfile(): void {
-        console.log('GO TO PROFILE PLAYER');
-        this.$router.push('/pregame'); // supprimer le dialog avec des events
+      toProfile() {
+        console.log(this.$route.path, '/profile/' + this.user.id);
+        this.$emit("closedialog");
+        if (this.$route.path !== '/profile/' + this.user.id)
+          this.$router.push('/profile/' + this.user.id); // supprimer le dialog avec des events
       },
+      
+      removeFriend() {
+        this.$emit("rmFriend", this.user.id);
+      },
+      
       async fetchFriend() {
         return (await this.$http.get('/user/' + this.id).then(response => {
           this.user = response.data; }).catch(console.log('Ressource waiting..')))
