@@ -35,8 +35,7 @@ export class ChatService {
             users: users,
             ... room
         }
-        await this.chatRepo.save(newRoom);
-        return this.addUserToRoom(newRoom.id, admin);
+        return await this.chatRepo.save(newRoom);
     }
 
     async getRoomsForUser(userId: number, options: IPaginationOptions)
