@@ -1,6 +1,6 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
-import { DatabaseModule } from './infrastructure/database.module';
+import { DatabaseModule } from './database/database.module';
 import { PhotoModule } from './photo/photo.module';
 import { UserModule } from './user/user.module';
 import * as Joi from 'joi';
@@ -29,10 +29,7 @@ import { ChatModule } from './chat/chat.module';
     }),
     DatabaseModule,
     UserModule,
-    PhotoModule,
-    AuthModule,
     PongModule,
-    ChatModule,
   ],
   providers: [
     {
