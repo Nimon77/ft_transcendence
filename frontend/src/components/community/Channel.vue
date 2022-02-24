@@ -46,26 +46,15 @@
       <v-divider class="mt-1"></v-divider>
   
       <v-list-item-group mandatory>
-        <v-list-item two-line router to="/">
+        <div v-for="CR in userCR.items" :key="CR.id">
+        <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
-            <v-list-item-title > BANANA ROOM </v-list-item-title>
+            <v-list-item-title > {{CR.name | upCase}} </v-list-item-title>
             <v-list-item-subtitle> public <v-icon  small color="yellow"> mdi-account </v-icon> </v-list-item-subtitle>
           </v-list-item-content>
-              <v-btn @click.prevent="testBtn" icon> <v-icon >mdi-dots-vertical</v-icon> </v-btn>
+          <OptionChannel @leaveRoom="leaveRoom(CR.id)"/>
         </v-list-item>
-        <v-divider></v-divider>
-
-        <v-list-item two-line>
-          <v-list-item-content>
-            <v-list-item-title > PRIVATE ROOM </v-list-item-title>
-            <v-list-item-subtitle> private </v-list-item-subtitle>
-          </v-list-item-content>
-          <v-list-item-action>
-            <v-list-item-action-text>
-              <v-btn icon> <v-icon >mdi-dots-vertical</v-icon> </v-btn>
-            </v-list-item-action-text>
-          </v-list-item-action>
-        </v-list-item>
+        </div>
         <v-divider></v-divider>
       </v-list-item-group>
     
@@ -74,11 +63,17 @@
 
 
 <script lang="ts">
-
 import Vue from 'vue';
+import OptionChannel from './OptionChannel.vue'
+
+Vue.component('OptionChannel', OptionChannel);
 
 export default Vue.extend({
     name: 'Channel',
+    props: {
+      user: [],
+      userCR: [],
+    },
     data() {
         return {
           dialog: false,
@@ -89,13 +84,15 @@ export default Vue.extend({
         }
     },
     methods: {
-      testBtn() {
-        console.log("GNEEEEE");
+      async leaveRoom(idCR) {
+        console.log("IN CHAN LEAVE ROOM");
+        await this.$http.post('/chatroom/' + idCR, {id: this.user.id,}).then((resp) => console.log(resp))
+        this.$emit('newCR');
       },
       async newChannel() {
-        // await this.$http.post('/user/chatroom', {name: this.name,}).then((resp) => console.log(resp))
-        await this.$http.get('/user/chatroom').then((resp) => console.log(resp))
-        this.dialog = false
+        await this.$http.post('/user/chatroom', {name: this.name,}).then((resp) => console.log(resp))
+        this.dialog = false;
+        this.$emit('newCR');
       }
     },
     computed: {

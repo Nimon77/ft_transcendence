@@ -24,7 +24,7 @@
             </v-card-text>
             <v-card-actions class="justify-end">
               <v-btn color="red" dark @click="dialog.value = false" >CANCEL</v-btn>
-              <v-btn :disabled="!valid" @click="setNewName" >OK!</v-btn>
+              <v-btn color="blue" class="white--text" :disabled="!valid" @click="setNewName" >OK!</v-btn>
             </v-card-actions>
           </v-card>
         </template>
