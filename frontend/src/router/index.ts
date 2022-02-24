@@ -19,7 +19,7 @@ const routes: Array<RouteConfig> = [
     component: Main
   },
   {
-    path: '/community',
+    path: '/community/:idCR',
     name: 'community',
     component: Community
   },

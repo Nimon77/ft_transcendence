@@ -4,13 +4,12 @@
       <v-divider class="pt-7"></v-divider>
       <span class="span"> PLAYERS </span>
       </v-sheet>
-
       <v-list>
-        <div v-for="player in players" :key="player.id">
+        <div v-for="player in playersCR" :key="player.id">
         <v-list-group>
           <template v-slot:activator>
             <v-list-item-content class="mt-n4">
-              <v-list-item-title> <v-badge dot inline color="blue"> </v-badge>{{player.name}}</v-list-item-title>
+              <v-list-item-title> <v-badge dot inline color="blue"> </v-badge>{{player.username}}</v-list-item-title>
             </v-list-item-content>
 
           </template>
@@ -22,14 +21,15 @@
           </v-list-item>
           <v-list-item dense>
             <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn color="blue" tile dark min-width="100%"> PROFILE </v-btn>
+              <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="100%"> PROFILE </v-btn>
             </v-list-item-title>
           </v-list-item>
           <v-list-item dense>
             <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn color="blue" tile dark min-width="100%" > MUTE </v-btn>
+              <v-btn color="red" tile dark min-width="50%" > MUTE </v-btn>
+              <v-btn color="red" class="ml-1" tile dark min-width="50%" > BAN </v-btn>
             </v-list-item-title>
-          </v-list-item>
+          </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
           <v-list-item dense>
             <v-list-item-title class="d-flex justify-center text-button">
               <v-btn color="blue" tile dark min-width="100%" > SET ADMIN </v-btn>
@@ -50,25 +50,17 @@ import Vue from 'vue';
 
 export default Vue.extend({
     name: 'PlayerChannel',
+    props: {
+      playersCR: [],
+    },
     data() {
         return {
-          players: [
-            {id: 0, name: "bill"},
-            {id: 1, name: "john"},
-            {id: 1, name: "john"},
-            {id: 1, name: "john"},
-            {id: 1, name: "john"},
-          ],
           test: true,
-          items: [
-            {
-              action: 'mdi-ticket',
-              items: [{ title: 'List Item' }],
-              title: 'Attractions',
-            },
-          ]
         }    
     },
+    // created() {
+    //   this.$watch(() => this.playersCR, () => {return},{ immediate: true })
+    // },
 })
 </script>
 

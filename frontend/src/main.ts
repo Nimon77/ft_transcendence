@@ -13,6 +13,12 @@ Vue.config.productionTip = false;
 Vue.use(VueAxios, axios)
 Vue.use(VueAuthImage);
 
+// put to uppercase
+Vue.filter("upCase", value => {
+  if (!value) return ''
+  return value.toUpperCase();
+})
+
 axios.defaults.baseURL = "http://" + location.hostname + ":" + process.env.VUE_APP_BACKEND_PORT;
 axios.defaults.headers.common['Authorization'] = 'Bearer ' + localStorage.getItem('token');
 

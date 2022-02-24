@@ -9,7 +9,7 @@
             <p class="font-weight-bold text-h5" > Player Profile </p>
             </div>
             <v-list-item-title class="text-h5 my-2">
-            {{user.log | upCase}} <span class="text-h6 font-weight-bold" > {{user.rank}}  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
+            {{user.username | upCase}} <span class="text-h6 font-weight-bold" > {{user.rank}}  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
             </v-list-item-title>
             <v-list-item-subtitle class="font-weight-bold green--text">
                 WINS : {{playerItems[0].nbWin}} <span class="font-weight-bold black--text"> | </span>
@@ -73,12 +73,7 @@ export default Vue.extend({
             user: [],
         }
     },
-    filters: {
-        upCase: function (value) {
-            if (!value) return ''
-            return value.toUpperCase();
-        }
-    },
+
     methods: {
         async fetchUser() {
             await this.$http.get('/user/'+ this.$route.params.id).then(response => {
