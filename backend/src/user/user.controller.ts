@@ -76,10 +76,11 @@ export class UserController {
   }
 
   @Delete(':id/:userid/chatroom')
-  async removeUserFromRoom(@Param('id', ParseIntPipe) id: number, @Param('userid', ParseIntPipe) userid: number)
+  async removeUserFromRoom(@Param('id', ParseIntPipe) id: number, @Param('userid', ParseIntPipe) userid: number, @Request() req)
   {
-      const user = await this.userService.getUserById(userid);
-      return this.chatService.removeUserFromRoom(user, id);
+    const admin = await this.userService.getUserById(req.user.userId);
+    const user = await this.userService.getUserById(userid);
+    return this.chatService.removeUserFromRoom(user, id, admin.id);
   }
 
   @Delete(':id/chatroom')
