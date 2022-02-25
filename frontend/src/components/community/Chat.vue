@@ -1,5 +1,5 @@
 <template>
-    <v-card tile flat class="mx-10 d-flex flex-column" color="white" min-width="50%" max-width="50%" height="645">
+    <v-card tile flat class="mx-10 d-flex flex-column" color="white" min-width="50%" max-width="100%" height="100%">
     <v-container fluid>
     
         <v-sheet color="green" height="100" dark width="100%" class="text-center">
@@ -7,25 +7,25 @@
         <span class="span"> CHAT </span>
         </v-sheet>
         
-        <v-card elevation="2" class="pt-3 mt-3" color="white" min-width="100%" max-width="100%" height="440">
-            <v-list>
+        <!-- <v-card elevation="2" class="pt-3 mt-3" color="white" width="100%" height="100%"> -->
+            <v-list style="border: solid;" max-height="50%" class="mt-3">
                 <div v-for="cM in chatMsg" :key="cM.sender">
-                <v-card v-if="cM.sender != 'MOI'" flat tile width="400px" color="white" >
-                <v-card-text>
-                        {{cM.sender}}
-                        <div> {{cM.msg}} </div>
-                </v-card-text>
-                </v-card >                
-                <v-card v-if="cM.sender == 'MOI'" flat tile width="100%" color="blue" dark style="justify: right">
-                <v-card-text class="text-right">
-                    {{cM.sender}}
-                    <div> {{cM.msg}} </div>
-                </v-card-text>
-                </v-card >
+                    <v-card v-if="cM.sender != 'MOI'" flat tile width="100%" color="white" >
+                        <v-card-text>
+                            {{cM.sender}}
+                            <div> {{cM.msg}} </div>
+                        </v-card-text>
+                    </v-card >                
+                    <v-card v-if="cM.sender == 'MOI'" flat tile width="100%" color="blue" dark style="justify: right">
+                        <v-card-text class="text-right">
+                            {{cM.sender}}
+                            <div> {{cM.msg}} </div>
+                        </v-card-text>
+                    </v-card >
                 <v-divider class="mt-1"></v-divider>
                 </div>
             </v-list>
-        </v-card>
+        <!-- </v-card> -->
 
 
     <v-spacer></v-spacer>
@@ -57,6 +57,11 @@ const chatMsg = [
     { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
     { sender: 'MOI', msg: 'oh pas de spam stp' },
     { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
 ]
 
 
@@ -82,7 +87,8 @@ export default Vue.extend({
 }
 
 .v-list{
-  height:440px;
+  display: flex !important;
+  flex-direction: column;
   overflow-y:auto
 }
 
