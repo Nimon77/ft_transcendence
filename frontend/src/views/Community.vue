@@ -1,13 +1,10 @@
 <template>
-
-    <v-container fluid class="fill-height">
-    <v-row align=center justify="center">
-      <!-- <v-col> -->
-    <Channel :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
-    <Chat/>
-    <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
-    <!-- </v-col> -->
-  </v-row>
+    <v-container  fluid class="fill-height">
+    <v-row  align=center justify="center">
+      <Channel :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
+      <Chat/>
+      <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
+    </v-row>
   </v-container>
 </template>
 

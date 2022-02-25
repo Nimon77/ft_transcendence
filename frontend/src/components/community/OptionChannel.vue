@@ -4,11 +4,44 @@
     <v-btn @click.prevent v-on="on" v-bind="attrs" icon> <v-icon >mdi-dots-vertical</v-icon> </v-btn>
     </template>
     <v-list>
+    
     <v-list-item>
-        <v-list-item-title @click="leaveRoom" class="text-center">Leave Channel</v-list-item-title>
+        <v-btn dark class="ma-1" color="green" tile>
+            <v-list-item-title @click="leaveRoom" class="text-center">Leave Channel</v-list-item-title>
+        </v-btn>
     </v-list-item>
-    <v-list-item> <!-- si admin ! -->
-        <v-list-item-title class="text-center">Manage Password</v-list-item-title>
+    
+    <!-- si admin ! -->
+    <v-list-item>
+    <v-dialog v-model="dialog" max-width="600px" >
+      <template v-slot:activator="{ on, attrs }">
+        <v-btn v-bind="attrs" v-on="on" dark class="ma-1" color="green" tile @click="dialog = !dialog">
+            <v-list-item-title class="text-center">Manage Password</v-list-item-title>
+        </v-btn>
+      </template>
+      <v-card>
+        <v-card-title class="text-h5 green">
+          <span class="text-h5 white--text">Set Password</span>
+        </v-card-title>
+        <v-card-text>
+          <v-container>
+            <v-row>
+              <v-col cols="12" >
+
+                <v-form ref="form" v-model="valid">
+                <v-text-field v-model="password" :rules="rules" type="password" label="set your password channel"></v-text-field>
+                </v-form>
+              </v-col>
+            </v-row>
+          </v-container>
+        </v-card-text>
+        <v-card-actions>
+          <v-spacer></v-spacer>
+          <v-btn color="red darken-1" depressed tile dark @click="dialog = false"> Cancel </v-btn>
+          <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="dialog=!dialog"> SAVE </v-btn>
+        </v-card-actions>
+      </v-card>
+    </v-dialog>
     </v-list-item>
     </v-list>
 </v-menu>
@@ -25,7 +58,9 @@ export default Vue.extend({
     },
     data() {
         return {
-
+            dialog: false,
+            password: '',
+            valid: false,
         }
     },
     methods: {
@@ -35,8 +70,13 @@ export default Vue.extend({
         }
     },
     computed: {
-
-    },
+      rules() {
+        const rules = [];
+        let rule = v => !!v;
+        rules.push(rule);
+        return rules;
+      }
+    }
 
     // created() {
 
