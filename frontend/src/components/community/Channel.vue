@@ -43,7 +43,7 @@
       </v-form>
       <v-divider class="mt-1"></v-divider>
   
-      <v-list-item-group height="100px" v-if="searchCR==''" mandatory style="border: solid;"> <!-- Si je ne cherche pas de CR -->
+      <v-list-item-group  v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
         <div v-for="CR in userCR.items" :key="CR.id">
         <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
@@ -52,8 +52,8 @@
           </v-list-item-content>
           <OptionChannel @leaveRoom="leaveRoom(CR.id)"/>
         </v-list-item>
-        </div>
         <v-divider></v-divider>
+        </div>
       </v-list-item-group>
 
       <v-list v-if="searchCR!=''" > <!-- Si je cherche un CR -->
@@ -165,10 +165,14 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+html {
+  overflow: hidden !important;
+}
 
 .v-list-item-group {
   display: flex !important;
   flex-direction: column;
+  height: 70vh;
   overflow: auto;
 }
 
