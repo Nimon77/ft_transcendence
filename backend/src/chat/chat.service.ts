@@ -1,12 +1,13 @@
 import { Injectable, HttpException, HttpStatus, } from '@nestjs/common';
 import { ChatRoomI } from './chat.interface';
 import { ChatRoom } from './chat.entity';
-import { getRepository, Repository } from 'typeorm';
+import { Connection, ConnectionManager, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/database/user.entity';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { array } from 'joi';
 import { use } from 'passport';
+import { query } from 'express';
 
 
 @Injectable()
@@ -31,11 +32,61 @@ export class ChatService {
         let users = [];
         users.push(admin);
         const newRoom: ChatRoom = {
-            adminId: admin.id,
+            adminId: [],
+            ownerId: admin.id,
             users: users,
             ... room
         }
+        newRoom.adminId.push(admin.id);
         return await this.chatRepo.save(newRoom);
+    }
+
+    async deleteRoom(id: number)
+    {
+        console.log(id);
+        const roomid = await this.chatRepo.findOne(id);
+        if (roomid)
+        {
+            await this.chatRepo.remove(roomid);
+        }
+        else
+            throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+
+    async removeUserFromRoom(user: User, roomId: number)
+    {
+        const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
+        if (room)
+        {
+            var index = room.users.map(user => user.id).indexOf(user.id);
+            console.log(index);
+            if (index !== -1)
+                room.users.splice(index, 1);
+            await this.chatRepo.save(room);
+        }
+        else
+            throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+
+    async updateRoom(id: number, room: ChatRoom)
+    {
+        const updatedRoom = await this.chatRepo.findOne(id);
+        console.log(room.adminId);
+        const newRoom = {
+            id: room.id,
+            ... room
+        }
+        if (updatedRoom)
+        {
+            return await this.chatRepo.update({id: room.id}, newRoom);
+        }
+        else
+            throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+
+    async getAllRooms()
+    {
+        return await this.chatRepo.find();
     }
 
     async getRoomsForUser(userId: number, options: IPaginationOptions)
@@ -45,18 +96,26 @@ export class ChatService {
         .where('user.id = :userId', { userId })
         .leftJoinAndSelect('room.users', 'all_users')
         .orderBy('room.id', 'DESC');
+        const result = await paginate(query, options);
+        console.log(result);
         return paginate(query, options);
     }
 
 
     async getUsersForRoom(roomId: number, options: IPaginationOptions)
     {
-        const query = await this.chatRepo.createQueryBuilder('room')
-        .leftJoin('room.users', 'user')
-        .where('room.id = :roomId', { roomId })
-        .leftJoinAndSelect('room.users', 'all_rooms')
-        .orderBy('user.id', 'DESC');
-        return paginate(query, options);
+        const chatroom = await this.chatRepo.findOne(roomId)
+        if (chatroom)
+        {
+            const query = await this.chatRepo.createQueryBuilder('room')
+            .leftJoin('room.users', 'user')
+            .where('room.id = :roomId', { roomId })
+            .leftJoinAndSelect('room.users', 'all_rooms')
+            .orderBy('user.id', 'DESC');
+            return paginate(query, options);
+        }
+        else
+        throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     }
 
     async addUserToRoom(roomid: number, user: User)
