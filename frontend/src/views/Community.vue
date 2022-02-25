@@ -1,6 +1,6 @@
 <template>
-    <v-container  fluid class="fill-height">
-    <v-row  align=center justify="center">
+    <v-container fluid class="fill-height">
+    <v-row class="fill-height" align="center" justify="center">
       <Channel :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
       <Chat/>
       <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
