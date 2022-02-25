@@ -32,6 +32,10 @@ export class UserController {
     private chatService: ChatService,
   ) {}
 
+    //getadmin 
+    ///post admin in chatroom
+    // password in chatroom
+
   @Get('/chatroom')
   getRoomsMe(@Request() req)
   {
@@ -46,6 +50,11 @@ export class UserController {
     return this.chatService.createRoom(room, user);
   }
 
+  @Get('chatroom/all')
+  async getAllChatRooms()
+  {
+    return this.chatService.getAllRooms();
+  }
   @Get(':id/chatroom')
   getUsersRoom(@Param('id', ParseIntPipe) id: number)
   {
@@ -56,7 +65,27 @@ export class UserController {
   async addUserToRoom(@Param('id', ParseIntPipe) id: number, @Body() user: User)
   {
     const foundUser = await this.userService.getUserById(user.id);
+    //should check if user already in room
     return this.chatService.addUserToRoom(id, foundUser);
+  }
+
+  @Put(':id/chatroom')
+  async updateChatRoom(@Param('id', ParseIntPipe) id: number, @Body() room: ChatRoom)
+  {
+    return this.chatService.updateRoom(id, room);
+  }
+
+  @Delete(':id/:userid/chatroom')
+  async removeUserFromRoom(@Param('id', ParseIntPipe) id: number, @Param('userid', ParseIntPipe) userid: number)
+  {
+      const user = await this.userService.getUserById(userid);
+      return this.chatService.removeUserFromRoom(user, id);
+  }
+
+  @Delete(':id/chatroom')
+  async deleteRoom(@Param('id', ParseIntPipe) id: number)
+  {
+    return this.chatService.deleteRoom(id);
   }
 
   @Post('me/community')

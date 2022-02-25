@@ -9,8 +9,11 @@ export class ChatRoom{
     @Column()
     name: string;
 
+    @Column('int', {array: true, default: []})
+    public adminId: number[];
+
     @Column()
-    adminId: number;
+    ownerId: number;
 
     @ManyToMany(() => User, { cascade: true, onUpdate:'CASCADE' })
     @JoinTable()
