@@ -43,7 +43,6 @@ export class ChatService {
 
     async deleteRoom(id: number)
     {
-        console.log(id);
         const roomid = await this.chatRepo.findOne(id);
         if (roomid)
         {
@@ -53,15 +52,19 @@ export class ChatService {
             throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     }
 
-    async removeUserFromRoom(user: User, roomId: number)
+    async removeUserFromRoom(user: User, roomId: number, adminId: number)
     {
         const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
+        var index = room.adminId.indexOf(adminId);
+        if (index == -1)
+            throw new HttpException('User isnt admin in room', HttpStatus.UNAUTHORIZED);
         if (room)
         {
             var index = room.users.map(user => user.id).indexOf(user.id);
-            console.log(index);
             if (index !== -1)
                 room.users.splice(index, 1);
+            else
+                throw new HttpException('User not in room', HttpStatus.NOT_FOUND);
             await this.chatRepo.save(room);
         }
         else
@@ -71,7 +74,6 @@ export class ChatService {
     async updateRoom(id: number, room: ChatRoom)
     {
         const updatedRoom = await this.chatRepo.findOne(id);
-        console.log(room.adminId);
         const newRoom = {
             id: room.id,
             ... room
@@ -97,7 +99,6 @@ export class ChatService {
         .leftJoinAndSelect('room.users', 'all_users')
         .orderBy('room.id', 'DESC');
         const result = await paginate(query, options);
-        console.log(result);
         return paginate(query, options);
     }
 
