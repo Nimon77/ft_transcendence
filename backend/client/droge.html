@@ -31,14 +31,14 @@
         margin: 0 10px;
       }
 
-      .sent {
+      .me {
         flex-direction: row-reverse;
       }
 
-      .sent p {
+      .me p {
         background: rgba(250, 128, 114, 0.2);
       }
-      .received p {
+      .other p {
         background: rgba(255, 255, 255, 0.1);
       }
 
@@ -83,6 +83,25 @@
       <form><input type="text" placeholder="Chat message" /></form>
     </section>
     <script>
+      const socket = io('http://localhost:3000/chat', {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              Authorization:
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDUzMiIsImlhdCI6MTY0NTYzOTE5MCwiZXhwIjoxNjQ2MjQzOTkwfQ.aDdClSdXn8D-rmHwWkKiBsRh3rYYD8SIxEh3Wix5u-U', //'Bearer h93t4293t49jt34j9rferek...'
+            },
+          },
+        },
+      });
+
+      socket.on('connect', function () {
+        console.log('Connected');
+      });
+
+      socket.on('disconnect', function () {
+        console.log('Disconnected');
+      });
+
       const create = (tag, msg) => {
         const div = document.createElement('div');
         div.className = `message ${tag}`;
@@ -93,31 +112,17 @@
         main.insertBefore(div, main.firstChild);
       };
 
-      const socket = io('http://localhost:3000/chat', {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization: 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDUzMiIsImlhdCI6MTY0NTYzOTE5MCwiZXhwIjoxNjQ2MjQzOTkwfQ.aDdClSdXn8D-rmHwWkKiBsRh3rYYD8SIxEh3Wix5u-U', //'Bearer h93t4293t49jt34j9rferek...'
-            },
-          },
-        },
-      });
-      socket.on('connect', function () {
-        console.log('Connected');
-      });
+      let me;
 
-      socket.on('disconnect', function () {
-        console.log('Disconnected');
-      });
+      socket.on('info', (data) => (me = data.user));
+      socket.on('send', (data) =>
+        create(data.user.id == me.id ? 'me' : 'other', data.value),
+      );
 
       const input = document.querySelector('input');
       const send = () => {
         if (input.value.length == 0) return;
-        create('message', input.value);
-        socket.send({
-          event: 'message',
-          data: input.value,
-        });
+        socket.emit('send', input.value);
         input.value = '';
       };
 
