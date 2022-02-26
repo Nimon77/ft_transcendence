@@ -1,4 +1,9 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Socket, Server } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
 
@@ -13,23 +18,16 @@ export class ChatGateway {
     private readonly authService: AuthService,
     private readonly userService: UserService,
   ) {}
+  @WebSocketServer()
+  server: Server;
 
-  async handleConnection(client: any) {
+  async handleConnection(client: Socket) {
     if (!client.handshake.headers.authorization) return client.disconnect();
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    if (!payload.sub) return client.disconnect();
-
-    client.user = await this.userService.getUserById(payload.sub);
-  }
-
-  Chatlog = new Array();
-  @SubscribeMessage('message')
-  handleMessage(client: any, data: any) {
-    console.log(client.user);
-    if (this.Chatlog.length > 10) this.Chatlog.shift();
-    this.Chatlog.push(data.data);
-    //console.log(this.Chatlog);
+    const user = await this.userService.getUserById(payload.sub);
+    !user && client.disconnect();
+    client.data.user = user;
   }
 }

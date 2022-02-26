@@ -43,6 +43,7 @@
     "reflect-metadata": "^0.1.13",
     "rimraf": "^3.0.2",
     "rxjs": "^7.5.4",
+    "socket.io": "^4.4.1",
     "swagger-ui-express": "^4.3.0",
     "typeorm": "^0.2.42",
     "webpack": "^5.69.0"
