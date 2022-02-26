@@ -1,4 +1,5 @@
 import {
+  OnGatewayConnection,
   SubscribeMessage,
   WebSocketGateway,
   WebSocketServer,
@@ -13,7 +14,7 @@ import { UserService } from 'src/user/user.service';
   },
   namespace: 'chat',
 })
-export class ChatGateway {
+export class ChatGateway implements OnGatewayConnection {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
@@ -26,8 +27,19 @@ export class ChatGateway {
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    const user = await this.userService.getUserById(payload.sub);
-    !user && client.disconnect();
+    const user =
+      payload.sub && (await this.userService.getUserById(payload.sub));
+    if (!user) return client.disconnect();
+
     client.data.user = user;
+    process.nextTick(() => client.emit('info', { user }));
+  }
+
+  @SubscribeMessage('send')
+  async handleMessage(client: Socket, value: string) {
+    this.server.emit('send', {
+      user: client.data.user,
+      value,
+    });
   }
 }
