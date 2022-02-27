@@ -22,7 +22,7 @@ h1 {
   margin-bottom: 50px;
 }
 
-.channel {
+#channel {
   width: 15vw;
 
   display: flex;
@@ -42,11 +42,12 @@ button {
   font-size: large;
 }
 
-button:active {
-  background-color: gray;
+button:active,
+button.active {
+  background: rgba(250, 128, 114, 0.2);
 }
 
-.chat {
+#chat {
   width: 70vw;
 
   border: solid rgb(250, 128, 114);
@@ -66,29 +67,29 @@ main {
   flex-direction: column-reverse;
 }
 
-.chat div {
+#chat div {
   display: flex;
   flex-direction: column;
 
   color: white;
 
-  margin: 0 20px;
+  margin: 5px 20px;
 }
 
-.chat .me {
+#chat .me {
   flex-direction: row-reverse;
 }
 
-.chat .me .author {
+#chat .me .author {
   display: none;
 }
 
-.chat .author {
+#chat .author {
   margin: 10px 0;
   font-size: x-large;
 }
 
-.chat .text {
+#chat .text {
   margin: 0 20px;
   margin-right: auto;
   padding: 10px 20px;
@@ -100,7 +101,7 @@ main {
   background: rgba(255, 255, 255, 0.1);
 }
 
-.chat .me .text {
+#chat .me .text {
   background: rgba(250, 128, 114, 0.2);
   margin-right: 0;
 }
@@ -126,11 +127,11 @@ input::placeholder {
   font-family: Verdana, Geneva, Tahoma, sans-serif;
 }
 
-.player {
+#user {
   width: 15vw;
 }
 
-.player div {
+#user div {
   border-top: 1px solid;
 
   color: white;
