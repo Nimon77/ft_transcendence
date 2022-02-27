@@ -7,6 +7,7 @@ import {
 import { Socket, Server } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
+import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
@@ -18,6 +19,7 @@ export class ChatGateway implements OnGatewayConnection {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly chatService: ChatService,
   ) {}
   @WebSocketServer()
   server: Server;
@@ -32,14 +34,33 @@ export class ChatGateway implements OnGatewayConnection {
     if (!user) return client.disconnect();
 
     client.data.user = user;
-    process.nextTick(() => client.emit('info', { user }));
+    process.nextTick(async () =>
+      client.emit('info', {
+        user,
+        channels: await this.chatService.getRoomsForUser(user.id, {
+          page: 1,
+          limit: 10,
+        }),
+      }),
+    );
   }
 
-  @SubscribeMessage('send')
-  async handleMessage(client: Socket, value: string) {
-    this.server.emit('send', {
-      user: client.data.user,
-      value,
+  @SubscribeMessage('channel')
+  async joinChannel(client: Socket, id: number) {
+    const channels = await this.chatService.getUsersForRoom(id, {
+      page: 1,
+      limit: 10,
+    });
+    client.emit('channel', channels.items[0]);
+  }
+
+  @SubscribeMessage('text')
+  async handleMessage(client: Socket, data: object) {
+    const user = client.data.user;
+
+    this.server.emit('text', {
+      user: { id: user.id, username: user.username },
+      ...data,
     });
   }
 }
