@@ -1,69 +1,142 @@
 body {
-    margin: 0;
-    background-color: #121212;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }
+  margin: 0;
 
-  section {
-    height: 100vh;
-    width: calc(100vh * 9 / 16);
-    border: solid rgb(250, 128, 114);
-    border-top: 0;
-    border-bottom: 0;
-    margin: 0 auto;
-    display: flex;
-    flex-direction: column;
-  }
+  background-color: #121212;
 
-  main {
-    flex-grow: 1;
-    overflow: hidden;
-    display: flex;
-    flex-direction: column-reverse;
-  }
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
 
-  .message {
-    display: flex;
-    color: white;
-    margin: 0 10px;
-  }
+section {
+  height: 100vh;
 
-  .me {
-    flex-direction: row-reverse;
-  }
+  display: flex;
+  flex-direction: row;
+}
 
-  .me p {
-    background: rgba(250, 128, 114, 0.2);
-  }
-  .other p {
-    background: rgba(255, 255, 255, 0.1);
-  }
+h1 {
+  font-size: xx-large;
+  color: rgb(250, 128, 114);
+  width: 100%;
+  text-align: center;
+  margin: 0;
+  margin-bottom: 50px;
+}
 
-  p {
-    margin-bottom: 0;
-    padding: 10px 20px;
-    border-radius: 40px;
-    font-size: x-large;
-    word-break: break-all;
-  }
+.channel {
+  width: 15vw;
 
-  form {
-    background: rgba(255, 255, 255, 0.1);
-    display: flex;
-    padding: 10px 20px;
-    margin: 20px;
-    border-radius: 40px;
-  }
+  display: flex;
+  flex-direction: column;
+}
 
-  input {
-    flex-grow: 1;
-    background: transparent;
-    color: white;
-    border: none;
-    outline: none;
-    font-size: x-large;
-  }
-  input::placeholder {
-    font-size: x-large;
-    font-family: Verdana, Geneva, Tahoma, sans-serif;
-  }
+button {
+  border: none;
+  border-top: 1px solid;
+
+  color: white;
+  background-color: inherit;
+
+  padding: 20px 0;
+
+  cursor: pointer;
+  font-size: large;
+}
+
+button:active {
+  background-color: gray;
+}
+
+.chat {
+  width: 70vw;
+
+  border: solid rgb(250, 128, 114);
+  border-top: 0;
+  border-bottom: 0;
+
+  display: flex;
+  flex-direction: column;
+}
+
+main {
+  flex-grow: 1;
+
+  overflow-y: scroll;
+
+  display: flex;
+  flex-direction: column-reverse;
+}
+
+.chat div {
+  display: flex;
+  flex-direction: column;
+
+  color: white;
+
+  margin: 0 20px;
+}
+
+.chat .me {
+  flex-direction: row-reverse;
+}
+
+.chat .me .author {
+  display: none;
+}
+
+.chat .author {
+  margin: 10px 0;
+  font-size: x-large;
+}
+
+.chat .text {
+  margin: 0 20px;
+  margin-right: auto;
+  padding: 10px 20px;
+  border-radius: 40px;
+
+  font-size: x-large;
+  word-break: break-all;
+
+  background: rgba(255, 255, 255, 0.1);
+}
+
+.chat .me .text {
+  background: rgba(250, 128, 114, 0.2);
+  margin-right: 0;
+}
+
+form {
+  background: rgba(255, 255, 255, 0.1);
+  display: flex;
+  padding: 10px 20px;
+  margin: 20px;
+  border-radius: 40px;
+}
+
+input {
+  flex-grow: 1;
+  background: transparent;
+  color: white;
+  border: none;
+  outline: none;
+  font-size: x-large;
+}
+input::placeholder {
+  font-size: x-large;
+  font-family: Verdana, Geneva, Tahoma, sans-serif;
+}
+
+.player {
+  width: 15vw;
+}
+
+.player div {
+  border-top: 1px solid;
+
+  color: white;
+
+  padding: 20px 0;
+
+  text-align: center;
+  font-size: large;
+}

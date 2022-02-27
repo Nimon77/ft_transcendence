@@ -1,40 +1,48 @@
+<!DOCTYPE html>
 <html>
   <head>
     <meta charset="utf-8" />
     <title>RealTime Chat</title>
     <link rel="stylesheet" href="style.css" />
     <script
-      src="https://cdn.socket.io/4.3.2/socket.io.min.js"
-      integrity="sha384-KAZ4DtjNhLChOB/hxXuKqhMLYvx3b5MlT55xPEiNmREKRzeEm+RVPlTnAn0ajQNs"
+      src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+      integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
       crossorigin="anonymous"
     ></script>
+    <script src="socket.js"></script>
+    <script src="event.js"></script>
   </head>
   <body>
     <section>
-      <main></main>
-      <form><input type="text" placeholder="Chat message" /></form>
+      <div class="channel">
+        <h1>Channels</h1>
+        <button>Public 1</button>
+        <button>Public 2</button>
+      </div>
+      <div class="chat">
+        <main>
+          <div>
+            <div class="author">Other</div>
+            <div class="text">tu m'entends pas ?</div>
+          </div>
+          <div class="me">
+            <div class="author">Me</div>
+            <div class="text">coucou cest moi</div>
+          </div>
+        </main>
+        <form><input type="text" placeholder="Chat message" /></form>
+      </div>
+      <div class="player">
+        <h1>Players</h1>
+        <div>me</div>
+        <div>other</div>
+      </div>
     </section>
     <script>
-      const socket = io('http://localhost:3000/chat', {
-        transportOptions: {
-          polling: {
-            extraHeaders: {
-              Authorization:
-                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NTkwNDc2NiwiZXhwIjoxNjQ2NTA5NTY2fQ.iEHf1zmBbNkKJO0sGhnISL3L7cVIfcx9nrc3jb1GLcw', //'Bearer h93t4293t49jt34j9rferek...'
-            },
-          },
-        },
-      });
-
-      socket.on('connect', function () {
-        console.log('Connected');
-      });
-
-      socket.on('disconnect', function () {
-        console.log('Disconnected');
-      });
-
+      socket(
+        'http://localhost:3000/chat',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NTk3OTM3NSwiZXhwIjoxNjQ2NTg0MTc1fQ.JfGBuUVgTM_zOtlCfV55nuX3IgA3H_n4bFm5stVB2kA',
+      );
     </script>
-    <script type="text/javascript" src="main.js"></script>
   </body>
 </html>
