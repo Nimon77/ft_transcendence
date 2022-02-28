@@ -49,6 +49,8 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import io from "socket.io-client";
+
 
 const chatMsg = [
     { sender: 'Billy', msg: 'yo les copains sa va ?' },
@@ -64,8 +66,28 @@ export default Vue.extend({
     name: 'Chat',
     data() {
         return {
+            socket: {},
             chatMsg,
         }
+    },
+    created() {
+        this.socket = io("http://127.0.0.1:3000/chat", {
+            transportOptions: {
+            polling: { extraHeaders: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDUzMiIsImlhdCI6MTY0NjA1ODI3MCwiZXhwIjoxNjQ2NjYzMDcwfQ.ocrm7sytMMTAOSUGBt_ku6vpI9AoXbF2nmCn27Uq6Kc` } },
+            },
+        });
+    },
+    mounted() {
+        this.socket.on("info", data => {
+            console.log(data);
+        });
+        /*this.socket.emit('text', {
+            id: 1,
+            value: "hey",
+        });*/
+        this.socket.on("text", data => {
+            console.log(data);
+        });
     }
 })
 </script>
