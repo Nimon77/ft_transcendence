@@ -10,6 +10,7 @@
   "dependencies": {
     "axios": "^0.26.0",
     "core-js": "^3.6.5",
+    "socket.io-client": "^4.4.1",
     "vue": "^2.6.11",
     "vue-advanced-cropper": "^1.10.1",
     "vue-auth-image": "^0.0.3",
@@ -17,6 +18,7 @@
     "vue-class-component": "^7.2.3",
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
+    "vue-socket.io-extended": "^4.2.0",
     "vuetify": "^2.4.0"
   },
   "devDependencies": {
