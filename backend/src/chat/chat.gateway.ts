@@ -1,6 +1,13 @@
-import { SubscribeMessage, WebSocketGateway } from '@nestjs/websockets';
+import {
+  OnGatewayConnection,
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Socket, Server } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
+import { ChatService } from './chat.service';
 
 @WebSocketGateway({
   cors: {
@@ -8,28 +15,52 @@ import { UserService } from 'src/user/user.service';
   },
   namespace: 'chat',
 })
-export class ChatGateway {
+export class ChatGateway implements OnGatewayConnection {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly chatService: ChatService,
   ) {}
+  @WebSocketServer()
+  server: Server;
 
-  async handleConnection(client: any) {
+  async handleConnection(client: Socket) {
     if (!client.handshake.headers.authorization) return client.disconnect();
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    if (!payload.sub) return client.disconnect();
+    const user =
+      payload.sub && (await this.userService.getUserById(payload.sub));
+    if (!user) return client.disconnect();
 
-    client.user = await this.userService.getUserById(payload.sub);
+    client.data.user = user;
+    process.nextTick(async () =>
+      client.emit('info', {
+        user,
+        channels: await this.chatService.getRoomsForUser(user.id, {
+          page: 1,
+          limit: 10,
+        }),
+      }),
+    );
   }
 
-  Chatlog = new Array();
-  @SubscribeMessage('message')
-  handleMessage(client: any, data: any) {
-    console.log(client.user);
-    if (this.Chatlog.length > 10) this.Chatlog.shift();
-    this.Chatlog.push(data.data);
-    //console.log(this.Chatlog);
+  @SubscribeMessage('channel')
+  async joinChannel(client: Socket, id: number) {
+    const channels = await this.chatService.getUsersForRoom(id, {
+      page: 1,
+      limit: 10,
+    });
+    client.emit('channel', channels.items[0]);
+  }
+
+  @SubscribeMessage('text')
+  async handleMessage(client: Socket, data: object) {
+    const user = client.data.user;
+
+    this.server.emit('text', {
+      user: { id: user.id, username: user.username },
+      ...data,
+    });
   }
 }
