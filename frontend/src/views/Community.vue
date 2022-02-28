@@ -2,7 +2,7 @@
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="center" justify="center">
       <Channel :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
-      <Chat/>
+      <Chat :socket="socket"/>
       <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
     </v-row>
   </v-container>
@@ -10,6 +10,7 @@
 
 <script lang="ts">
 import Vue from 'vue';
+import io from "socket.io-client";
 
 import Chat from '@/components/community/Chat.vue'
 import Channel from '@/components/community/Channel.vue'
@@ -25,6 +26,7 @@ export default Vue.extend({
       return {
         idCR: 0,
         newCR: false,
+        socket: {},
         user: [],
         userCR: [],
         playersCR: [],
@@ -39,7 +41,7 @@ export default Vue.extend({
 
         while(i < this.userCR.items.length && this.userCR.items[i].id != this.idCR)
           i++;
-        
+
         if (this.userCR.items[i].id == this.idCR)
           return ( this.playersCR = this.userCR.items[i].users );
         return (this.playersCR);
@@ -48,11 +50,11 @@ export default Vue.extend({
       async fetchInfos() {
         await this.$http.get('/user/me').then((resp) => {
           this.user = resp.data;
-          console.log("GET USER IN COMMUNITY ", this.user);
+          // console.log("GET USER IN COMMUNITY ", this.user);
         })
         await this.$http.get('/user/chatroom').then((resp) => {
           this.userCR = resp.data;
-          console.log("GET userCR IN COMMUNITY", this.userCR)
+          // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
         if (this.$route.params.idCR)
           this.idCR = this.$route.params.idCR;
@@ -63,8 +65,25 @@ export default Vue.extend({
     created() {
       this.$watch(() => this.newCR, () => {this.fetchInfos()},{ immediate: true })
       this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
+      this.socket = io("http://127.0.0.1:3000/chat", {
+          transportOptions: {
+          // polling: { extraHeaders: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjM5MSIsImlhdCI6MTY0NjA2MjY5MSwiZXhwIjoxNjQ2NjY3NDkxfQ.SY_SzgfGk6mbGzOG071EhwmFm-a_D18cL3pr8g-XvIU` } },
+          polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+          },
+      });
     },
-
+    mounted() {
+        this.socket.on("info", data => {
+            console.log("INFO ", data);
+        });
+        /*this.socket.emit('text', {
+            id: 1,
+            value: "hey",
+        });*/
+        // this.socket.on("text", data => {
+        //     console.log(data);
+        // });
+    }
 })
 </script>
 
