@@ -33,8 +33,8 @@
       <v-card-actions>
         <v-sheet color="green" height="50" dark width="100%" class="text-center">
             <v-app-bar bottom color="rgba(0,0,0,0)" flat>
-                <v-text-field class="mt-5" append-outer-icon="mdi-send"
-                filled clear-icon="mdi-close-circle" label="Message" type="text"
+                <v-text-field class="mt-5" v-model="input" append-outer-icon="mdi-send"
+                filled label="Message" type="text" v-on:click:append-outer="sendMsg" v-on:keyup.enter="sendMsg"
                 ></v-text-field>
             </v-app-bar>
         </v-sheet>
@@ -47,76 +47,44 @@
 
 <script lang="ts">
 import Vue from 'vue';
+// import io from "socket.io-client";
+
 
 const chatMsg = [
-    { sender: 'Billy', msg: 'yo les copains sa va ?' },
-    { sender: 'Zidane', msg: 'youyou sa va é toi ??' },
-    { sender: 'Macron', msg: 'C4EST NOTRE PROJEEET' },
-    { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
-    { sender: 'MOI', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
-    { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
+    // { sender: 'Billy', msg: 'yo les copains sa va ?' },
+    // { sender: 'Zidane', msg: 'youyou sa va é toi ??' },
+    // { sender: 'Macron', msg: 'C4EST NOTRE PROJEEET' },
+    // { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
+    // { sender: 'MOI', msg: 'oh pas de spam stp' },
+    // { sender: 'CHEVRE', msg: 'oh pas de spam stp' },
 ]
 
 
 export default Vue.extend({
     name: 'Chat',
+    props: {
+        socket: {},
+    },
     data() {
         return {
+            input: '',
             chatMsg,
-            heightCard: 800,
         }
     },
     methods: {
-        // getHeight() {
-        //     if (document.getElementById("card").offsetHeight != null)
-        //     this.heightCard = document.getElementById("card").offsetHeight;
-        //     console.log('HEIGHT', document.getElementById("card").offsetHeight);
-        // },
+        sendMsg() {
+            if (this.input != '')
+                console.log(this.input);
+            let msg = [
+                { sender: 'MOI', msg: "BONJOUR" },
+            ]
+            this.chatMsg.push(msg)
+            this.input = '';
+        },
     },
-    // created() {
-    //     this.getHeight();
-    // }
+    created() {
+      this.$watch(() => this.chatMsg, () => {return ;},{ immediate: true })
+    },
 })
 </script>
 
