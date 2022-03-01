@@ -14,9 +14,9 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { User } from 'src/database/user.entity';
 import PhotoService from 'src/photo/photo.service';
 import { Readable } from 'stream';
+import { User } from '../user.entity';
 import { UserService } from '../user.service';
 
 @Controller('user')
