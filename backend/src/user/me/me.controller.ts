@@ -49,6 +49,7 @@ export class MeController {
 
   @Put('/me')
   updateUser(@Request() req, @Body() user: User) {
+    user.id = req.user.userId;
     this.userService.updateUser(req.user.userId, user);
   }
 
@@ -60,10 +61,10 @@ export class MeController {
   @Put('me/avatar')
   @UseInterceptors(FileInterceptor('file'))
   async updateAvatar(
-    @Param('id') id: number,
+    @Request() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.addAvatar(id, file.buffer, file.originalname);
+    return this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
   }
 
   @Post('/me/follow')
