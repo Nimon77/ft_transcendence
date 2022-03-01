@@ -1,10 +1,9 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from './user.entity';
+import { User } from 'src/user/user.entity';
 import { Photo } from 'src/photo/photo.entity';
 import { ChatRoom } from 'src/chat/chat.entity';
-import PhotoService from 'src/photo/photo.service';
 
 @Module({
     imports: [
