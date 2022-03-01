@@ -15,7 +15,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { User } from 'src/user/user.entity';
-import PhotoService from 'src/photo/photo.service';
+import AvatarService from 'src/user/avatar/avatar.service';
 import { Readable } from 'stream';
 import { UserService } from '../user.service';
 
@@ -23,7 +23,7 @@ import { UserService } from '../user.service';
 export class MeController {
   constructor(
     private readonly userService: UserService,
-    private readonly photoService: PhotoService,
+    private readonly avatarService: AvatarService,
   ) {}
 
   @Get('/me')
@@ -37,11 +37,11 @@ export class MeController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(req.user.userId);
-    const photo = await this.photoService.getPhotoById(user.avatarId);
-    const stream = Readable.from(photo.data);
+    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
-      'Content-Disposition': `inline; filename="${photo.filename}"`,
+      'Content-Disposition': `inline; filename="${avatar.filename}"`,
       'Content-Type': 'image',
     });
     return new StreamableFile(stream);
@@ -64,7 +64,11 @@ export class MeController {
     @Request() req,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.addAvatar(req.user.userId, file.buffer, file.originalname);
+    return this.userService.setAvatar(
+      req.user.userId,
+      file.originalname,
+      file.buffer,
+    );
   }
 
   @Post('/me/follow')

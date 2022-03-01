@@ -2,7 +2,7 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from 'src/user/user.entity';
-import { Photo } from 'src/photo/photo.entity';
+import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/chat.entity';
 
 @Module({
@@ -16,7 +16,7 @@ import { ChatRoom } from 'src/chat/chat.entity';
             username: configService.get('POSTGRES_USER'),
             password: configService.get('POSTGRES_PASSWORD'),
             database: configService.get('POSTGRES_DB'),
-            entities: [User, Photo, ChatRoom],
+            entities: [User, Avatar, ChatRoom],
             synchronize: true,//false for production, else destroy/recreate data in the db
           })
         }),

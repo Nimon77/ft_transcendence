@@ -1,5 +1,5 @@
 import { Column,PrimaryColumn, Entity, JoinColumn, PrimaryGeneratedColumn, OneToOne, ManyToMany } from 'typeorm';
-import { Photo } from 'src/photo/photo.entity';
+import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/chat.entity';
  
 @Entity()
@@ -33,13 +33,13 @@ export class User {
 
   @JoinColumn({ name: 'avatarId'})
   @OneToOne(
-    () => Photo,
+    () => Avatar,
     {
       nullable: true
     }
   )
 
-  public avatar?: Photo;
+  public avatar?: Avatar;
   @Column({ nullable: true })
   public avatarId: number;
 }
