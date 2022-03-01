@@ -3,7 +3,7 @@ import { ChatRoomI } from './chat.interface';
 import { ChatRoom } from './chat.entity';
 import { Connection, ConnectionManager, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/database/user.entity';
+import { User } from 'src/user/user.entity';
 import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
 import { array } from 'joi';
 import { use } from 'passport';
