@@ -70,10 +70,11 @@ export class IdController {
   }
   @Put(':id/avatar')
   @UseInterceptors(FileInterceptor('file'))
-  setAvatar(
+  async setAvatar(
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    this.userService.setAvatar(id, file.originalname, file.buffer);
+    const user = await this.userService.getUserById(id);
+    this.userService.setAvatar(user, file.originalname, file.buffer);
   }
 }
