@@ -43,7 +43,7 @@
       </v-form>
       <v-divider class="mt-1"></v-divider>
   
-      <v-list-item-group  v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
+      <v-list  v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
         <div v-for="CR in userCR.items" :key="CR.id">
         <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
@@ -54,7 +54,7 @@
         </v-list-item>
         <v-divider></v-divider>
         </div>
-      </v-list-item-group>
+      </v-list>
 
       <v-list v-if="searchCR!=''" > <!-- Si je cherche un CR -->
         <div>
@@ -142,11 +142,12 @@ export default Vue.extend({
     methods: {
       async leaveRoom(idCR) {
         console.log("IN CHAN LEAVE ROOM");
-        await this.$http.post('/chatroom/' + idCR, {id: this.user.id,}).then((resp) => console.log(resp))
+        await this.$http.post('/channel/' + idCR, {id: this.user.id,}).then((resp) => console.log(resp))
         this.$emit('newCR');
       },
       async newChannel() {
-        await this.$http.post('/user/chatroom', {name: this.name,}).then((resp) => console.log(resp))
+        // console.log('USER ID IN CHANNEL', this.user.id);
+        await this.$http.post('/channel', {name: this.name, id: this.user.id}).then((resp) => console.log(resp))
         this.dialog = false;
         this.$emit('newCR');
       }

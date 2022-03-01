@@ -8,20 +8,18 @@
         
         <!-- <v-card elevation="2" class="pt-3 mt-3" color="white" width="100%" height="100%"> -->
             <v-list max-height="70vh" class="mt-3 d-flex flex-column">
-                <div v-for="cM in chatMsg" :key="cM.sender">
+                <div v-for="(cM, index) in chatMsg" :key="index">
                     <v-card v-if="cM.sender != 'MOI'" flat tile width="100%" color="white" >
-                        <v-card-text>
-                            {{cM.sender}}
-                            <div> {{cM.msg}} </div>
-                        </v-card-text>
+                        <!-- <v-card-text class="align-center"> -->
+                            <div class="font-weight-bold ml-4"> {{cM.sender}} </div>
+                            <div class=" ml-4"> {{cM.msg}} </div>
+                        <!-- </v-card-text> -->
                     </v-card >                
-                    <v-card v-if="cM.sender == 'MOI'" flat tile width="100%" color="blue" dark style="justify: right">
-                        <v-card-text class="text-right">
-                            {{cM.sender}}
-                            <div> {{cM.msg}} </div>
-                        </v-card-text>
+                    <v-card v-if="cM.sender == 'MOI'" class="text-right" flat tile width="100%" color="blue" dark style="justify: right">
+                            <div class="font-weight-bold mr-4 mt-1"> {{cM.sender}} </div>
+                            <div class="mr-4 mb-1"> {{cM.msg}} </div>
                     </v-card >
-                <v-divider class="mt-1"></v-divider>
+                <v-divider ></v-divider>
                 </div>
             </v-list>
         <!-- </v-card> -->
@@ -31,7 +29,7 @@
     <!-- <v-row> -->
         <!-- <v-col cols="12"> -->
       <v-card-actions>
-        <v-sheet color="green" height="50" dark width="100%" class="text-center">
+        <v-sheet color="grey" height="50" dark width="100%" class="text-center">
             <v-app-bar bottom color="rgba(0,0,0,0)" flat>
                 <v-text-field class="mt-5" v-model="input" append-outer-icon="mdi-send"
                 filled label="Message" type="text" v-on:click:append-outer="sendMsg" v-on:keyup.enter="sendMsg"
@@ -51,7 +49,7 @@ import Vue from 'vue';
 
 
 const chatMsg = [
-    // { sender: 'Billy', msg: 'yo les copains sa va ?' },
+    { sender: 'Billy', msg: 'yo les copains sa va ?' },
     // { sender: 'Zidane', msg: 'youyou sa va é toi ??' },
     // { sender: 'Macron', msg: 'C4EST NOTRE PROJEEET' },
     // { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
@@ -64,6 +62,7 @@ export default Vue.extend({
     name: 'Chat',
     props: {
         socket: {},
+        user: [],
     },
     data() {
         return {
@@ -75,16 +74,25 @@ export default Vue.extend({
         sendMsg() {
             if (this.input != '')
                 console.log(this.input);
-            let msg = [
-                { sender: 'MOI', msg: "BONJOUR" },
-            ]
+            else
+                return;
+            let msg = { sender: 'MOI', msg: this.input }
+
             this.chatMsg.push(msg)
+
+            this.socket.emit('text', {
+                id: this.user.id,
+                value: this.input,
+            });
+            this.socket.on("text", data => {
+                console.log(data);
+            });
             this.input = '';
         },
     },
-    created() {
-      this.$watch(() => this.chatMsg, () => {return ;},{ immediate: true })
-    },
+    // created() {
+    //   this.$watch(() => this.chatMsg, () => {return ;},{ immediate: true })
+    // },
 })
 </script>
 

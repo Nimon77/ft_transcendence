@@ -2,7 +2,7 @@
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="center" justify="center">
       <Channel :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
-      <Chat :socket="socket"/>
+      <Chat :socket="socket" :user="user"/>
       <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
     </v-row>
   </v-container>
@@ -52,7 +52,7 @@ export default Vue.extend({
           this.user = resp.data;
           // console.log("GET USER IN COMMUNITY ", this.user);
         })
-        await this.$http.get('/user/chatroom').then((resp) => {
+        await this.$http.get('/channel/me').then((resp) => {
           this.userCR = resp.data;
           // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
@@ -71,18 +71,14 @@ export default Vue.extend({
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
           },
       });
+      console.log('CREATED');
     },
     mounted() {
         this.socket.on("info", data => {
             console.log("INFO ", data);
+        console.log('MOUNTED');
         });
-        /*this.socket.emit('text', {
-            id: 1,
-            value: "hey",
-        });*/
-        // this.socket.on("text", data => {
-        //     console.log(data);
-        // });
+
     }
 })
 </script>
