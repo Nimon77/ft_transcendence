@@ -3,6 +3,7 @@ import {
   Controller,
   Delete,
   Get,
+  NotFoundException,
   Param,
   Post,
   Put,
@@ -37,7 +38,9 @@ export class MeController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(req.user.userId);
-    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    const avatar = await this.avatarService.getAvatar(user.avatarId);
+    if (!avatar) throw new NotFoundException('Avatar not found');
+
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({

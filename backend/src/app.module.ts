@@ -1,14 +1,11 @@
 import { Module } from '@nestjs/common';
 import { ConfigModule } from '@nestjs/config';
 import { DatabaseModule } from './database/database.module';
-import { AvatarModule } from './user/avatar/avatar.module';
 import { UserModule } from './user/user.module';
 import * as Joi from 'joi';
-import { AuthModule } from './auth/auth.module';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PongModule } from './pong/pong.module';
-import { ChatModule } from './chat/chat.module';
 
 @Module({
   imports: [
