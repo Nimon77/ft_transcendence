@@ -11,10 +11,12 @@ import {
 } from '@nestjs/common';
 import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
+import { UserService } from 'src/user/user.service';
 
 @Controller('channel')
 export class IdController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly chatService: ChatService,
+    private readonly userService: UserService) {}
 
   @Get('/')
   async getAllChannels(): Promise<ChatRoom[]> {
@@ -23,7 +25,8 @@ export class IdController {
 
   @Post('/')
   async createChannel(@Request() req, @Body() channel: any): Promise<ChatRoom> {
-    return await this.chatService.createRoom(channel, req.user);
+    const user = await this.userService.getUserById(req.user.userId);
+    return await this.chatService.createRoom(channel, user);
   }
 
   @Put('/:id')
