@@ -42,7 +42,7 @@ export class IdController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(id);
-    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    const avatar = await this.avatarService.getAvatar(user.avatarId);
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({

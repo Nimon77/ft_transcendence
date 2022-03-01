@@ -1,5 +1,4 @@
 import { Injectable } from '@nestjs/common';
-import { NotFoundException } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Avatar } from './avatar.entity';
@@ -20,10 +19,9 @@ export class AvatarService {
     await this.avatarRepo.save(avatar);
   }
 
-  async getAvatarById(avatarId: number) {
-    const file = await this.avatarRepo.findOne(avatarId);
-    if (file) return file;
-    else throw new NotFoundException('Avatar not found');
+  getAvatar(id: number): Promise<Avatar> {
+    if (id) return this.avatarRepo.findOne(id);
+    return null;
   }
 }
 
