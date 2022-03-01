@@ -1,13 +1,13 @@
-import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm';
+import { Column, Entity, PrimaryColumn } from 'typeorm';
 
 @Entity()
-export class Photo {
-  @PrimaryGeneratedColumn()
+export class Avatar {
+  @PrimaryColumn()
   public id: number;
- 
+
   @Column()
   filename: string;
- 
+
   @Column({
     type: 'bytea',
   })

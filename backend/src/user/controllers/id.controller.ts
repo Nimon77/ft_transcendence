@@ -14,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import PhotoService from 'src/photo/photo.service';
+import AvatarService from 'src/user/avatar/avatar.service';
 import { Readable } from 'stream';
 import { User } from '../user.entity';
 import { UserService } from '../user.service';
@@ -23,7 +23,7 @@ import { UserService } from '../user.service';
 export class IdController {
   constructor(
     private readonly userService: UserService,
-    private readonly photoService: PhotoService,
+    private readonly avatarService: AvatarService,
   ) {}
 
   @Get('/')
@@ -42,11 +42,11 @@ export class IdController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(id);
-    const photo = await this.photoService.getPhotoById(user.avatarId);
-    const stream = Readable.from(photo.data);
+    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
-      'Content-Disposition': `inline; filename="${photo.filename}"`,
+      'Content-Disposition': `inline; filename="${avatar.filename}"`,
       'Content-Type': 'image',
     });
     return new StreamableFile(stream);
@@ -70,10 +70,10 @@ export class IdController {
   }
   @Put(':id/avatar')
   @UseInterceptors(FileInterceptor('file'))
-  async addAvatar(
+  setAvatar(
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    return this.userService.addAvatar(id, file.buffer, file.originalname);
+    this.userService.setAvatar(id, file.originalname, file.buffer);
   }
 }
