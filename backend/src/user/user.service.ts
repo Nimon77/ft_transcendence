@@ -50,8 +50,13 @@ export class UserService {
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
-  setAvatar(id: number, filename: string, avatar: Buffer) {
-    this.avatarService.setAvatar(id, filename, avatar);
+  setAvatar(user: User, filename: string, avatar: Buffer) {
+    this.avatarService.setAvatar(user.id, filename, avatar);
+
+    if (user.avatarId != user.id)
+      this.repo.update(user.id, {
+        avatarId: user.id,
+      });
   }
 
   async updateFollow(user: User, followed_user: User) {
