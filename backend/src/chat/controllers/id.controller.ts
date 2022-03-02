@@ -25,6 +25,12 @@ export class IdController {
     return await this.chatService.getAllRooms();
   }
 
+  @Get('/:id')
+  async getRoom(@Param('id', ParseIntPipe) id: number)
+  {
+    return await this.chatService.getRoomInfo(id);
+  }
+
   @Post('/')
   async createChannel(@Request() req, @Body() channel: any): Promise<ChatRoom> {
     const user = await this.userService.getUserById(req.user.userId);
