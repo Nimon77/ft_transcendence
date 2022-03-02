@@ -85,7 +85,7 @@ export default Vue.extend({
         canvas.toBlob((blob) => {
           const form = new FormData();
           form.append('file', blob);
-          this.$http.post('/user/me/avatar', form).then(() => {
+          this.$http.put('/user/me/avatar', form).then(() => {
             this.$refs.cropper.reset();
           });
         }, this.image.type);

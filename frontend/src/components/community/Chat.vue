@@ -11,8 +11,8 @@
                 <div v-for="(cM, index) in chatMsg" :key="index">
                     <v-card v-if="cM.sender != 'MOI'" flat tile width="100%" color="white" >
                         <!-- <v-card-text class="align-center"> -->
-                            <div class="font-weight-bold ml-4"> {{cM.sender}} </div>
-                            <div class=" ml-4"> {{cM.msg}} </div>
+                            <div class="font-weight-bold mt-2 ml-4"> {{cM.sender}} </div>
+                            <div class=" mb-2 ml-4"> {{cM.msg}} </div>
                         <!-- </v-card-text> -->
                     </v-card >                
                     <v-card v-if="cM.sender == 'MOI'" class="text-right" flat tile width="100%" color="blue" dark style="justify: right">
@@ -49,7 +49,7 @@ import Vue from 'vue';
 
 
 const chatMsg = [
-    { sender: 'Billy', msg: 'yo les copains sa va ?' },
+    // { sender: 'Billy', msg: 'yo les copains sa va ?' },
     // { sender: 'Zidane', msg: 'youyou sa va é toi ??' },
     // { sender: 'Macron', msg: 'C4EST NOTRE PROJEEET' },
     // { sender: 'sangoku', msg: 'KAMEEEEEEEEHAAAAAAAMEEEEEEEEEHAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA' },
@@ -76,23 +76,20 @@ export default Vue.extend({
                 console.log(this.input);
             else
                 return;
-            let msg = { sender: 'MOI', msg: this.input }
-
-            this.chatMsg.push(msg)
 
             this.socket.emit('text', {
                 id: this.user.id,
                 value: this.input,
             });
-            this.socket.on("text", data => {
-                console.log(data);
-            });
             this.input = '';
         },
     },
-    // created() {
-    //   this.$watch(() => this.chatMsg, () => {return ;},{ immediate: true })
-    // },
+    created() {
+        this.socket.on( "text", data => {
+            console.log("TEXT EVENT", data);
+            this.chatMsg.push( { sender: data.id, msg: data.value } );
+        });
+    },
 })
 </script>
 

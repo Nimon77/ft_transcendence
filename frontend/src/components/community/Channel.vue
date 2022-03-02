@@ -57,18 +57,18 @@
       </v-list>
 
       <v-list v-if="searchCR!=''" > <!-- Si je cherche un CR -->
-        <div>
+        <div v-for="cr in CRs" :key="cr.id">
         <v-list-item two-line>
           <v-list-item-content>
-            <v-list-item-title > BONJOUR </v-list-item-title>
+            <v-list-item-title > {{cr.name}} </v-list-item-title>
             <v-list-item-subtitle> public </v-list-item-subtitle>
           </v-list-item-content>
           
-          <!-- <v-btn v-if="!passwordCR" dark color="blue" @click.prevent>
+          <v-btn v-if="!password" dark color="blue" @click.prevent="joinRoom(cr.id)">
             <v-list-item-title class="text-center">JOIN</v-list-item-title>
-          </v-btn> -->
+          </v-btn>
           <!-- v-else -->
-          <v-dialog  v-model="PWdialog" max-width="600px" >
+          <!-- <v-dialog  v-model="PWdialog" max-width="600px" >
           <template v-slot:activator="{ on, attrs }">
             <v-btn  dark color="blue" @click.prevent="PWdialog = !PWdialog">
               <v-list-item-title v-bind="attrs" v-on="on" class="text-center">JOIN</v-list-item-title>
@@ -95,21 +95,21 @@
               <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="PWdialog=!PWdialog"> JOIN </v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog>
+        </v-dialog> -->
         
         </v-list-item>
         </div>
         <v-divider></v-divider>
-        <div>
+        <!-- <div>
         <v-list-item two-line>
           <v-list-item-content>
             <v-list-item-title > OY </v-list-item-title>
             <v-list-item-subtitle> private </v-list-item-subtitle>
           </v-list-item-content>
-          <!-- <OptionChannel @leaveRoom="leaveRoom(CR.id)"/> -->
+          <OptionChannel @leaveRoom="leaveRoom(CR.id)"/>
         </v-list-item>
         </div>
-        <v-divider></v-divider>
+        <v-divider></v-divider> -->
       </v-list>
     
     </v-card>
@@ -127,6 +127,7 @@ export default Vue.extend({
     props: {
       user: [],
       userCR: [],
+      CRs: [],
     },
     data() {
         return {
@@ -140,10 +141,20 @@ export default Vue.extend({
         }
     },
     methods: {
+      async joinRoom(idCR) {
+        console.log('Join ROOM', idCR);
+        await this.$http.put('/channel/' + idCR + '/join/', {userId: this.user.id,}).then((resp) => console.log(resp))
+        // this.$emit('newCR');
+      },
       async leaveRoom(idCR) {
-        console.log("IN CHAN LEAVE ROOM");
-        await this.$http.post('/channel/' + idCR, {id: this.user.id,}).then((resp) => console.log(resp))
-        this.$emit('newCR');
+        console.log("leave ROOM ", idCR);
+        await this.$http.put('/channel/' + idCR + '/leave/' + this.user.id, {id: this.user.id,}).then((resp) => console.log(resp))
+        if (this.$route.path !== '/community/0')
+        {
+          this.$router.push('/community/0');
+        }
+        else
+          location.reload();
       },
       async newChannel() {
         // console.log('USER ID IN CHANNEL', this.user.id);
@@ -161,6 +172,9 @@ export default Vue.extend({
         rules.push(rule2);
         return rules;
       }
+    },
+    mounted() {
+      console.log('CRs :', this.CRs);
     }
 })
 </script>
@@ -170,7 +184,7 @@ html {
   overflow: hidden !important;
 }
 
-.v-list-item-group {
+.v-list {
   display: flex !important;
   flex-direction: column;
   height: 70vh;
