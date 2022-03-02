@@ -15,8 +15,10 @@ import { UserService } from 'src/user/user.service';
 
 @Controller('channel')
 export class IdController {
-  constructor(private readonly chatService: ChatService,
-    private readonly userService: UserService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/')
   async getAllChannels(): Promise<ChatRoom[]> {
