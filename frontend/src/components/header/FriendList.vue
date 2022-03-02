@@ -65,7 +65,7 @@ export default Vue.extend({
       },
       async rmFriend(rmId: number) {
         console.log("rmId = ", rmId);
-        await this.$http.post('/user/me/community', {id: rmId,}).then(response => {
+        await this.$http.post('/user/me/follow', {id: rmId,}).then(response => {
           console.log('POST REQUEST', response);
           });
         location.reload();
