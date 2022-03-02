@@ -1,4 +1,11 @@
-import { Controller, Get, Headers, Request, Res, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Headers,
+  Request,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { FortyTwoAuthGuard } from './guards/42-auth.guard';
@@ -22,7 +29,7 @@ export class AuthController {
   @Public()
   @Get('jwt')
   jwt(@Headers() headers) {
-	  if (!headers.authorization) return false;
+    if (!headers.authorization) return false;
     const token = headers.authorization.split(' ')[1];
     return !!this.authService.verify(token).sub;
   }
