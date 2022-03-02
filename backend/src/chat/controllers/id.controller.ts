@@ -25,22 +25,9 @@ export class IdController {
     return await this.chatService.getAllRooms();
   }
 
-  @Get('/:id')
-  async getRoom(@Param('id', ParseIntPipe) id: number)
-  {
-    return await this.chatService.getRoomInfo(id);
-  }
-
   @Post('/')
   async createChannel(@Request() req, @Body() channel: any): Promise<ChatRoom> {
     const user = await this.userService.getUserById(req.user.userId);
-    return await this.chatService.createRoom(channel, user);
-  }
-
-  @Post('/:id')
-  async createChannelForUser(@Param('id', ParseIntPipe) id: number, @Body() channel: any)
-  {
-    const user = await this.userService.getUserById(id);
     return await this.chatService.createRoom(channel, user);
   }
 
@@ -53,4 +40,20 @@ export class IdController {
   deleteChannel(@Param('id', ParseIntPipe) id: number) {
     this.chatService.deleteRoom(id);
   }
+  // for testing purposes
+
+  @Get('/:id')
+  async getRoom(@Param('id', ParseIntPipe) id: number)
+  {
+    return await this.chatService.getRoomInfo(id);
+  }
+
+  @Post('/:id')
+  async createChannelForUser(@Param('id', ParseIntPipe) id: number, @Body() channel: any)
+  {
+    const user = await this.userService.getUserById(id);
+    return await this.chatService.createRoom(channel, user);
+  }
 }
+
+
