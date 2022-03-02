@@ -26,7 +26,7 @@ export class MeController {
 
   @Put('/:id/join')
   joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    this.chatService.addUserToRoom(id, req.user);
+    this.chatService.addUserToRoom(id, req.user.userId);
   }
 
   @Put('/:id/leave/:userid')

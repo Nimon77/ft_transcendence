@@ -3,7 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  NotFoundException,
   Param,
   Post,
   Put,
@@ -38,9 +37,9 @@ export class MeController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(req.user.userId);
-    const avatar = await this.avatarService.getAvatar(user.avatarId);
-    if (!avatar) throw new NotFoundException('Avatar not found');
-
+    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    if (!avatar)
+      return null;
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
@@ -66,9 +65,13 @@ export class MeController {
   async updateAvatar(
     @Request() req,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-    const user = await this.userService.getUserById(req.user.userId);
-    this.userService.setAvatar(user, file.originalname, file.buffer);
+  ) 
+  {
+    return this.userService.setAvatar(
+      req.user.userId,
+      file.originalname,
+      file.buffer,
+    );
   }
 
   @Post('/me/follow')

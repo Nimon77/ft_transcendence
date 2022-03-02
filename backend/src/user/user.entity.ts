@@ -19,6 +19,9 @@ export class User {
   @Column({default: false})
   public onlineStatus: boolean;
 
+  @Column({default: ""})
+  public otp: string;
+
   @Column('int', {array: true, default: []})
   public friends: number[];
 

@@ -31,6 +31,13 @@ export class IdController {
     return await this.chatService.createRoom(channel, user);
   }
 
+  @Post('/:id')
+  async createChannelForUser(@Param('id', ParseIntPipe) id: number, @Body() channel: any)
+  {
+    const user = await this.userService.getUserById(id);
+    return await this.chatService.createRoom(channel, user);
+  }
+
   @Put('/:id')
   updateChannel(@Param('id', ParseIntPipe) id: number, @Body() channel: any) {
     this.chatService.updateRoom(id, channel);
