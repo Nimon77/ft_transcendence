@@ -46,7 +46,7 @@ export default Vue.extend({
         this.loader = !this.loader;
         this.color = 'green';
         setTimeout(this.setDone, 500);
-        await this.$http.post('/user/me/community', {id: this.user.id,}).then(response => {
+        await this.$http.post('/user/me/follow', {id: this.user.id,}).then(response => {
           console.log('PUT REQUEST', response);
           });
         location.reload();

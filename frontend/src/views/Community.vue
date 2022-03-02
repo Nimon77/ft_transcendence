@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="center" justify="center">
-      <Channel :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
+      <Channel :CRs="CRs" :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
       <Chat :socket="socket" :user="user"/>
       <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
     </v-row>
@@ -30,6 +30,7 @@ export default Vue.extend({
         user: [],
         userCR: [],
         playersCR: [],
+        CRs: [],
       }
     },
     methods: {
@@ -44,13 +45,17 @@ export default Vue.extend({
 
         if (this.userCR.items[i].id == this.idCR)
           return ( this.playersCR = this.userCR.items[i].users );
-        return (this.playersCR);
+        return (this.playersCR = []);
       },
 
       async fetchInfos() {
         await this.$http.get('/user/me').then((resp) => {
           this.user = resp.data;
           // console.log("GET USER IN COMMUNITY ", this.user);
+        })
+        await this.$http.get('/channel').then((resp) => {
+          this.CRs = resp.data;
+          // console.log("GET CRs IN COMMUNITY ", this.CRs);
         })
         await this.$http.get('/channel/me').then((resp) => {
           this.userCR = resp.data;
@@ -99,3 +104,5 @@ export default Vue.extend({
 }
 
 </style>
+
+// le socket marche pour un seul chat :o
