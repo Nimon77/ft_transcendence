@@ -11,12 +11,20 @@ export class AvatarService {
   ) {}
 
   async setAvatar(id: number, filename: string, dataBuffer: Buffer) {
-    const avatar = await this.avatarRepo.create({
-      id,
-      filename,
-      data: dataBuffer,
-    });
-    await this.avatarRepo.save(avatar);
+    const currentavatar = await this.avatarRepo.findOne(id);
+    if (currentavatar)
+    {
+      await this.avatarRepo.update(id, {filename: filename, data: dataBuffer});
+    }
+    else
+    {
+      const avatar = await this.avatarRepo.create({
+        id,
+        filename,
+        data: dataBuffer,
+      });
+      await this.avatarRepo.save(avatar);
+    }
   }
 
   getAvatarById(id: number): Promise<Avatar> {
