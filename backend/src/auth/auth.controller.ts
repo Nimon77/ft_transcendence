@@ -22,6 +22,7 @@ export class AuthController {
   @Public()
   @Get('jwt')
   jwt(@Headers() headers) {
+	  if (!headers.authorization) return false;
     const token = headers.authorization.split(' ')[1];
     return !!this.authService.verify(token).sub;
   }
