@@ -7,7 +7,6 @@ import {
   Request,
 } from '@nestjs/common';
 import { UserService } from 'src/user/user.service';
-import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
 
 @Controller('channel')

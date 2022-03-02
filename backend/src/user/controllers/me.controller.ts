@@ -68,7 +68,7 @@ export class MeController {
     @UploadedFile() file: Express.Multer.File,
   ) {
     const user = await this.userService.getUserById(req.user.userId);
-    return this.userService.setAvatar(user, file.originalname, file.buffer);
+    this.userService.setAvatar(user, file.originalname, file.buffer);
   }
 
   @Post('/me/follow')
