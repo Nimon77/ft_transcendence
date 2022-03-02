@@ -1,1 +1,757 @@
-{}
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "BananaPong",
+    "description": "This is the documentation of the BananaPong server. Remember that the JWT is necessary for all the operations (except the ones in the auth tag), Make sure you input a correct JWT token in the Authorize menu.",
+    "version": "2.0",
+    "contact": {
+      "email": "droge@student.42.fr"
+    }
+  },
+  "tags": [
+    {
+      "name": "auth",
+      "description": "Everything about authentification"
+    },
+    {
+      "name": "channel me",
+      "description": "Everything about the channels for the current user"
+    },
+    {
+      "name": "channel id",
+      "description": "Everything about the channels for any user"
+    },
+    {
+      "name": "user me",
+      "description": "Everything about the users for the current user"
+    },
+    {
+      "name": "user id",
+      "description": "Everything about the users for any user"
+    }
+  ],
+  "servers": [],
+  "components": {
+    "securitySchemes": {
+      "bearerAuth": {
+        "type": "http",
+        "scheme": "bearer",
+        "bearerFormat": "JWT"
+      }
+    },
+    "schemas": {
+      "User": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 65000
+          },
+          "log": {
+            "type": "string",
+            "example": "droge"
+          },
+          "username": {
+            "type": "string",
+            "example": "dimitri"
+          },
+          "onlineStatus": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "profileCompleted": {
+            "type": "boolean",
+            "example": "true"
+          },
+          "rank": {
+            "type": "number",
+            "example": 100
+          },
+          "friends": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [
+              65255,
+              65350
+            ]
+          },
+          "blocked": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [
+              65243,
+              65379
+            ]
+          },
+          "otp": {
+            "type": "string",
+            "example": "lnrtuvcbdefghijk"
+          },
+          "avatarId": {
+            "type": "number",
+            "example": 65000
+          }
+        }
+      },
+      "Channel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "name": {
+            "type": "string",
+            "example": "les bgs"
+          },
+          "adminId": {
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [
+              65000,
+              65350
+            ]
+          },
+          "ownerId": {
+            "type": "number",
+            "example": 65000
+          },
+          "users": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "properties": {
+                "id": {
+                  "type": "number",
+                  "example": 65000
+                },
+                "log": {
+                  "type": "string",
+                  "example": "droge"
+                },
+                "username": {
+                  "type": "string",
+                  "example": "dimitri"
+                },
+                "onlineStatus": {
+                  "type": "boolean",
+                  "example": "true"
+                },
+                "profileCompleted": {
+                  "type": "boolean",
+                  "example": "true"
+                },
+                "rank": {
+                  "type": "number",
+                  "example": 100
+                },
+                "friends": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "example": [
+                    65255,
+                    65350
+                  ]
+                },
+                "blocked": {
+                  "type": "array",
+                  "items": {
+                    "type": "number"
+                  },
+                  "example": [
+                    65243,
+                    65379
+                  ]
+                },
+                "otp": {
+                  "type": "string",
+                  "example": "lnrtuvcbdefghijk"
+                },
+                "avatarId": {
+                  "type": "number",
+                  "example": 65000
+                }
+              }
+            }
+          }
+        }
+      }
+    },
+    "responses": {
+      "UnauthorizedError": {
+        "description": "JWT Token is invalid or empty"
+      }
+    }
+  },
+  "paths": {
+    "/auth/42/callback": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "AuthController_login",
+        "parameters": [],
+        "responses": {
+          "302": {
+            "description": "Expected response, should redirect to 42 intra login page"
+          }
+        }
+      }
+    },
+    "/auth/jwt": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "operationId": "AuthController_jwt",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": "Expected response, will return true if the jwt is valid or false if it isnt"
+          }
+        }
+      }
+    },
+    "/channel/me": {
+      "get": {
+        "tags": [
+          "channel me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_getAllChannels",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/join": {
+      "put": {
+        "tags": [
+          "channel me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_joinChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/leave/{userid}": {
+      "put": {
+        "tags": [
+          "channel me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_leaveChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "userid",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel": {
+      "get": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_getAllChannels",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_createChannel",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}": {
+      "put": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_updateChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_deleteChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/me": {
+      "get": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_getUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_updateUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_deleteUser",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/me/avatar": {
+      "get": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_getAvatar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_updateAvatar",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/me/follow": {
+      "post": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_followUser",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/me/block": {
+      "post": {
+        "tags": [
+          "user me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "MeController_blockUser",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user": {
+      "get": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_getAllUsers",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_createUser",
+        "parameters": [],
+        "responses": {
+          "201": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/{id}": {
+      "get": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_getUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_updateUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_deleteUser",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "string"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/user/{id}/avatar": {
+      "get": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_getAvatar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "operationId": "IdController_setAvatar",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "description": ""
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    }
+  }
+}
