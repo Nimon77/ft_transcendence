@@ -98,7 +98,6 @@ export class ChatService {
         .where('user.id = :userId', { userId })
         .leftJoinAndSelect('room.users', 'all_users')
         .orderBy('room.id', 'DESC');
-        const result = await paginate(query, options);
         return paginate(query, options);
     }
 
