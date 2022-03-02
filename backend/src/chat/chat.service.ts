@@ -52,6 +52,12 @@ export class ChatService {
             throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     }
 
+    async getRoomInfo(roomId: number)
+    {
+        const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
+        return (room);
+    }
+
     async removeUserFromRoom(user: User, roomId: number, adminId: number)
     {
         const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
