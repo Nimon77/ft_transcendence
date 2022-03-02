@@ -19,7 +19,7 @@ export class AvatarService {
     await this.avatarRepo.save(avatar);
   }
 
-  getAvatar(id: number): Promise<Avatar> {
+  getAvatarById(id: number): Promise<Avatar> {
     if (id) return this.avatarRepo.findOne(id);
     return null;
   }

@@ -15,8 +15,10 @@ import { UserService } from 'src/user/user.service';
 
 @Controller('channel')
 export class IdController {
-  constructor(private readonly chatService: ChatService,
-    private readonly userService: UserService) {}
+  constructor(
+    private readonly chatService: ChatService,
+    private readonly userService: UserService,
+  ) {}
 
   @Get('/')
   async getAllChannels(): Promise<ChatRoom[]> {
@@ -26,6 +28,13 @@ export class IdController {
   @Post('/')
   async createChannel(@Request() req, @Body() channel: any): Promise<ChatRoom> {
     const user = await this.userService.getUserById(req.user.userId);
+    return await this.chatService.createRoom(channel, user);
+  }
+
+  @Post('/:id')
+  async createChannelForUser(@Param('id', ParseIntPipe) id: number, @Body() channel: any)
+  {
+    const user = await this.userService.getUserById(id);
     return await this.chatService.createRoom(channel, user);
   }
 

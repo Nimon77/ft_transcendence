@@ -42,7 +42,9 @@ export class IdController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(id);
-    const avatar = await this.avatarService.getAvatar(user.avatarId);
+    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    if (!avatar)
+      return null;
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
@@ -68,6 +70,7 @@ export class IdController {
   deleteUser(@Param('id') id: string) {
     this.userService.deleteUser(Number(id));
   }
+
   @Put(':id/avatar')
   @UseInterceptors(FileInterceptor('file'))
   async setAvatar(
