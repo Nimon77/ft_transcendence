@@ -188,6 +188,9 @@
     "responses": {
       "UnauthorizedError": {
         "description": "JWT Token is invalid or empty"
+      },
+      "OK": {
+        "description": "Expected response"
       }
     }
   },
@@ -197,11 +200,12 @@
         "tags": [
           "auth"
         ],
+        "summary": "Authentificate with 42 oauth then generates a JWT returned in the URL",
         "operationId": "AuthController_login",
         "parameters": [],
         "responses": {
           "302": {
-            "description": "Expected response, should redirect to 42 intra login page"
+            "$ref": "#/components/responses/OK"
           }
         }
       }
@@ -211,11 +215,16 @@
         "tags": [
           "auth"
         ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Checks if the JWT is valid or not, returns a boolean",
         "operationId": "AuthController_jwt",
-        "parameters": [],
         "responses": {
           "200": {
-            "description": "Expected response, will return true if the jwt is valid or false if it isnt"
+            "$ref": "#/components/responses/OK"
           }
         }
       }
@@ -230,11 +239,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns all the channels objects the current user is in",
         "operationId": "MeController_getAllChannels",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -252,12 +262,14 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Makes the current user join the channel (specified by id)",
         "operationId": "MeController_joinChannel",
         "parameters": [
           {
             "name": "id",
-            "required": true,
+            "description": "Id of the channel",
             "in": "path",
+            "required": true,
             "schema": {
               "type": "number"
             }
@@ -265,7 +277,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -283,10 +295,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Makes the current user kick the user (specified by userid) from the channel (specified by id)",
         "operationId": "MeController_leaveChannel",
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the channel",
             "required": true,
             "in": "path",
             "schema": {
@@ -295,6 +309,7 @@
           },
           {
             "name": "userid",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -304,7 +319,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -322,11 +337,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns all the channels objects of the server (some information is excluded, compare the returned JSON and the Channel Schemas to see the differences)",
         "operationId": "IdController_getAllChannels",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -342,11 +358,33 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Creates a channel object (only id and name will be saved on the database)",
         "operationId": "IdController_createChannel",
         "parameters": [],
+        "requestBody": {
+          "description": "New channel object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "name": {
+                    "type": "string",
+                    "example": "le gang"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -364,10 +402,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Modifies the channel object (specified by id)",
         "operationId": "IdController_updateChannel",
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the channel",
             "required": true,
             "in": "path",
             "schema": {
@@ -375,9 +415,25 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "Updated channel object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PLACEHOLDER": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -393,10 +449,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Delete the channel object (specified by id)",
         "operationId": "IdController_deleteChannel",
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the channel",
             "required": true,
             "in": "path",
             "schema": {
@@ -406,7 +464,7 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -424,11 +482,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns the current user object",
         "operationId": "MeController_getUser",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -444,8 +503,66 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Modifies the current user object",
         "operationId": "MeController_updateUser",
         "parameters": [],
+        "requestBody": {
+          "description": "Updated user object (id and avatarId cannot be modified)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "log": {
+                    "type": "string",
+                    "example": "droge"
+                  },
+                  "username": {
+                    "type": "string",
+                    "example": "dimitri"
+                  },
+                  "onlineStatus": {
+                    "type": "boolean",
+                    "example": "true"
+                  },
+                  "profileCompleted": {
+                    "type": "boolean",
+                    "example": "true"
+                  },
+                  "rank": {
+                    "type": "number",
+                    "example": 100
+                  },
+                  "friends": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [
+                      65255,
+                      65350
+                    ]
+                  },
+                  "blocked": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [
+                      65243,
+                      65379
+                    ]
+                  },
+                  "otp": {
+                    "type": "string",
+                    "example": "lnrtuvcbdefghijk"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "description": ""
@@ -464,11 +581,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Deletes the current user object",
         "operationId": "MeController_deleteUser",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -486,11 +604,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns the current user's avatar",
         "operationId": "MeController_getAvatar",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -506,11 +625,28 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Modifies the current user's avatar",
         "operationId": "MeController_updateAvatar",
         "parameters": [],
+        "requestBody": {
+          "description": "Updated avatar",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PLACEHOLDER": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -528,14 +664,35 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Modifies the current user's object (more specifically the friends array)",
         "operationId": "MeController_followUser",
         "parameters": [],
+        "requestBody": {
+          "description": "Id of the user you wish to follow",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 65000
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "User doesn't exist in database"
           }
         }
       }
@@ -550,14 +707,35 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Modifies the current user's object (more specifically the blocked array)",
         "operationId": "MeController_blockUser",
         "parameters": [],
+        "requestBody": {
+          "description": "Id of the user you wish to block",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 65000
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "User doesn't exist in database"
           }
         }
       }
@@ -572,11 +750,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns all the users of the server",
         "operationId": "IdController_getAllUsers",
         "parameters": [],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -592,11 +771,33 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Creates a user object (only id and log will be saved on the database)",
         "operationId": "IdController_createUser",
         "parameters": [],
+        "requestBody": {
+          "description": "New user object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 1
+                  },
+                  "log": {
+                    "type": "string",
+                    "example": "droge"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "201": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -614,6 +815,7 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns the user object (specified by id)",
         "operationId": "IdController_getUser",
         "parameters": [
           {
@@ -627,10 +829,13 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "User doesn't exist in database"
           }
         }
       },
@@ -643,10 +848,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Modifies the user object (specified by id)",
         "operationId": "IdController_updateUser",
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -654,12 +861,26 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "Updated user object (id and avatarId cannot be modified)",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/User"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "User doesn't exist in database"
           }
         }
       },
@@ -672,6 +893,7 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Delete the user object (specified by id)",
         "operationId": "IdController_deleteUser",
         "parameters": [
           {
@@ -685,10 +907,13 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "User doesn't exist in database"
           }
         }
       }
@@ -703,6 +928,7 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns the user's avatar (specified by id)",
         "operationId": "IdController_getAvatar",
         "parameters": [
           {
@@ -716,10 +942,13 @@
         ],
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "description": "User doesn't exist in database"
           }
         }
       },
@@ -732,10 +961,12 @@
             "bearerAuth": []
           }
         ],
+        "summary": "Returns the user's avatar (specified by id)",
         "operationId": "IdController_setAvatar",
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -743,9 +974,25 @@
             }
           }
         ],
+        "requestBody": {
+          "description": "Updated avataar",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "PLACEHOLDER": {
+                    "type": "number"
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
-            "description": ""
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
