@@ -621,7 +621,15 @@
         "parameters": [],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/OK"
+            "description": "Expected response",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -644,12 +652,17 @@
           "description": "Updated avatar",
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "file"
+                ],
                 "properties": {
-                  "PLACEHOLDER": {
-                    "type": "number"
+                  "file": {
+                    "description": "new Avatar",
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
