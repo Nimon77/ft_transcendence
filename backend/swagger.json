@@ -181,6 +181,14 @@
                 }
               }
             }
+          },
+          "public": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "password": {
+            "type": "string",
+            "example": "password"
           }
         }
       }
@@ -369,13 +377,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 1
-                  },
                   "name": {
                     "type": "string",
                     "example": "le gang"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "example": "false"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
                   }
                 }
               }
