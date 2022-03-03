@@ -47,7 +47,7 @@
         <div v-for="CR in userCR.items" :key="CR.id">
         <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
-            <v-list-item-title > {{CR.name | upCase}} </v-list-item-title>
+            <v-list-item-title > {{CR.name}} </v-list-item-title>
             <v-list-item-subtitle> public <v-icon  small color="yellow"> mdi-account </v-icon> </v-list-item-subtitle>
           </v-list-item-content>
           <OptionChannel @leaveRoom="leaveRoom(CR.id)"/>
@@ -57,8 +57,8 @@
       </v-list>
 
       <v-list v-if="searchCR!=''" > <!-- Si je cherche un CR -->
-        <div v-for="cr in CRs" :key="cr.id">
-        <v-list-item two-line>
+        <div v-for="cr in filteredCRs" :key="cr.id">
+        <v-list-item two-line v-if="alreadyJoin(cr.id)==false">
           <v-list-item-content>
             <v-list-item-title > {{cr.name}} </v-list-item-title>
             <v-list-item-subtitle> public </v-list-item-subtitle>
@@ -98,8 +98,8 @@
         </v-dialog> -->
         
         </v-list-item>
-        </div>
         <v-divider></v-divider>
+        </div>
         <!-- <div>
         <v-list-item two-line>
           <v-list-item-content>
@@ -141,10 +141,26 @@ export default Vue.extend({
         }
     },
     methods: {
+      alreadyJoin(toJoin: number) {
+        let i = 0;
+
+        while (i < this.userCR.items.length)
+        {
+          if (this.userCR.items[i].id == toJoin)
+          {
+            // console.log("TRUE");
+            return true;
+          }
+          i++;
+        }
+        // console.log("FALSE");
+        return false;
+      },
       async joinRoom(idCR) {
         console.log('Join ROOM', idCR);
         await this.$http.put('/channel/' + idCR + '/join/', {userId: this.user.id,}).then((resp) => console.log(resp))
-        // this.$emit('newCR');
+        this.searchCR = '';
+        this.$emit('newCR');
       },
       async leaveRoom(idCR) {
         console.log("leave ROOM ", idCR);
@@ -164,6 +180,13 @@ export default Vue.extend({
       }
     },
     computed: {
+      filteredCRs(): unknown {
+        console.log('FILTERED CR');
+        return this.CRs.filter((cr) => {
+          return cr.name.match(this.searchCR);
+        })
+      },
+
       rules() {
         const rules = [];
         let rule = v => !!v;
