@@ -1,6 +1,5 @@
 export interface User {
   id: number;
-  log: string;
   username?: string;
   onlineStatus?: boolean;
   profileCompleted?: boolean;

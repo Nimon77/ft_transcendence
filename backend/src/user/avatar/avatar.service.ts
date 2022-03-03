@@ -10,22 +10,30 @@ export class AvatarService {
     private avatarRepo: Repository<Avatar>,
   ) {}
 
-  async setAvatar(id: number, name: string, dataBuffer: Buffer) {
-    console.log(id);
+  async setAvatar(
+    id: number,
+    name: string,
+    dataBuffer: Buffer,
+  ): Promise<Avatar> {
     const currentavatar = await this.avatarRepo.findOne(id);
     currentavatar.data = dataBuffer;
     currentavatar.filename = name;
-    console.log(currentavatar);
-    await this.avatarRepo.save(currentavatar);
+    this.avatarRepo.save(currentavatar);
+    return currentavatar;
   }
 
-  async createAvatar(id: number, name: string, dataBuffer: Buffer)
-  {
-    const avatar = await this.avatarRepo.create({
+  async createAvatar(
+    id: number,
+    name: string,
+    dataBuffer: Buffer,
+  ): Promise<Avatar> {
+    const currentavatar = this.avatarRepo.create({
       id,
       filename: name,
       data: dataBuffer,
     });
+    await this.avatarRepo.save(currentavatar);
+    return currentavatar;
   }
 
   getAvatarById(id: number): Promise<Avatar> {
