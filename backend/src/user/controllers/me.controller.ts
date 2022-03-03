@@ -67,8 +67,9 @@ export class MeController {
     @UploadedFile() file: Express.Multer.File,
   ) 
   {
+    const user = await this.userService.getUserById(req.user.userId);
     return this.userService.setAvatar(
-      req.user.userId,
+      user,
       file.originalname,
       file.buffer,
     );

@@ -15,6 +15,12 @@ export class ChatRoom{
     @Column()
     ownerId: number;
 
+    @Column({nullable: true})
+    password: string;
+
+    @Column({default: true})
+    public: boolean;
+
     @ManyToMany(() => User, { cascade: true, onUpdate:'CASCADE' })
     @JoinTable()
     users: User[];
