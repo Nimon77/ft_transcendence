@@ -72,6 +72,7 @@ export default Vue.extend({
   data() {
     return {
       image: {
+        name: '',
         src: '',
         type: '',
       },
@@ -84,7 +85,7 @@ export default Vue.extend({
       if (canvas) {
         canvas.toBlob((blob) => {
           const form = new FormData();
-          form.append('file', blob);
+          form.append('file', blob, this.image.name);
           this.$http.put('/user/me/avatar', form);
         }, this.image.type);
       }
@@ -112,6 +113,7 @@ export default Vue.extend({
         const reader = new FileReader();
         reader.onload = (e => {
           this.image = {
+            name: files[0].name,
             src: blob,
             type: getMimeType(e.target.result, files[0].type),
           };

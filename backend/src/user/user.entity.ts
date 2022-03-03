@@ -7,17 +7,11 @@ export class User {
   @PrimaryColumn()
   public id: number;
  
-  @Column({nullable: true})
+  @Column({nullable: true, unique: true})
   public username: string;
-
-  @Column()
-  public log: string;
 
   @Column({default: 0})
   public rank: number;
-
-  @Column({default: false})
-  public onlineStatus: boolean;
 
   @Column({default: ""})
   public otp: string;

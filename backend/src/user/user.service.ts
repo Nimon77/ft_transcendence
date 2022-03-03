@@ -3,6 +3,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { AvatarService } from './avatar/avatar.service';
+import { Avatar } from './avatar/avatar.entity';
 
 @Injectable()
 export class UserService {
@@ -22,22 +23,21 @@ export class UserService {
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
-  async createUser(user: User) {
+  async createUser(user: User): Promise<User> {
     const newUser = {
       id: user.id,
-      log: user.log,
     };
     newUser.id = user.id;
-    await this.repo.save(newUser);
+    await this.repo.save(newUser); //will throw exception if username is already taken
     return user;
   }
 
   async updateUser(userid: number, user: User) {
     const updatedUser = await this.repo.findOne(userid);
     const newUser = {
-      id: userid,
       ...user,
     };
+    newUser.id = userid;
     if (updatedUser) {
       return await this.repo.update({ id: userid }, newUser);
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
@@ -50,13 +50,14 @@ export class UserService {
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
   }
 
-  async setAvatar(user: User, filename: string, avatar: Buffer) {
-    await this.avatarService.setAvatar(user.id, filename, avatar);
+  async setAvatar(user: User, filename: string, buffer: Buffer) {
+    let avatar: Avatar;
+    if (!user.avatarId)
+      avatar = await this.avatarService.createAvatar(user.id, filename, buffer);
+    else avatar = await this.avatarService.setAvatar(user.id, filename, buffer);
 
-    if (user.avatarId != user.id)
-      this.repo.update(user.id, {
-        avatarId: user.id,
-      });
+    if (user.avatarId != avatar.id)
+      this.repo.update(user.id, { avatarId: avatar.id });
   }
 
   async updateFollow(user: User, followed_user: User) {

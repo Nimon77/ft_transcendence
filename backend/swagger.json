@@ -181,6 +181,14 @@
                 }
               }
             }
+          },
+          "public": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "password": {
+            "type": "string",
+            "example": "password"
           }
         }
       }
@@ -369,13 +377,17 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 1
-                  },
                   "name": {
                     "type": "string",
                     "example": "le gang"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "example": "false"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
                   }
                 }
               }
@@ -609,7 +621,15 @@
         "parameters": [],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/OK"
+            "description": "Expected response",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -632,12 +652,17 @@
           "description": "Updated avatar",
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "file"
+                ],
                 "properties": {
-                  "PLACEHOLDER": {
-                    "type": "number"
+                  "file": {
+                    "description": "new Avatar",
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
@@ -942,7 +967,15 @@
         ],
         "responses": {
           "200": {
-            "$ref": "#/components/responses/OK"
+            "description": "Expected response",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -975,15 +1008,20 @@
           }
         ],
         "requestBody": {
-          "description": "Updated avataar",
+          "description": "Updated avatar",
           "required": true,
           "content": {
-            "application/json": {
+            "multipart/form-data": {
               "schema": {
                 "type": "object",
+                "required": [
+                  "file"
+                ],
                 "properties": {
-                  "PLACEHOLDER": {
-                    "type": "number"
+                  "file": {
+                    "description": "new Avatar",
+                    "type": "string",
+                    "format": "binary"
                   }
                 }
               }
