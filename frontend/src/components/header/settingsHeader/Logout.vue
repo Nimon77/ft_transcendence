@@ -39,7 +39,7 @@ export default Vue.extend({
       }
   },
   methods: {
-    async logout() {
+    logout() {
       localStorage.removeItem('token');
       localStorage.setItem('ready', 'false');
       this.$router.push({ name: 'Login' });
