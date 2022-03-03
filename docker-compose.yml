@@ -5,6 +5,8 @@ services:
     image: postgres:latest
     env_file:
       - ./docker/postgres.env
+    environment:
+      TZ: "Europe/Paris"
     restart: unless-stopped
     volumes:
       - data:/var/lib/postgresql/data
@@ -18,6 +20,8 @@ services:
     restart: unless-stopped
     env_file:
       - ./docker/pgadmin.env
+    environment:
+      TZ: "Europe/Paris"
     volumes:
       - ./docker/pgadmin_servers.json:/pgadmin4/servers.json
     ports:
