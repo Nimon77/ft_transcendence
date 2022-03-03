@@ -49,7 +49,7 @@ export class IdController {
     stream.pipe(response);
     response.set({
       'Content-Disposition': `inline; filename="${avatar.filename}"`,
-      'Content-Type': 'image',
+      'Content-Type': 'image/*',
     });
     return new StreamableFile(stream);
   }
@@ -68,7 +68,13 @@ export class IdController {
 
   @Delete(':id')
   deleteUser(@Param('id') id: string) {
+    try {
     this.userService.deleteUser(Number(id));
+    }
+    catch (error)
+    {
+      console.log(error);
+    }
   }
 
   @Put(':id/avatar')

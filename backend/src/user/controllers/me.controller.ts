@@ -44,7 +44,7 @@ export class MeController {
     stream.pipe(response);
     response.set({
       'Content-Disposition': `inline; filename="${avatar.filename}"`,
-      'Content-Type': 'image',
+      'Content-Type': 'image/*',
     });
     return new StreamableFile(stream);
   }
@@ -67,8 +67,9 @@ export class MeController {
     @UploadedFile() file: Express.Multer.File,
   ) 
   {
+    const user = await this.userService.getUserById(req.user.userId);
     return this.userService.setAvatar(
-      req.user.userId,
+      user,
       file.originalname,
       file.buffer,
     );
