@@ -49,7 +49,7 @@ export class IdController {
     stream.pipe(response);
     response.set({
       'Content-Disposition': `inline; filename="${avatar.filename}"`,
-      'Content-Type': 'image',
+      'Content-Type': 'image/*',
     });
     return new StreamableFile(stream);
   }
