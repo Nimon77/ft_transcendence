@@ -28,16 +28,16 @@ export class UserService {
       log: user.log,
     };
     newUser.id = user.id;
-    await this.repo.save(newUser);
+    await this.repo.save(newUser);//will throw exception if username is already taken
     return user;
   }
 
   async updateUser(userid: number, user: User) {
     const updatedUser = await this.repo.findOne(userid);
     const newUser = {
-      id: userid,
       ...user,
     };
+    newUser.id = userid;
     if (updatedUser) {
       return await this.repo.update({ id: userid }, newUser);
     } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);

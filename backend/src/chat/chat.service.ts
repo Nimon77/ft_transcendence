@@ -8,6 +8,7 @@ import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginat
 import { array } from 'joi';
 import { use } from 'passport';
 import { query } from 'express';
+import * as bcrypt from 'bcrypt';
 
 
 @Injectable()
@@ -21,6 +22,7 @@ export class ChatService {
     {
         const chat = await this.chatRepo.findOne(id);
         if (chat){
+            chat.password = undefined;
             return chat;
         }
         else
@@ -30,15 +32,22 @@ export class ChatService {
     async createRoom(room: ChatRoom, admin: User)
     {
         let users = [];
+        let hashedPassword = "";
+        if (!room.public)
+            hashedPassword = await bcrypt.hash(room.password, 10);
         users.push(admin);
         const newRoom: ChatRoom = {
             adminId: [],
+            public: room.public,
             ownerId: admin.id,
             users: users,
             ... room
         }
+        newRoom.password = hashedPassword;
         newRoom.adminId.push(admin.id);
-        return await this.chatRepo.save(newRoom);
+        await this.chatRepo.save(newRoom);
+        newRoom.password = undefined;
+        return newRoom;
     }
 
     async deleteRoom(id: number)
@@ -55,6 +64,7 @@ export class ChatService {
     async getRoomInfo(roomId: number)
     {
         const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
+        room.password = undefined;
         return (room);
     }
 
@@ -94,21 +104,28 @@ export class ChatService {
 
     async getAllRooms()
     {
-        return await this.chatRepo.find();
+        const rooms = await this.chatRepo.find();
+        rooms.forEach(chat => {
+            chat.password = undefined;
+        })
+        return rooms;
     }
 
-    async getRoomsForUser(userId: number, options: IPaginationOptions)
+    async getRoomsForUser(userId: number)
     {
         const query = await this.chatRepo.createQueryBuilder('room')
         .leftJoin('room.users', 'user')
         .where('user.id = :userId', { userId })
         .leftJoinAndSelect('room.users', 'all_users')
-        .orderBy('room.id', 'DESC');
-        return paginate(query, options);
+        .getMany();
+        query.forEach(chat => {
+            chat.password = undefined;
+        })
+        return query;
     }
 
 
-    async getUsersForRoom(roomId: number, options: IPaginationOptions)
+    async getUsersForRoom(roomId: number)
     {
         const chatroom = await this.chatRepo.findOne(roomId)
         if (chatroom)
@@ -117,8 +134,11 @@ export class ChatService {
             .leftJoin('room.users', 'user')
             .where('room.id = :roomId', { roomId })
             .leftJoinAndSelect('room.users', 'all_rooms')
-            .orderBy('user.id', 'DESC');
-            return paginate(query, options);
+            .getMany();
+            query.forEach(chat => {
+                chat.password = undefined;
+            })
+            return query;
         }
         else
         throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
@@ -127,8 +147,8 @@ export class ChatService {
     async addUserToRoom(roomid: number, user: User)
     {
         const room = await this.getRoomById(roomid);
-        const page = await this.getUsersForRoom(roomid, {page: 1, limit: 100})
-        page.items.forEach(async id => {
+        const page = await this.getUsersForRoom(roomid)
+        page.forEach(async id => {
             await this.chatRepo
               .createQueryBuilder()
               .relation(ChatRoom, 'users')

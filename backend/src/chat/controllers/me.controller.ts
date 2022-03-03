@@ -18,10 +18,7 @@ export class MeController {
 
   @Get('/me')
   async getAllChannels(@Request() req): Promise<any> {
-    return await this.chatService.getRoomsForUser(req.user.userId, {
-      page: 1,
-      limit: 10,
-    });
+    return await this.chatService.getRoomsForUser(req.user.userId);
   }
 
   @Put('/:id/join')
