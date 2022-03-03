@@ -26,7 +26,6 @@ export class AvatarService {
       filename: name,
       data: dataBuffer,
     });
-    return avatar;
   }
 
   getAvatarById(id: number): Promise<Avatar> {
