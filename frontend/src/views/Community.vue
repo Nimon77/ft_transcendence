@@ -2,7 +2,7 @@
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="center" justify="center">
       <Channel :CRs="CRs" :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
-      <Chat :socket="socket" :user="user"/>
+      <Chat :socket="socket" :user="user" v-bind:idCR="idCR" />
       <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
     </v-row>
   </v-container>
@@ -62,7 +62,7 @@ export default Vue.extend({
           // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
         if (this.$route.params.idCR)
-          this.idCR = this.$route.params.idCR;
+          this.idCR = +this.$route.params.idCR;
         this.getPlayersCR();
       },
     },
@@ -72,16 +72,15 @@ export default Vue.extend({
       this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
       this.socket = io("http://127.0.0.1:3000/chat", {
           transportOptions: {
-          // polling: { extraHeaders: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI1NjM5MSIsImlhdCI6MTY0NjA2MjY5MSwiZXhwIjoxNjQ2NjY3NDkxfQ.SY_SzgfGk6mbGzOG071EhwmFm-a_D18cL3pr8g-XvIU` } },
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
           },
       });
-      console.log('CREATED');
+      // console.log('CREATED');
     },
     mounted() {
         this.socket.on("info", data => {
             console.log("INFO ", data);
-        console.log('MOUNTED');
+        // console.log('MOUNTED');
         });
 
     }
