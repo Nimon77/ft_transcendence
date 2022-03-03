@@ -26,6 +26,9 @@
           <v-list-item>
             <v-list-item-title> <DeleteAccount/> </v-list-item-title>
           </v-list-item>
+          <v-list-item>
+            <v-list-item-title> <Logout/> </v-list-item-title>
+          </v-list-item>
         </v-list>
       </v-menu>
 
@@ -41,10 +44,12 @@ import Vue from 'vue'
 import ChangeAvatar from './settingsHeader/ChangeAvatar.vue'
 import TwoFactor from './settingsHeader/TwoFactor.vue'
 import DeleteAccount from './settingsHeader/DeleteAccount.vue'
+import Logout from './settingsHeader/Logout.vue'
 
 Vue.component('ChangeAvatar', ChangeAvatar)
 Vue.component('TwoFactor', TwoFactor)
 Vue.component('DeleteAccount', DeleteAccount)
+Vue.component('Logout', Logout)
 
 export default Vue.extend({
     name: 'Player',
