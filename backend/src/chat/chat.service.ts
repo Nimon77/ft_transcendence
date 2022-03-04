@@ -176,14 +176,20 @@ export class ChatService {
 
     async addUserToRoom(roomid: number, user: User)
     {
-        const room = await this.getRoomById(roomid);
+        const room = await this.chatRepo.findOne(roomid, { relations: ['users'] });
         const page = await this.getUsersForRoom(roomid)
-        page.forEach(async id => {
-            await this.chatRepo
-              .createQueryBuilder()
-              .relation(ChatRoom, 'users')
-              .of(room)
-              .add(user);
-          });
+        let userexists = false;
+        room.users.forEach(curuser => {
+            if (curuser.id == user.id)
+                userexists = true ;
+        })
+        if (!userexists)        
+            page.forEach(async id => {
+                await this.chatRepo
+                .createQueryBuilder()
+                .relation(ChatRoom, 'users')
+                .of(room)
+                .add(user);
+            });
     }
 }

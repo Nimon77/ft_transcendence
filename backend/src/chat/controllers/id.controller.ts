@@ -47,7 +47,7 @@ export class IdController {
   {
     const user = await this.userService.getUserById(req.user.userId);
     const room = await this.chatService.getRoomById(id);
-    if (room.ownerId == user.id)
+    if (room.ownerId == user.id && room.public == false)
       return this.chatService.changePassword(pass, room);
     return ("user unathorized to change password");
   }

@@ -67,14 +67,10 @@ export class IdController {
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: string) {
-    try {
-    this.userService.deleteUser(Number(id));
-    }
-    catch (error)
-    {
-      console.log(error);
-    }
+  deleteUser(@Param('id') id: number) {
+    
+    return  this.userService.deleteUser(id);
+
   }
 
   @Put(':id/avatar')

@@ -57,7 +57,9 @@ export class MeController {
 
   @Delete('/me')
   deleteUser(@Request() req) {
-    this.userService.deleteUser(req.user.userId);
+    
+    return  this.userService.deleteUser(req.user.userId);
+
   }
 
   @Put('me/avatar')

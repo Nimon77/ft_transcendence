@@ -22,12 +22,25 @@ export class MeController {
   }
 
   @Put('/:id/join')
-  joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    this.chatService.addUserToRoom(id, req.user.userId);
+  async joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
+    const user = await this.userService.getUserById(req.user.userId);
+    this.chatService.addUserToRoom(id, user);
   }
 
-  @Put('/:id/leave/:userid')
+  //for testing 
+
+  @Put('/:id/leave')
   async leaveChannel(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ) {
+    const admin = (await this.chatService.getRoomInfo(id)).adminId[0];
+    const user = await this.userService.getUserById(req.user.userId);
+    return this.chatService.removeUserFromRoom(user, id, admin);
+  }
+
+  @Put('/:id/kick/:userid') // admin removes user from room
+  async kickUserFromChannel(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
