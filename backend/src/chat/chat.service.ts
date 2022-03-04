@@ -4,7 +4,7 @@ import { ChatRoom } from './chat.entity';
 import { Connection, ConnectionManager, getRepository, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
-import { IPaginationOptions, paginate, Pagination } from 'nestjs-typeorm-paginate';
+import { PasswordI } from './password.interface';
 import { array } from 'joi';
 import { use } from 'passport';
 import { query } from 'express';
@@ -33,7 +33,7 @@ export class ChatService {
     {
         let users = [];
         let hashedPassword = "";
-        if (!room.public)
+        if (room.public == false)
             hashedPassword = await bcrypt.hash(room.password, 10);
         users.push(admin);
         const newRoom: ChatRoom = {
@@ -45,7 +45,14 @@ export class ChatService {
         }
         newRoom.password = hashedPassword;
         newRoom.adminId.push(admin.id);
-        await this.chatRepo.save(newRoom);
+        try
+        {
+            await this.chatRepo.save(newRoom);
+        }
+        catch (error)
+        {
+            return;
+        }
         newRoom.password = undefined;
         return newRoom;
     }
@@ -85,6 +92,28 @@ export class ChatService {
         }
         else
             throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    }
+
+    async changePassword(pass: PasswordI, room: ChatRoom)
+    {
+        if (!pass.oldPassword || !pass.newPassword)
+            return ;
+        if (this.checkPassword(room.id, pass.oldPassword))
+        {
+            const hashedPassword = await bcrypt.hash(pass.newPassword, 10);
+            room.password = hashedPassword;
+            this.chatRepo.save(room);
+        }
+        else
+            throw new HttpException('Wrong credentials provided', HttpStatus.BAD_REQUEST);
+    }
+
+    async checkPassword(id: number, password: string)
+    {
+        const currentRoom = await this.chatRepo.findOne(id);
+        if (await bcrypt.compare(password, currentRoom.password))
+            return true;
+        return false;
     }
 
     async updateRoom(id: number, room: ChatRoom)

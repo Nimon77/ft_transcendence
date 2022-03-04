@@ -12,6 +12,7 @@ import {
 import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/user/user.service';
+import { PasswordI } from '../password.interface';
 
 @Controller('channel')
 export class IdController {
@@ -26,7 +27,7 @@ export class IdController {
   }
 
   @Post('/')
-  async createChannel(@Request() req, @Body() channel: any): Promise<ChatRoom> {
+  async createChannel(@Request() req, @Body() channel: ChatRoom): Promise<ChatRoom> {
     const user = await this.userService.getUserById(req.user.userId);
     return await this.chatService.createRoom(channel, user);
   }
@@ -40,12 +41,28 @@ export class IdController {
   deleteChannel(@Param('id', ParseIntPipe) id: number) {
     this.chatService.deleteRoom(id);
   }
+
+  @Post(':id/change/')
+  async changePass(@Body() pass: PasswordI, @Request() req, @Param('id', ParseIntPipe) id: number)
+  {
+    const user = await this.userService.getUserById(req.user.userId);
+    const room = await this.chatService.getRoomById(id);
+    if (room.ownerId == user.id)
+      return this.chatService.changePassword(pass, room);
+    return ("user unathorized to change password");
+  }
   // for testing purposes
 
   @Get('/:id')
   async getRoom(@Param('id', ParseIntPipe) id: number)
   {
     return await this.chatService.getRoomInfo(id);
+  }
+
+  @Get(':id/check')
+  async checkPass(@Body() room: ChatRoom, @Param('id', ParseIntPipe) id: number)
+  {
+    return (this.chatService.checkPassword(id, room.password));
   }
 
   @Post('/:id')
