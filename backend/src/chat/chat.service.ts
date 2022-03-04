@@ -111,8 +111,9 @@ export class ChatService {
     async checkPassword(id: number, password: string)
     {
         const currentRoom = await this.chatRepo.findOne(id);
-        if (await bcrypt.compare(password, currentRoom.password))
-            return true;
+        if (password)
+            if (await bcrypt.compare(password, currentRoom.password))
+                return true;
         return false;
     }
 
