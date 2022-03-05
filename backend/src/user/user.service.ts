@@ -12,15 +12,14 @@ export class UserService {
     private readonly avatarService: AvatarService,
   ) {}
 
-  async getAllUsers() {
-    return await this.repo.find();
+  getAllUsers(): Promise<User[]> {
+    return this.repo.find();
   }
 
-  async getUserById(id: number) {
-    const user = await this.repo.findOne(id);
-    if (user) {
-      return user;
-    } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  async getUserById(id: number): Promise<User> {
+    const user: User = await this.repo.findOne(id);
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    return user;
   }
 
   async createUser(user: User): Promise<User> {
@@ -32,15 +31,19 @@ export class UserService {
     return user;
   }
 
-  async updateUser(userid: number, user: User) {
-    const updatedUser = await this.repo.findOne(userid);
-    const newUser = {
-      ...user,
-    };
-    newUser.id = userid;
-    if (updatedUser) {
-      return await this.repo.update({ id: userid }, newUser);
-    } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+  async updateUser(id: number, user: User): Promise<User> {
+    const oldUser: User = await this.getUserById(id);
+    if (user.id && user.id != oldUser.id)
+      throw new HttpException('Cannot update user id', HttpStatus.BAD_REQUEST);
+    user.id = oldUser.id;
+
+    try {
+      await this.repo.update(oldUser.id, user);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+    delete user.id;
+    return user;
   }
 
   async deleteUser(id: number) {

@@ -29,13 +29,13 @@ export class IdController {
   ) {}
 
   @Get('/')
-  async getAllUsers(): Promise<User[]> {
-    return await this.userService.getAllUsers();
+  getAllUsers(): Promise<User[]> {
+    return this.userService.getAllUsers();
   }
 
   @Get('/:id')
-  async getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return await this.userService.getUserById(Number(id));
+  getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
+    return this.userService.getUserById(id);
   }
 
   @Get('/:id/avatar')
@@ -62,7 +62,7 @@ export class IdController {
   }
 
   @Put(':id')
-  updateUser(@Body() user: User, @Param('id') id: number) {
+  updateUser(@Param('id') id: number, @Body() user: User) {
     return this.userService.updateUser(id, user);
   }
 
