@@ -1,0 +1,35 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>RealTime Chat</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+      integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+      crossorigin="anonymous"
+    ></script>
+    <script src="socket.js"></script>
+    <script src="event.js"></script>
+  </head>
+  <body>
+    <section>
+      <div id="channel">
+        <h1>Channels</h1>
+      </div>
+      <div id="chat">
+        <main></main>
+        <form><input type="text" placeholder="Chat message" /></form>
+      </div>
+      <div id="user">
+        <h1>Users</h1>
+      </div>
+    </section>
+    <script>
+      socket(
+        'http://localhost:3000/chat',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NTk3OTM3NSwiZXhwIjoxNjQ2NTg0MTc1fQ.JfGBuUVgTM_zOtlCfV55nuX3IgA3H_n4bFm5stVB2kA',
+      );
+    </script>
+  </body>
+</html>
