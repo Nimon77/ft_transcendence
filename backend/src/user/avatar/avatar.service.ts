@@ -42,6 +42,16 @@ export class AvatarService {
       throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
     return avatar;
   }
+
+  async deleteAvatar(id: number) {
+    await this.getAvatarById(id);
+    const avatar: Avatar = { id, ...new Avatar() };
+    try {
+      await this.repo.remove(avatar);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }
 
 export default AvatarService;
