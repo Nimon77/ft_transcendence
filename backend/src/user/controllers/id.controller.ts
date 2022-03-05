@@ -3,6 +3,8 @@ import {
   Controller,
   Delete,
   Get,
+  HttpException,
+  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -42,9 +44,11 @@ export class IdController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(id);
+
+    if (!user.avatarId)
+      throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
+
     const avatar = await this.avatarService.getAvatarById(user.avatarId);
-    if (!avatar)
-      return null;
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
@@ -68,9 +72,7 @@ export class IdController {
 
   @Delete(':id')
   deleteUser(@Param('id') id: number) {
-    
-    return  this.userService.deleteUser(id);
-
+    return this.userService.deleteUser(id);
   }
 
   @Put(':id/avatar')

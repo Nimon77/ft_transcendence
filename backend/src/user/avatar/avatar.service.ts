@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Avatar } from './avatar.entity';
@@ -7,7 +7,7 @@ import { Avatar } from './avatar.entity';
 export class AvatarService {
   constructor(
     @InjectRepository(Avatar)
-    private avatarRepo: Repository<Avatar>,
+    private repo: Repository<Avatar>,
   ) {}
 
   async setAvatar(
@@ -15,10 +15,10 @@ export class AvatarService {
     name: string,
     dataBuffer: Buffer,
   ): Promise<Avatar> {
-    const currentavatar = await this.avatarRepo.findOne(id);
+    const currentavatar = await this.repo.findOne(id);
     currentavatar.data = dataBuffer;
     currentavatar.filename = name;
-    this.avatarRepo.save(currentavatar);
+    this.repo.save(currentavatar);
     return currentavatar;
   }
 
@@ -27,18 +27,20 @@ export class AvatarService {
     name: string,
     dataBuffer: Buffer,
   ): Promise<Avatar> {
-    const currentavatar = this.avatarRepo.create({
+    const currentavatar = this.repo.create({
       id,
       filename: name,
       data: dataBuffer,
     });
-    await this.avatarRepo.save(currentavatar);
+    await this.repo.save(currentavatar);
     return currentavatar;
   }
 
-  getAvatarById(id: number): Promise<Avatar> {
-    if (id) return this.avatarRepo.findOne(id);
-    return null;
+  async getAvatarById(id: number): Promise<Avatar> {
+    const avatar: Avatar = await this.repo.findOne(id);
+    if (!avatar)
+      throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
+    return avatar;
   }
 }
 
