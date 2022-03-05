@@ -39,9 +39,6 @@ export class MeController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const user = await this.userService.getUserById(req.user.userId);
-    if (!user.avatarId)
-      throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
-
     const avatar = await this.avatarService.getAvatarById(user.avatarId);
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
