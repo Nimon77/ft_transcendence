@@ -35,13 +35,14 @@ export class UserService {
   }
 
   async updateUser(id: number, user: User): Promise<User> {
-    const oldUser: User = await this.getUserById(id);
-    if (user.id && user.id != oldUser.id)
+    await this.getUserById(id);
+
+    if (user.id && user.id != id)
       throw new HttpException('Cannot update user id', HttpStatus.BAD_REQUEST);
-    user.id = oldUser.id;
+    user.id = id;
 
     try {
-      await this.repo.update(oldUser.id, user);
+      await this.repo.update(id, user);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
