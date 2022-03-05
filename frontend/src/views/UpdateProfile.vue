@@ -91,7 +91,6 @@ export default Vue.extend({
       }
       this.$http.put('/user/me', {
         username: this.username,
-        profileCompleted: true,
       }).then(() => {
         localStorage.setItem('ready', 'true');
         this.$router.push({ name: 'Main' });

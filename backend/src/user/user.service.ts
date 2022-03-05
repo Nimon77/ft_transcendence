@@ -48,6 +48,7 @@ export class UserService {
 
     try {
       user.id = id;
+      if (user.username) user.profileCompleted = true;
       await this.repo.update(id, user);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
