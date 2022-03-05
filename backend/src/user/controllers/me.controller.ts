@@ -51,8 +51,7 @@ export class MeController {
 
   @Put('/me')
   updateUser(@Request() req, @Body() user: User) {
-    user.id = req.user.userId;
-    this.userService.updateUser(req.user.userId, user);
+    return this.userService.updateUser(req.user.userId, user);
   }
 
   @Delete('/me')
