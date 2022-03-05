@@ -37,16 +37,16 @@ export class ChatGateway implements OnGatewayConnection {
     process.nextTick(async () =>
       client.emit('info', {
         user,
-        channels: await this.chatService.getRoomsForUser(user.id, 
-        ),
+        channels: await this.chatService.getRoomsForUser(user.id),
       }),
     );
   }
 
   @SubscribeMessage('channel')
   async joinChannel(client: Socket, id: number) {
-    const channels = await this.chatService.getUsersForRoom(id);
-    client.emit('channel', channels[0]);
+    const channel = await this.chatService.getRoomInfo(id);
+    console.log(channel);
+    client.emit('channel', channel);
   }
 
   @SubscribeMessage('text')
