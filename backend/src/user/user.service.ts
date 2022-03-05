@@ -23,7 +23,7 @@ export class UserService {
   }
 
   async createUser(user: User): Promise<User> {
-    if (user && user.id && (await this.repo.findOne(user.id)))
+    if (user.id && (await this.repo.findOne(user.id)))
       throw new HttpException('User already exist', HttpStatus.CONFLICT);
 
     try {
