@@ -13,25 +13,24 @@ export class ChatService {
     private readonly chatRepo: Repository<ChatRoom>,
   ) {}
 
-  async getRoomById(id: number) {
+  async getRoomById(id: number): Promise<ChatRoom> {
     const chat = await this.chatRepo.findOne(id);
-    if (chat) {
-      chat.password = undefined;
-      return chat;
-    } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    if (!chat) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    delete chat.password;
+    return chat;
   }
 
   async createRoom(room: ChatRoom, admin: User) {
-    let users = [];
     let hashedPassword = '';
     if (room.public == false)
       hashedPassword = await bcrypt.hash(room.password, 10);
-    users.push(admin);
+
     const newRoom: ChatRoom = {
       adminId: [],
       public: room.public,
       ownerId: admin.id,
-      users: users,
+      users: [admin],
       ...room,
     };
     newRoom.password = hashedPassword;
