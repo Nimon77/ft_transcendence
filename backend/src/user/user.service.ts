@@ -37,11 +37,17 @@ export class UserService {
   async updateUser(id: number, user: User): Promise<User> {
     await this.getUserById(id);
 
-    if (user.id && user.id != id)
-      throw new HttpException('Cannot update user id', HttpStatus.BAD_REQUEST);
-    user.id = id;
+    const can: Array<String> = ['username', 'friends', 'blocked'];
+
+    for (const key of Object.keys(user))
+      if (can.indexOf(key) == -1)
+        throw new HttpException(
+          'Value cannot be modified',
+          HttpStatus.BAD_REQUEST,
+        );
 
     try {
+      user.id = id;
       await this.repo.update(id, user);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
