@@ -54,6 +54,7 @@ export class UserService {
     const user: User = { id, ...new User() };
     try {
       await this.repo.remove(user);
+      await this.avatarService.deleteAvatar(id);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
