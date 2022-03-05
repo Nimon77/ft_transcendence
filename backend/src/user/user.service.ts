@@ -23,11 +23,14 @@ export class UserService {
   }
 
   async createUser(user: User): Promise<User> {
-    const newUser = {
-      id: user.id,
-    };
-    newUser.id = user.id;
-    await this.repo.save(newUser); //will throw exception if username is already taken
+    if (user && user.id && (await this.repo.findOne(user.id)))
+      throw new HttpException('User already exist', HttpStatus.CONFLICT);
+
+    try {
+      await this.repo.save(user);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
     return user;
   }
 
@@ -47,10 +50,13 @@ export class UserService {
   }
 
   async deleteUser(id: number) {
-    const firstUser = await this.repo.findOne(id);
-    if (firstUser) {
-      await this.repo.remove(firstUser);
-    } else throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    await this.getUserById(id);
+    const user: User = { id, ...new User() };
+    try {
+      await this.repo.remove(user);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async setAvatar(user: User, filename: string, buffer: Buffer) {
