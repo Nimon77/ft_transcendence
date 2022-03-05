@@ -58,11 +58,10 @@ export class UserService {
   }
 
   async deleteUser(id: number) {
-    await this.getUserById(id);
-    const user: User = { id, ...new User() };
+    const user: User = await this.getUserById(id);
     try {
-      await this.repo.remove(user);
-      await this.avatarService.deleteAvatar(id);
+      await this.repo.remove({ id, ...new User() });
+      if (user.avatarId) await this.avatarService.deleteAvatar(user.avatarId);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

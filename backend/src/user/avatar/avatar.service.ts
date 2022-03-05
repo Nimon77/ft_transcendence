@@ -45,9 +45,8 @@ export class AvatarService {
 
   async deleteAvatar(id: number) {
     await this.getAvatarById(id);
-    const avatar: Avatar = { id, ...new Avatar() };
     try {
-      await this.repo.remove(avatar);
+      await this.repo.remove({ id, ...new Avatar() });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

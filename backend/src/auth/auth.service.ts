@@ -29,17 +29,14 @@ export class AuthService {
       ...new User(),
     };
 
-    //need to check if user already exist
-    try {
-      await this.userService.getUserById(newUser.id);
-    } catch (error) {
+    await this.userService.getUserById(newUser.id).catch(async () => {
       newUser = await this.userService.createUser(newUser);
       this.userService.setAvatar(
         newUser,
         '42',
         await download(user.photos[0].value),
       );
-    }
+    });
     const payload = { sub: user.id };
     return {
       access_token: this.jwtService.sign(payload),
