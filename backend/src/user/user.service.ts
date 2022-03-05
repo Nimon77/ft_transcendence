@@ -43,7 +43,7 @@ export class UserService {
       if (can.indexOf(key) == -1)
         throw new HttpException(
           'Value cannot be modified',
-          HttpStatus.BAD_REQUEST,
+          HttpStatus.CONFLICT,
         );
 
     try {
