@@ -37,7 +37,7 @@ export class AvatarService {
   }
 
   async getAvatarById(id: number): Promise<Avatar> {
-    const avatar: Avatar = await this.repo.findOne(id);
+    const avatar: Avatar = id && (await this.repo.findOne(id));
     if (!avatar)
       throw new HttpException('Avatar not found', HttpStatus.NOT_FOUND);
     return avatar;
