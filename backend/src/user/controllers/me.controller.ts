@@ -29,8 +29,8 @@ export class MeController {
   ) {}
 
   @Get('/me')
-  async getUser(@Request() req): Promise<User> {
-    return await this.userService.getUserById(req.user.userId);
+  getUser(@Request() req): Promise<User> {
+    return this.userService.getUserById(req.user.userId);
   }
 
   @Get('/me/avatar')
@@ -51,6 +51,8 @@ export class MeController {
 
   @Put('/me')
   updateUser(@Request() req, @Body() user: User) {
+    if (!user) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
+
     return this.userService.updateUser(req.user.userId, user);
   }
 
@@ -71,6 +73,8 @@ export class MeController {
 
   @Post('/me/follow')
   async followUser(@Request() req, @Body() friend: User) {
+    if (!friend) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
+
     const user = await this.userService.getUserById(req.user.userId);
     const frienduser = await this.userService.getUserById(friend.id);
     this.userService.updateFollow(user, frienduser);
@@ -78,6 +82,8 @@ export class MeController {
 
   @Post('/me/block')
   async blockUser(@Request() req, @Body() blocked: User) {
+    if (!blocked) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
+
     const user = await this.userService.getUserById(req.user.userId);
     const blockeduser = await this.userService.getUserById(blocked.id);
     this.userService.updateBlock(user, blockeduser);

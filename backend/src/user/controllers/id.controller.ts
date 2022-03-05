@@ -58,11 +58,15 @@ export class IdController {
 
   @Post()
   createUser(@Body() user: User) {
+    if (!user) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
+
     return this.userService.createUser(user);
   }
 
   @Put(':id')
   updateUser(@Param('id') id: number, @Body() user: User) {
+    if (!user) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
+
     return this.userService.updateUser(id, user);
   }
 
