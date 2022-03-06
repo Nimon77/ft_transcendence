@@ -107,15 +107,21 @@ export class ChatService {
   }
 
   async updateRoom(id: number, room: ChatRoom) {
-    const updatedRoom = await this.chatRepo.findOne(id);
-    const newRoom = {
-      id: room.id,
-      ...room,
-    };
+    let updatedRoom = await this.chatRepo.findOne(id);
+    if (!updatedRoom)
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    room.password = undefined;
+    const currentRoom = this.chatRepo.create({
+      id: updatedRoom.id,
+      name: (room.name ? room.name : updatedRoom.name),
+      password: updatedRoom.password,
+      public: (room.public != undefined ? room.public : updatedRoom.public),
+      adminId: updatedRoom.adminId,
+      ownerId: updatedRoom.ownerId,
+    });
     if (updatedRoom) {
-      newRoom.password = updatedRoom.password;
-      return await this.chatRepo.update({ id: room.id }, newRoom);
-    } else throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+      return await this.chatRepo.update({ id: currentRoom.id }, currentRoom);
+    }
   }
 
   async getAllRooms() {
