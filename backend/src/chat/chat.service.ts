@@ -22,6 +22,8 @@ export class ChatService {
   }
 
   async createRoom(room: ChatRoom, admin: User) {
+    if (room.name == undefined)
+      throw new HttpException('Room name needs to be specified', HttpStatus.BAD_REQUEST);
     let hashedPassword = '';
     if (room.public == false)
     {
@@ -30,7 +32,6 @@ export class ChatService {
       else
         throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
     }
-
     const currentRoom = this.chatRepo.create({
       name: room.name,
       adminId: [],
