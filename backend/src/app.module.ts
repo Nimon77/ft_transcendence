@@ -6,6 +6,7 @@ import * as Joi from 'joi';
 import { JwtAuthGuard } from './auth/guards/jwt-auth.guard';
 import { APP_GUARD } from '@nestjs/core';
 import { PongModule } from './pong/pong.module';
+import { NotifyModule } from './notify/notify.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PongModule } from './pong/pong.module';
       ignoreEnvFile: true,
     }),
     DatabaseModule,
+    NotifyModule,
     UserModule,
     PongModule,
   ],
