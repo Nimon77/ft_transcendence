@@ -47,17 +47,9 @@
             "type": "number",
             "example": 65000
           },
-          "log": {
-            "type": "string",
-            "example": "droge"
-          },
           "username": {
             "type": "string",
             "example": "dimitri"
-          },
-          "onlineStatus": {
-            "type": "boolean",
-            "example": "true"
           },
           "profileCompleted": {
             "type": "boolean",
@@ -131,17 +123,9 @@
                   "type": "number",
                   "example": 65000
                 },
-                "log": {
-                  "type": "string",
-                  "example": "droge"
-                },
                 "username": {
                   "type": "string",
                   "example": "dimitri"
-                },
-                "onlineStatus": {
-                  "type": "boolean",
-                  "example": "true"
                 },
                 "profileCompleted": {
                   "type": "boolean",
@@ -199,6 +183,12 @@
       },
       "OK": {
         "description": "Expected response"
+      },
+      "UnauthorizedValue": {
+        "description": "You tried to modify a value you don't have access to"
+      },
+      "NotExist": {
+        "description": "User and / or avatar does not exist"
       }
     }
   },
@@ -293,7 +283,40 @@
         }
       }
     },
-    "/channel/{id}/leave/{userid}": {
+    "/channel/{id}/leave": {
+      "put": {
+        "tags": [
+          "channel me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Makes the current user leave the channel (specified by id)",
+        "operationId": "MeController_leaveChannel",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/kick/{userid}": {
       "put": {
         "tags": [
           "channel me"
@@ -519,32 +542,16 @@
         "operationId": "MeController_updateUser",
         "parameters": [],
         "requestBody": {
-          "description": "Updated user object (id and avatarId cannot be modified)",
+          "description": "Updated user object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
                 "type": "object",
                 "properties": {
-                  "log": {
-                    "type": "string",
-                    "example": "droge"
-                  },
                   "username": {
                     "type": "string",
                     "example": "dimitri"
-                  },
-                  "onlineStatus": {
-                    "type": "boolean",
-                    "example": "true"
-                  },
-                  "profileCompleted": {
-                    "type": "boolean",
-                    "example": "true"
-                  },
-                  "rank": {
-                    "type": "number",
-                    "example": 100
                   },
                   "friends": {
                     "type": "array",
@@ -565,10 +572,6 @@
                       65243,
                       65379
                     ]
-                  },
-                  "otp": {
-                    "type": "string",
-                    "example": "lnrtuvcbdefghijk"
                   }
                 }
               }
@@ -581,6 +584,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           }
         }
       },
@@ -633,6 +639,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotExist"
           }
         }
       },
@@ -826,6 +835,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "409": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           }
         }
       }
@@ -860,7 +872,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "description": "User doesn't exist in database"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       },
@@ -887,12 +899,38 @@
           }
         ],
         "requestBody": {
-          "description": "Updated user object (id and avatarId cannot be modified)",
+          "description": "Updated user object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "$ref": "#/components/schemas/User"
+                "type": "object",
+                "properties": {
+                  "username": {
+                    "type": "string",
+                    "example": "dimitri"
+                  },
+                  "friends": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [
+                      65255,
+                      65350
+                    ]
+                  },
+                  "blocked": {
+                    "type": "array",
+                    "items": {
+                      "type": "number"
+                    },
+                    "example": [
+                      65243,
+                      65379
+                    ]
+                  }
+                }
               }
             }
           }
@@ -905,7 +943,10 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "description": "User doesn't exist in database"
+            "$ref": "#/components/responses/NotExist"
+          },
+          "409": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           }
         }
       },
@@ -938,7 +979,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "description": "User doesn't exist in database"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -981,7 +1022,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "description": "User doesn't exist in database"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       },
@@ -1034,6 +1075,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
