@@ -24,24 +24,29 @@ export class ChatService {
   async createRoom(room: ChatRoom, admin: User) {
     let hashedPassword = '';
     if (room.public == false)
-      hashedPassword = await bcrypt.hash(room.password, 10);
+    {
+      if (room.password)
+        hashedPassword = await bcrypt.hash(room.password, 10);
+      else
+        throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
+    }
 
-    const newRoom: ChatRoom = {
+    const currentRoom = this.chatRepo.create({
+      name: room.name,
       adminId: [],
       public: room.public,
       ownerId: admin.id,
       users: [admin],
-      ...room,
-    };
-    newRoom.password = hashedPassword;
-    newRoom.adminId.push(admin.id);
+      password: hashedPassword,
+    });
+    currentRoom.adminId.push(admin.id);
     try {
-      await this.chatRepo.save(newRoom);
+      await this.chatRepo.save(currentRoom);
     } catch (error) {
       return;
     }
-    newRoom.password = undefined;
-    return newRoom;
+    currentRoom.password = undefined;
+    return currentRoom;
   }
 
   async deleteRoom(id: number) {
@@ -53,6 +58,8 @@ export class ChatService {
 
   async getRoomInfo(roomId: number) {
     const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
+    if (!room)
+      throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
     room.password = undefined;
     return room;
   }
@@ -66,6 +73,11 @@ export class ChatService {
         HttpStatus.UNAUTHORIZED,
       );
     if (room) {
+      if (user.id == room.ownerId && adminId == room.ownerId)
+      {
+        this.deleteRoom(room.id);
+        return ;
+      }
       var index = room.users.map((user) => user.id).indexOf(user.id);
       if (index !== -1) room.users.splice(index, 1);
       else throw new HttpException('User not in room', HttpStatus.NOT_FOUND);
@@ -100,6 +112,7 @@ export class ChatService {
       ...room,
     };
     if (updatedRoom) {
+      newRoom.password = updatedRoom.password;
       return await this.chatRepo.update({ id: room.id }, newRoom);
     } else throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
   }
