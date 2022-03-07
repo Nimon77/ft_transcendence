@@ -79,6 +79,8 @@ export class ChatService {
         this.deleteRoom(room.id);
         return ;
       }
+      if (room.adminId.indexOf(user.id) != -1)
+        room.adminId.splice(room.adminId.indexOf(user.id));
       var index = room.users.map((user) => user.id).indexOf(user.id);
       if (index !== -1) room.users.splice(index, 1);
       else throw new HttpException('User not in room', HttpStatus.NOT_FOUND);

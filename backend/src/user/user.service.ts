@@ -4,12 +4,14 @@ import { In, Repository } from 'typeorm';
 import { User } from './user.entity';
 import { AvatarService } from './avatar/avatar.service';
 import { Avatar } from './avatar/avatar.entity';
+import { ChatService } from 'src/chat/chat.service';
 
 @Injectable()
 export class UserService {
   constructor(
     @InjectRepository(User) private readonly repo: Repository<User>,
     private readonly avatarService: AvatarService,
+    private readonly chatService: ChatService,
   ) {}
 
   getAllUsers(): Promise<User[]> {
@@ -60,6 +62,10 @@ export class UserService {
   async deleteUser(id: number) {
     const user: User = await this.getUserById(id);
     try {
+      const rooms = await this.chatService.getRoomsForUser(id);
+      rooms.forEach(room => {
+        this.chatService.removeUserFromRoom(user, room.id, room.adminId[0]);
+      })
       await this.repo.remove({ id, ...new User() });
       if (user.avatarId) await this.avatarService.deleteAvatar(user.avatarId);
     } catch (error) {
