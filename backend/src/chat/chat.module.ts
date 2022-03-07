@@ -6,9 +6,11 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { MeController } from './controllers/me.controller';
 import { IdController } from './controllers/id.controller';
+import { MutedUser } from './mute.entity';
+import { BannedUser } from './banned.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatRoom]), AuthModule],
+  imports: [TypeOrmModule.forFeature([ChatRoom, MutedUser, BannedUser]), AuthModule],
   providers: [ChatGateway, ChatService],
   exports: [ChatService],
   controllers: [MeController, IdController],

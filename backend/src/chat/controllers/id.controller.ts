@@ -14,6 +14,9 @@ import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/user/user.service';
 import { PasswordI } from '../password.interface';
+import { User } from 'src/user/user.entity';
+import { MutedUser } from '../mute.entity';
+import { BannedUser } from '../banned.entity';
 
 @Controller('channel')
 export class IdController {
@@ -71,5 +74,29 @@ export class IdController {
   {
     const user = await this.userService.getUserById(id);
     return await this.chatService.createRoom(channel, user);
+  }
+
+  @Put(':id/mute')
+  async muteUserFromRoom(@Param('id', ParseIntPipe) id: number, @Body() user: User)
+  {
+    let time = new Date();
+    const curuser = await this.userService.getUserById(user.id);
+    time = new Date(time.getTime() + (30 * 60 * 1000))
+    const newMutedUser = new MutedUser;
+    newMutedUser.userId = curuser.id;
+    newMutedUser.endOfMute = time;
+    this.chatService.MuteUserInRoom(newMutedUser, id);
+  }
+
+  @Put(':id/ban')
+  async banUserFromRoom(@Param('id', ParseIntPipe) id: number, @Body() user: User)
+  {
+    let time = new Date();
+    const curuser = await this.userService.getUserById(user.id);
+    time = new Date(time.getTime() + (30 * 60 * 1000))
+    const newBannedUser = new BannedUser;
+    newBannedUser.userId = curuser.id;
+    newBannedUser.endOfBan = time;
+    this.chatService.BanUserInRoom(newBannedUser, id);
   }
 }

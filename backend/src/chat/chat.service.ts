@@ -1,9 +1,11 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { ChatRoom } from './chat.entity';
-import { Repository } from 'typeorm';
+import { MutedUser } from './mute.entity';
+import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { PasswordI } from './password.interface';
+import { BannedUser } from './banned.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -11,6 +13,10 @@ export class ChatService {
   constructor(
     @InjectRepository(ChatRoom)
     private readonly chatRepo: Repository<ChatRoom>,
+    @InjectRepository(MutedUser)
+    private readonly mutedRepo: Repository<MutedUser>,
+    @InjectRepository(BannedUser)
+    private readonly bannedRepo: Repository<BannedUser>,
   ) {}
 
   async getRoomById(id: number): Promise<ChatRoom> {
@@ -38,6 +44,7 @@ export class ChatService {
       public: room.public,
       ownerId: admin.id,
       users: [admin],
+      muted: [],
       password: hashedPassword,
     });
     currentRoom.adminId.push(admin.id);
@@ -58,7 +65,7 @@ export class ChatService {
   }
 
   async getRoomInfo(roomId: number) {
-    const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
+    const room = await this.chatRepo.findOne(roomId, { relations: ['users', 'muted', 'banned'] });
     if (!room)
       throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
     room.password = undefined;
@@ -178,5 +185,31 @@ export class ChatService {
           .of(room)
           .add(user);
       });
+  }
+
+  async MuteUserInRoom(user: MutedUser, roomid: number)
+  {
+    const currentroom = await this.chatRepo.findOne(roomid, {relations : ['muted']});
+    const muted = this.mutedRepo.create({
+      userId: user.userId,
+      endOfMute: user.endOfMute,
+      room: currentroom,
+    });
+    this.mutedRepo.save(muted);
+    currentroom.muted.push(muted);
+    return await this.chatRepo.save(currentroom);
+  }
+
+  async BanUserInRoom(user: BannedUser, roomid: number)
+  {
+    const currentroom = await this.chatRepo.findOne(roomid, {relations : ['banned']});
+    const banned = this.bannedRepo.create({
+      userId: user.userId,
+      endOfBan: user.endOfBan,
+      room: currentroom,
+    });
+    this.bannedRepo.save(banned);
+    currentroom.banned.push(banned);
+    return await this.chatRepo.save(currentroom);
   }
 }
