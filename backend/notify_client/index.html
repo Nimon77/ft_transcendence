@@ -1,0 +1,45 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Notify</title>
+    <script
+      src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+      integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <script>
+      const client = io('http://127.0.0.1:3000/notify', {
+        transportOptions: {
+          polling: {
+            extraHeaders: {
+              Authorization:
+                'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0NjY3ODY4MSwiZXhwIjoxNjQ3MjgzNDgxfQ.IU1RGr77KHwE5d2YrPpY9kgmrvBOM8V9KnOIyApMf3c',
+            },
+          },
+        },
+      });
+
+      client.on('connect', () => {
+        console.log('Connected');
+
+        setTimeout(() => {
+          console.log('Send notify');
+          client.emit('notify', {
+            id: 60027,
+            data: {
+              message: 'Hello World',
+            },
+          });
+        }, 1 * 1000);
+      });
+
+      client.on('disconnect', () => console.log('Disconnected'));
+
+      client.on('notify', (data) => alert(data.data.message));
+      client.on('error', console.log);
+    </script>
+  </body>
+</html>
