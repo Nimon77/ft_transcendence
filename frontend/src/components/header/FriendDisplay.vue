@@ -5,16 +5,8 @@
         <img v-auth-image="'/user/'+ user.id +'/avatar'"/>
       </v-avatar>
 
-      <v-badge class="ml-3" inline left v-if="user.onlineStatus==0" color="grey">
-      {{user.log}}
-      </v-badge>
-
-      <v-badge class="ml-3" inline left v-if="user.onlineStatus==1" color="blue">
-      {{user.log}}
-      </v-badge>
-
-      <v-badge class="ml-3" inline left v-if="user.onlineStatus==2" color="red">
-      {{user.log}} - in game
+      <v-badge class="ml-3" inline left color="blue">
+      {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
 
