@@ -2,7 +2,7 @@
   "openapi": "3.0.0",
   "info": {
     "title": "BananaPong",
-    "description": "This is the documentation of the BananaPong server. Remember that the JWT is necessary for all the operations (except the ones in the auth tag), Make sure you input a correct JWT token in the Authorize menu.",
+    "description": "This is the documentation of the BananaPong server. Remember that the JWT is necessary for all the operations (except the ones that are public), Make sure you input a correct JWT token in the Authorize menu.",
     "version": "2.0",
     "contact": {
       "email": "droge@student.42.fr"
@@ -223,6 +223,34 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/generate/{id}": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Generates a JWT token for the user (specified by id), if that user doesn't exist it will get created",
+        "operationId": "AuthController_generateJWT",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of user",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
           }
         }
       }
@@ -327,7 +355,7 @@
           }
         ],
         "summary": "Makes the current user kick the user (specified by userid) from the channel (specified by id)",
-        "operationId": "MeController_leaveChannel",
+        "operationId": "MeController_kickUserFromChannel",
         "parameters": [
           {
             "name": "id",
@@ -428,6 +456,37 @@
       }
     },
     "/channel/{id}": {
+      "get": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "WIP",
+        "operationId": "IdController_getRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
       "put": {
         "tags": [
           "channel id"
@@ -475,6 +534,38 @@
           }
         }
       },
+      "post": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "WIP",
+        "operationId": "IdController_createChannelForUser",
+        "parameters": [],
+        "requestBody": {
+          "description": "WIP",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "201": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
       "delete": {
         "tags": [
           "channel id"
@@ -497,6 +588,171 @@
             }
           }
         ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/mute/": {
+      "put": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "WIP",
+        "operationId": "IdController_muteUserFromRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "WIP",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/ban/": {
+      "put": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "WIP",
+        "operationId": "IdController_banUserFromRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "WIP",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/check/": {
+      "get": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "WIP",
+        "operationId": "IdController_checkPass",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/channel/{id}/change/": {
+      "post": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "WIP",
+        "operationId": "IdController_changePass",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "WIP",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object"
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
