@@ -60,19 +60,19 @@ export default Vue.extend({
             if (this.input == '' || this.idCR == 0)
                 return;
 
-            this.socket.emit('text', {
-                id: this.idCR,
-                value: this.input,
-            });
+            // this.socket.emit('text', {
+            //     id: this.idCR,
+            //     value: this.input,
+            // });
             this.input = '';
         },
     },
     created() {
         this.$watch(() => this.idCR, () => {this.chatMsg = []; },{ immediate: true })
-        this.socket.on( "text", data => {
-            console.log("TEXT EVENT", data);
-            this.chatMsg.push( { sender: data.user.username, msg: data.value } );
-        });
+        // this.socket.on( "text", data => {
+        //     console.log("TEXT EVENT", data);
+        //     this.chatMsg.push( { sender: data.user.username, msg: data.value } );
+        // });
     },
 })
 </script>
