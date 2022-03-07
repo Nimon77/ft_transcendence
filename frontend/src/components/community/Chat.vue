@@ -8,12 +8,12 @@
         
             <v-list max-height="70vh" class="mt-3 d-flex flex-column">
                 <div v-for="(cM, index) in chatMsg" :key="index">
-                    <v-card v-if="cM.sender != user.username" flat tile width="100%" color="white" >
-                            <div class="font-weight-bold mt-2 ml-4"> {{cM.sender}} </div>
-                            <div class=" mb-2 ml-4"> {{cM.msg}} </div>
+                    <v-card v-if="cM.sender != user.username" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
+                            <div class="font-weight-bold mt-2 ml-3"> {{cM.sender}} </div>
+                            <div class=" mb-2 ml-3"> {{cM.msg}} </div>
                     </v-card >                
                     <div class="d-flex justify-end">
-                    <v-card v-if="cM.sender == user.username" class="mb-1 text-right d-flex justify-center" flat width="25%" color="blue" dark>
+                    <v-card v-if="cM.sender == user.username" class="mb-1 mr-2 text-right d-flex justify-center" tile flat width="25%" color="blue" dark>
                             <div class="font-weight-bold mr-4 mt-1"> {{cM.sender}} </div>
                             <div class="mr-4 mb-1"> {{cM.msg}} </div>
                     </v-card>
@@ -60,19 +60,19 @@ export default Vue.extend({
             if (this.input == '' || this.idCR == 0)
                 return;
 
-            // this.socket.emit('text', {
-            //     id: this.idCR,
-            //     value: this.input,
-            // });
+            this.socket.emit('text', {
+                id: this.idCR,
+                value: this.input,
+            });
             this.input = '';
         },
     },
     created() {
         this.$watch(() => this.idCR, () => {this.chatMsg = []; },{ immediate: true })
-        // this.socket.on( "text", data => {
-        //     console.log("TEXT EVENT", data);
-        //     this.chatMsg.push( { sender: data.user.username, msg: data.value } );
-        // });
+        this.socket.on( "text", data => {
+            console.log("TEXT EVENT", data);
+            this.chatMsg.push( { sender: data.user.username, msg: data.value } );
+        });
     },
 })
 </script>

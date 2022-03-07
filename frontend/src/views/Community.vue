@@ -27,6 +27,7 @@ export default Vue.extend({
         idCR: 0,
         newCR: false,
         socket: {},
+        socketData: [],
         user: [],
         userCR: [],
         playersCR: [],
@@ -53,6 +54,9 @@ export default Vue.extend({
           this.user = resp.data;
           // console.log("GET USER IN COMMUNITY ", this.user);
         })
+        // this.user = this.socketData.user;
+        // console.log("this user", this.user);
+        
         await this.$http.get('/channel').then((resp) => {
           this.CRs = resp.data;
           // console.log("GET CRs IN COMMUNITY ", this.CRs);
@@ -61,28 +65,48 @@ export default Vue.extend({
           this.userCR = resp.data;
           // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
+        // this.userCR = this.socketData.channels;
+        // console.log("this userCR", this.userCR);
+
         if (this.$route.params.idCR)
           this.idCR = +this.$route.params.idCR;
-        this.getPlayersCR();
+        if (this.userCR != undefined)
+          this.getPlayersCR();
+      },
+      fetchSocket()
+      {
+        // console.log('IN FETCH SOCKET');
+        this.socket.on("info", data => {
+          this.socketData = data;
+          this.user = data.user;
+          this.userCR = data.channels;
+          if (this.$route.params.idCR)
+            this.idCR = +this.$route.params.idCR;
+          if (this.userCR != undefined)
+            this.getPlayersCR();
+          // console.log("INFO ", this.user, this.userCR);
+        });
       },
     },
 
     created() {
-      this.$watch(() => this.newCR, () => {this.fetchInfos()},{ immediate: true })
-      this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
       this.socket = io("http://127.0.0.1:3000/chat", {
           transportOptions: {
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
           },
       });
-      console.log('CREATED');
+      this.fetchSocket();
+      // console.log('CREATED');
+      this.$watch(() => this.newCR, () => {this.fetchInfos()},{ immediate: true })
+      this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
     },
     mounted() {
-        this.socket.on("info", data => {
-            console.log("INFO ", data);
-        // console.log('MOUNTED');
-        });
-
+      // console.log('MOUNTED');
+        // this.socket.on("info", data => {
+        //   this.socketData = data;
+        //   console.log("INFO ", this.socketData);
+        // });
+        // this.fetchInfos();
     }
 })
 </script>
