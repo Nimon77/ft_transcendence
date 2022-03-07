@@ -172,7 +172,8 @@ export default Vue.extend({
         else
           location.reload();
       },
-      async newChannel() {
+      async newChannel(event) {
+        event.preventDefault();
         // console.log('USER ID IN CHANNEL', this.user.id);
         await this.$http.post('/channel', {name: this.name, id: this.user.id}).then((resp) => console.log(resp))
         this.dialog = false;
