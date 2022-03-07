@@ -33,4 +33,12 @@ export class AuthController {
     const token = headers.authorization.split(' ')[1];
     return !!this.authService.verify(token).sub;
   }
+
+  @Public()
+  @Get('generate/:id')
+  generateJWT(@Headers() headers) {
+    if (!headers.authorization) return false;
+    const token = headers.authorization.split(' ')[1];
+    return !!this.authService.verify(token).sub;
+  }
 }

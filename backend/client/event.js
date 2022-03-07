@@ -54,8 +54,7 @@ const createUser = (user) => {
 const event = (socket) => {
   socket.on('info', (info) => {
     me = info.user;
-    channels = info.channels.items;
-    for (const channel of channels) createChannel(channel, socket);
+    for (const channel of info.channels) createChannel(channel, socket);
   });
 
   socket.on('channel', (channel) => {
@@ -74,7 +73,6 @@ const event = (socket) => {
       const chat = document.getElementById('chat');
       const main = chat.getElementsByTagName('main')[0];
       const childs = Array.from(main.childNodes);
-      console.log(childs);
       for (const child of childs)
         if (child.nodeName == 'DIV') main.removeChild(child);
     }
