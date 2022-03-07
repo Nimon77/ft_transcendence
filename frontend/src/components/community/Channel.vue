@@ -44,7 +44,7 @@
       <v-divider class="mt-1"></v-divider>
   
       <v-list  v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
-        <div v-for="CR in userCR.items" :key="CR.id">
+        <div v-for="CR in userCR" :key="CR.id">
         <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
             <v-list-item-title > {{CR.name}} </v-list-item-title>
@@ -144,9 +144,9 @@ export default Vue.extend({
       alreadyJoin(toJoin: number) {
         let i = 0;
 
-        while (i < this.userCR.items.length)
+        while (i < this.userCR.length)
         {
-          if (this.userCR.items[i].id == toJoin)
+          if (this.userCR[i].id == toJoin)
           {
             // console.log("TRUE");
             return true;
@@ -164,7 +164,7 @@ export default Vue.extend({
       },
       async leaveRoom(idCR) {
         console.log("leave ROOM ", idCR);
-        await this.$http.put('/channel/' + idCR + '/leave/' + this.user.id, {id: this.user.id,}).then((resp) => console.log(resp))
+        await this.$http.put('/channel/' + idCR + '/leave/', {id: this.user.id,}).then((resp) => console.log(resp))
         if (this.$route.path !== '/community/0')
         {
           this.$router.push('/community/0');

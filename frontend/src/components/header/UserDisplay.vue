@@ -6,15 +6,15 @@
       </v-avatar>
 
       <v-badge class="ml-3" inline left v-if="user.onlineStatus==0" color="grey">
-      {{user.log}}
+      {{user.id}}
       </v-badge>
 
       <v-badge class="ml-3" inline left v-if="user.onlineStatus==1" color="blue">
-      {{user.log}}
+      {{user.id}}
       </v-badge>
 
       <v-badge class="ml-3" inline left v-if="user.onlineStatus==2" color="red">
-      {{user.log}} - in game
+      {{user.id}} - in game
       </v-badge>
       <v-spacer></v-spacer>
       <v-btn dark @click="addStat" :id="user.id" :loading="loader" :color="color" height="60" width="60">

@@ -40,11 +40,11 @@ export default Vue.extend({
         if (this.idCR == 0)
           return (this.playersCR);
 
-        while(i < this.userCR.items.length && this.userCR.items[i].id != this.idCR)
+        while(i < this.userCR.length && this.userCR[i].id != this.idCR)
           i++;
 
-        if (this.userCR.items[i].id == this.idCR)
-          return ( this.playersCR = this.userCR.items[i].users );
+        if (this.userCR[i].id == this.idCR)
+          return ( this.playersCR = this.userCR[i].users );
         return (this.playersCR = []);
       },
 
@@ -75,7 +75,7 @@ export default Vue.extend({
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
           },
       });
-      // console.log('CREATED');
+      console.log('CREATED');
     },
     mounted() {
         this.socket.on("info", data => {
