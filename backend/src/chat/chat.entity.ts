@@ -1,5 +1,7 @@
 import { User } from '../user/user.entity';
-import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToMany, OneToMany } from 'typeorm';
+import { MutedUser } from './mute.entity';
+import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToMany, OneToMany, ManyToOne } from 'typeorm';
+import { BannedUser } from './banned.entity';
 
 @Entity()
 export class ChatRoom{
@@ -24,4 +26,12 @@ export class ChatRoom{
     @ManyToMany(() => User, { cascade: true, onUpdate:'CASCADE' })
     @JoinTable()
     users: User[];
+
+    @OneToMany(() => MutedUser, MutedUser => MutedUser.room, { nullable: true })
+    @JoinTable()
+    muted: MutedUser[];
+
+    @OneToMany(() => BannedUser, BannedUser => BannedUser.room, { nullable: true })
+    @JoinTable()
+    banned: BannedUser[];
 }
