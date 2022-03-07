@@ -40,7 +40,7 @@
             </v-card-text>
             <v-card-actions class="justify-end">
               <v-btn color="red" dark @click="dialog.value = false" >CANCEL</v-btn>
-              <v-btn color="blue" class="white--text" :disabled="!valid" @click="setNewName" >OK!</v-btn>
+              <v-btn color="blue" class="white--text" :disabled="!valid" @click="setNewInfos" >OK!</v-btn>
             </v-card-actions>
           </v-card>
         </template>
@@ -95,7 +95,7 @@ export default Vue.extend({
             }
         },
         methods: {
-          async setNewName() {
+          async setNewInfos() {
             this.dialog = false;
             const { canvas } = this.$refs.cropper.getResult();
             if (canvas) {
@@ -105,9 +105,11 @@ export default Vue.extend({
                 this.$http.put('/user/me/avatar', form);
               }, this.image.type);
             }
-            await this.$http.put('/user/me', {username: this.username,}).then(response => {
-              console.log('PUT REQUEST', response);
-              });
+            if (this.username != '') {
+              await this.$http.put('/user/me', {username: this.username,}).then(response => {
+                console.log('PUT REQUEST', response);
+                });
+            }
             location.reload();
           },
 
@@ -127,6 +129,7 @@ export default Vue.extend({
                 };
               });
               reader.readAsArrayBuffer(files[0]);
+              this.valid = true;
             }
           },
         },
@@ -142,15 +145,11 @@ export default Vue.extend({
             const rules = [];
             let existingName: string = null;
             let i = 0;
-            // console.log('IN RULES, username = ', this.username);
 
-            existingName = this.users[i].log;
+            existingName = this.users[i].username;
             while (this.username != existingName && i < this.users.length) {
-              // console.log('EXISTING NAME : ', existingName);
-              existingName = this.users[i++].log;
-              // i++;
+              existingName = this.users[i++].username;
             }
-            // console.log('AFTER WHILE ', existingName);
             if (this.username === existingName) {
               const rule = `username already exist`;
               rules.push(rule);

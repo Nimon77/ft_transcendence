@@ -1,5 +1,5 @@
 <template>
-    <v-card tile flat class="mx-10" color="white" min-width="50%" max-width="100%" height=100%>
+    <v-card tile flat class="mx-10" color="white" min-width="50%" max-width="100%" height="80%">
     
         <v-sheet color="green" height="100" dark width="100%" class="text-center">
         <v-divider class="pt-4"></v-divider>
