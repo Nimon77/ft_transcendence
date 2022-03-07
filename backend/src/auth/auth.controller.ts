@@ -2,6 +2,8 @@ import {
   Controller,
   Get,
   Headers,
+  Param,
+  ParseIntPipe,
   Request,
   Res,
   UseGuards,
@@ -36,9 +38,7 @@ export class AuthController {
 
   @Public()
   @Get('generate/:id')
-  generateJWT(@Headers() headers) {
-    if (!headers.authorization) return false;
-    const token = headers.authorization.split(' ')[1];
-    return !!this.authService.verify(token).sub;
+  generateJWT(@Param('id', ParseIntPipe) id: number) {
+    return this.authService.login({ id });
   }
 }
