@@ -31,11 +31,12 @@ export class AuthService {
 
     await this.userService.getUserById(newUser.id).catch(async () => {
       newUser = await this.userService.createUser(newUser);
-      this.userService.setAvatar(
-        newUser,
-        '42',
-        await download(user.photos[0].value),
-      );
+      if (user.photos)
+        this.userService.setAvatar(
+          newUser,
+          '42',
+          await download(user.photos[0].value),
+        );
     });
     const payload = { sub: user.id };
     return {
