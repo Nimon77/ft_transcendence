@@ -55,6 +55,7 @@ export default Vue.extend({
       return {
         searchInput: "",
         dialog: false,
+        me: [],
         users: [],
         friends: [],
       }
@@ -75,16 +76,25 @@ export default Vue.extend({
     async created() { // retirer les amis des users !!
       await this.$http.get('/user').then(response => {
         this.users = response.data;
+        // console.log(this.users);
       });
       await this.$http.get('/user/me').then(response => {
         this.friends = response.data.friends;
+        this.me = response.data;
       });
-      // console.log(this.friends[0]);
+      // console.log(this.me);
     },
     computed: {
       filteredUsers(): unknown {
-        return this.users.filter((user) => {
-          return user.log.match(this.searchInput);
+        let cleanUsers;
+        cleanUsers = this.users.filter((user) => {
+          if (this.friends.indexOf(user.id) == -1 && user.id != this.me.id)
+            return true;
+          else
+            return false;
+        });
+        return cleanUsers.filter((user) => {
+          return user.username.match(this.searchInput);
         })
       }
     }
