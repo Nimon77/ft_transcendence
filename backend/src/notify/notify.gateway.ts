@@ -1,6 +1,9 @@
-import { SubscribeMessage, WebSocketGateway, WebSocketServer } from '@nestjs/websockets';
-import { any } from 'joi';
-import { Socket, Server } from 'socket.io';
+import {
+  SubscribeMessage,
+  WebSocketGateway,
+  WebSocketServer,
+} from '@nestjs/websockets';
+import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { UserService } from 'src/user/user.service';
 
@@ -16,7 +19,7 @@ export class NotifyGateway {
     private readonly userService: UserService,
   ) {}
   @WebSocketServer()
-  server: Server;
+  server: any;
 
   async handleConnection(client: Socket) {
     if (!client.handshake.headers.authorization) return client.disconnect();
@@ -29,12 +32,17 @@ export class NotifyGateway {
   }
 
   @SubscribeMessage('notify')
-  handleMessage(client: Socket, data: object) {
-    //const user = client.data.user;
-    //console.log(user);
-    //console.log(this.server.sockets);
-    /*client.emit('notify', {
-      user: { id: user.id, username: user.username },
-    });*/
+  handleMessage(client: Socket, data: any) {
+    const user = client.data.user;
+    if (!user) return;
+
+    const socket: any = Array.from(this.server.sockets.values()).find(
+      (socket: Socket) => socket.data.user.id == data.id,
+    );
+    if (!socket) client.emit('error', 'User not found');
+    else {
+      data.id = user.id;
+      socket.emit('notify', data);
+    }
   }
 }

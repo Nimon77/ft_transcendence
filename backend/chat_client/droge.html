@@ -30,19 +30,6 @@
         'http://localhost:3000/chat',
         'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDUzMiIsImlhdCI6MTY0NjY2ODIwNywiZXhwIjoxNjQ3MjczMDA3fQ.l833AGc_GAkNfVO8rZfTCAI2ZoYfele_3UAa8G_h7G8',
       );
-      const client = io('http://localhost:3000/notify', {
-        transportOptions: {
-        polling: { extraHeaders: { Authorization: `Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDUzMiIsImlhdCI6MTY0NjY2ODIwNywiZXhwIjoxNjQ3MjczMDA3fQ.l833AGc_GAkNfVO8rZfTCAI2ZoYfele_3UAa8G_h7G8` } },
-      },
-      });
-      client.on('connect', function () {
-        console.log('notify connect');
-        setTimeout(() =>
-          client.emit('notify', {
-        id: 65000,
-        data: "hello world",
-      }), 3000);
-      });
     </script>
   </body>
 </html>
