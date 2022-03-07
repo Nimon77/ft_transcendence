@@ -8,6 +8,7 @@ import {
   Post,
   Put,
   Request,
+  HttpException,
 } from '@nestjs/common';
 import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
@@ -27,14 +28,14 @@ export class IdController {
   }
 
   @Post('/')
-  async createChannel(@Request() req, @Body() channel: ChatRoom): Promise<ChatRoom> {
+  async createChannel(@Request() req, @Body() channel: ChatRoom) {
     const user = await this.userService.getUserById(req.user.userId);
     return await this.chatService.createRoom(channel, user);
   }
 
   @Put('/:id')
   updateChannel(@Param('id', ParseIntPipe) id: number, @Body() channel: any) {
-    this.chatService.updateRoom(id, channel);
+      return this.chatService.updateRoom(id, channel);
   }
 
   @Delete('/:id')
@@ -72,5 +73,3 @@ export class IdController {
     return await this.chatService.createRoom(channel, user);
   }
 }
-
-

@@ -5,6 +5,7 @@ export interface ChatRoomI{
     name?: string;
     password?:string;
     public?: boolean;
+    ownerId?: number;
     adminId?: number[];
     users?: User[];
 }
