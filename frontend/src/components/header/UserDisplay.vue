@@ -9,6 +9,9 @@
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
+      <v-btn class="mr-3" dark :id="user.id" color="red" height="60" width="60">
+        BLOCK
+      </v-btn>
       <v-btn dark @click="addStat" :id="user.id" :loading="loader" :color="color" height="60" width="60">
         ADD
       </v-btn>
