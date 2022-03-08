@@ -30,7 +30,6 @@
 </script>
 
 <style scoped>
-
   /* html { overflow-y: auto } */
 /* .app {
   overflow: hidden;
