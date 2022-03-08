@@ -48,9 +48,13 @@
         <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
             <v-list-item-title > {{CR.name}} </v-list-item-title>
-            <v-list-item-subtitle> public <v-icon  small color="yellow"> mdi-account </v-icon> </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="CR.public"> public
+              <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon>
+              <v-icon v-if="CR.ownerId == user.id" small color="blue"> mdi-account-child-circle </v-icon>
+            </v-list-item-subtitle>
+            <v-list-item-subtitle v-else> private <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon> </v-list-item-subtitle>
           </v-list-item-content>
-          <OptionChannel @leaveRoom="leaveRoom(CR.id)"/>
+          <OptionChannel @leaveRoom="leaveRoom(CR.id)" :isOwner="CR.ownerId == user.id"/>
         </v-list-item>
         <v-divider></v-divider>
         </div>
@@ -61,7 +65,8 @@
         <v-list-item two-line v-if="alreadyJoin(cr.id)==false">
           <v-list-item-content>
             <v-list-item-title > {{cr.name}} </v-list-item-title>
-            <v-list-item-subtitle> public </v-list-item-subtitle>
+            <v-list-item-subtitle v-if="cr.public"> public </v-list-item-subtitle>
+            <v-list-item-subtitle v-else> private </v-list-item-subtitle>
           </v-list-item-content>
           
           <v-btn v-if="!password" dark color="blue" @click.prevent="joinRoom(cr.id)">
@@ -100,16 +105,6 @@
         </v-list-item>
         <v-divider></v-divider>
         </div>
-        <!-- <div>
-        <v-list-item two-line>
-          <v-list-item-content>
-            <v-list-item-title > OY </v-list-item-title>
-            <v-list-item-subtitle> private </v-list-item-subtitle>
-          </v-list-item-content>
-          <OptionChannel @leaveRoom="leaveRoom(CR.id)"/>
-        </v-list-item>
-        </div>
-        <v-divider></v-divider> -->
       </v-list>
     
     </v-card>
@@ -141,6 +136,13 @@ export default Vue.extend({
         }
     },
     methods: {
+      isAdmin(adminIds: []) {
+        let adminId;
+        for (adminId in adminIds)
+          if (adminIds[adminId] == this.user.id)
+            return true;
+        return false;
+      },
       alreadyJoin(toJoin: number) {
         let i = 0;
 
@@ -182,7 +184,7 @@ export default Vue.extend({
     },
     computed: {
       filteredCRs(): unknown {
-        console.log('FILTERED CR');
+        // console.log('FILTERED CR');
         return this.CRs.filter((cr) => {
           return cr.name.match(this.searchCR);
         })

@@ -6,13 +6,13 @@
     <v-list>
     
     <v-list-item>
-        <v-btn dark class="ma-1" color="green" tile>
-            <v-list-item-title @click="leaveRoom" class="text-center">Leave Channel</v-list-item-title>
+        <v-btn dark class="ma-1" color="green" tile @click="leaveRoom">
+            <v-list-item-title class="text-center">Leave Channel</v-list-item-title>
         </v-btn>
     </v-list-item>
     
     <!-- si admin ! -->
-    <v-list-item>
+    <v-list-item v-if="isOwner">
     <v-dialog v-model="dialog" max-width="600px" >
       <template v-slot:activator="{ on, attrs }">
         <v-btn v-bind="attrs" v-on="on" dark class="ma-1" color="green" tile @click="dialog = !dialog">
@@ -29,10 +29,12 @@
               <v-col cols="12" >
 
                 <v-form ref="form" v-model="valid">
-                <v-text-field v-model="password" :rules="rules" type="password" label="set your password channel"></v-text-field>
+                <v-text-field v-model="oldPassword" type="password" label="Old Password"></v-text-field>
                 </v-form>
+                <v-text-field v-model="newPassword" type="password" label="New Password*"></v-text-field>
               </v-col>
             </v-row>
+            <small>*leave empty for no password</small>
           </v-container>
         </v-card-text>
         <v-card-actions>
@@ -54,12 +56,13 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'OptionChannel',
     props: {
-
+      isOwner: Boolean,
     },
     data() {
         return {
             dialog: false,
-            password: '',
+            oldPassword: '',
+            newPassword: '',
             valid: false,
         }
     },

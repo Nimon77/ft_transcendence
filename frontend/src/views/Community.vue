@@ -3,7 +3,7 @@
     <v-row class="fill-height" align="start" justify="center">
       <Channel :CRs="CRs" :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
       <Chat :socket="socket" :user="user" v-bind:idCR="idCR" />
-      <PlayerChannel :userCR="userCR" :playersCR="playersCR"/>
+      <PlayerChannel :userCR="userCR" :playersCR="playersCR" :user="user" :idCR="idCR" v-bind:isOwner="isOwner" :isAdmin="isAdmin"/>
     </v-row>
   </v-container>
 </template>
@@ -28,6 +28,8 @@ export default Vue.extend({
         newCR: false,
         socket: {},
         socketData: [],
+        isOwner: false,
+        isAdmin: false,
         user: [],
         userCR: [],
         playersCR: [],
@@ -35,17 +37,30 @@ export default Vue.extend({
       }
     },
     methods: {
+      
       getPlayersCR() {
         let i = 0;
-
+        
         if (this.idCR == 0)
-          return (this.playersCR);
-
+          return (this.playersCR = []);
         while(i < this.userCR.length && this.userCR[i].id != this.idCR)
           i++;
-
         if (this.userCR[i].id == this.idCR)
-          return ( this.playersCR = this.userCR[i].users );
+        {
+          this.playersCR = this.userCR[i].users;
+          if (this.userCR[i].ownerId == this.user.id)
+            this.isOwner = true;
+          else
+            this.isOwner = false;
+          for (let j in this.userCR[i].adminId)
+            if (this.userCR[i].adminId[j] == this.user.id)
+            {
+              this.isAdmin = true;
+              return;
+            }
+          this.isAdmin = false;
+          return;
+        }
         return (this.playersCR = []);
       },
 
@@ -54,9 +69,6 @@ export default Vue.extend({
           this.user = resp.data;
           // console.log("GET USER IN COMMUNITY ", this.user);
         })
-        // this.user = this.socketData.user;
-        // console.log("this user", this.user);
-        
         await this.$http.get('/channel').then((resp) => {
           this.CRs = resp.data;
           // console.log("GET CRs IN COMMUNITY ", this.CRs);
@@ -65,9 +77,6 @@ export default Vue.extend({
           this.userCR = resp.data;
           // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
-        // this.userCR = this.socketData.channels;
-        // console.log("this userCR", this.userCR);
-
         if (this.$route.params.idCR)
           this.idCR = +this.$route.params.idCR;
         if (this.userCR != undefined)
@@ -75,7 +84,6 @@ export default Vue.extend({
       },
       fetchSocket()
       {
-        // console.log('IN FETCH SOCKET');
         this.socket.on("info", data => {
           this.socketData = data;
           this.user = data.user;
@@ -84,7 +92,6 @@ export default Vue.extend({
             this.idCR = +this.$route.params.idCR;
           if (this.userCR != undefined)
             this.getPlayersCR();
-          // console.log("INFO ", this.user, this.userCR);
         });
       },
     },
