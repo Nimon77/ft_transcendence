@@ -43,7 +43,7 @@
       </v-form>
       <v-divider class="mt-1"></v-divider>
   
-      <v-list  v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
+      <v-list v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
         <div v-for="CR in userCR" :key="CR.id">
         <v-list-item two-line router :to="'/community/' + CR.id">
           <v-list-item-content>
@@ -52,9 +52,12 @@
               <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon>
               <v-icon v-if="CR.ownerId == user.id" small color="blue"> mdi-account-child-circle </v-icon>
             </v-list-item-subtitle>
-            <v-list-item-subtitle v-else> private <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon> </v-list-item-subtitle>
+            <v-list-item-subtitle v-else> private
+              <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon>
+              <v-icon v-if="CR.ownerId == user.id" small color="blue"> mdi-account-child-circle </v-icon>
+            </v-list-item-subtitle>
           </v-list-item-content>
-          <OptionChannel @leaveRoom="leaveRoom(CR.id)" :isOwner="CR.ownerId == user.id"/>
+          <OptionChannel @leaveRoom="leaveRoom(CR.id)" :isOwner="CR.ownerId == user.id" :CR="CR"/>
         </v-list-item>
         <v-divider></v-divider>
         </div>
@@ -69,11 +72,10 @@
             <v-list-item-subtitle v-else> private </v-list-item-subtitle>
           </v-list-item-content>
           
-          <v-btn v-if="!password" dark color="blue" @click.prevent="joinRoom(cr.id)">
+          <v-btn v-if="cr.public" dark color="blue" @click.prevent="joinRoom(cr.id)">
             <v-list-item-title class="text-center">JOIN</v-list-item-title>
           </v-btn>
-          <!-- v-else -->
-          <!-- <v-dialog  v-model="PWdialog" max-width="600px" >
+          <v-dialog v-else v-model="PWdialog" max-width="600px" >
           <template v-slot:activator="{ on, attrs }">
             <v-btn  dark color="blue" @click.prevent="PWdialog = !PWdialog">
               <v-list-item-title v-bind="attrs" v-on="on" class="text-center">JOIN</v-list-item-title>
@@ -87,20 +89,17 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" >
-
-                    <v-form ref="form" v-model="valid">
-                    <v-text-field v-model="name" :rules="rules" type="password" label="set your password channel"></v-text-field>
-                    </v-form>
+                    <v-text-field v-model="name" type="password" label="Enter password channel"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="PWdialog=!PWdialog"> JOIN </v-btn>
+              <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="checkPW"> JOIN </v-btn>
             </v-card-actions>
           </v-card>
-        </v-dialog> -->
+        </v-dialog>
         
         </v-list-item>
         <v-divider></v-divider>
@@ -145,18 +144,17 @@ export default Vue.extend({
       },
       alreadyJoin(toJoin: number) {
         let i = 0;
-
         while (i < this.userCR.length)
         {
           if (this.userCR[i].id == toJoin)
-          {
-            // console.log("TRUE");
             return true;
-          }
           i++;
         }
         // console.log("FALSE");
         return false;
+      },
+      checkPW() {
+        this.PWdialog=!this.PWdialog
       },
       async joinRoom(idCR) {
         console.log('Join ROOM', idCR);
@@ -168,16 +166,16 @@ export default Vue.extend({
         console.log("leave ROOM ", idCR);
         await this.$http.put('/channel/' + idCR + '/leave/', {id: this.user.id,}).then((resp) => console.log(resp))
         if (this.$route.path !== '/community/0')
-        {
           this.$router.push('/community/0');
-        }
         else
           location.reload();
       },
-      async newChannel(event) {
-        event.preventDefault();
+      async newChannel() {
         // console.log('USER ID IN CHANNEL', this.user.id);
-        await this.$http.post('/channel', {name: this.name, id: this.user.id}).then((resp) => console.log(resp))
+        if (this.password == '')
+          await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => console.log(resp))
+        else
+          await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => console.log(resp))
         this.dialog = false;
         this.$emit('newCR');
       }
@@ -206,6 +204,8 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+
 html {
   overflow: hidden !important;
 }
