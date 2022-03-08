@@ -6,7 +6,7 @@
         <span class="span"> CHAT </span>
         </v-sheet>
         
-            <v-list max-height="70vh" class="mt-3 d-flex flex-column">
+            <v-list id="Chat" max-height="70vh" class="mt-3 d-flex flex-column">
                 <div v-for="(cM, index) in chatMsg" :key="index">
                     <v-card v-if="cM.sender != user.username" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
                             <!-- v-if="cM.sender n'est pas bloqué par le user" -->
@@ -73,7 +73,10 @@ export default Vue.extend({
         this.socket.on( "text", data => {
             console.log("TEXT EVENT", data);
             if (data.id == this.idCR)
+            {
                 this.chatMsg.push( { sender: data.user.username, msg: data.value } );
+                document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
+            }
         });
     },
 })
