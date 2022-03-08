@@ -19,6 +19,7 @@
     "vue-property-decorator": "^9.1.2",
     "vue-router": "^3.2.0",
     "vue-socket.io-extended": "^4.2.0",
+    "vue-toastification": "^1.7.14",
     "vuetify": "^2.4.0"
   },
   "devDependencies": {
