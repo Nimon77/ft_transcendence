@@ -57,46 +57,58 @@ export class IdController {
   }
   // for testing purposes
 
-  @Get('/:id')
+  @Put(':id/add')//add any user to any channel
+  async addUserToRoom(@Body() user: User, @Param('id', ParseIntPipe) id: number)
+  {
+    const useradd = await this.userService.getUserById(user.id);
+    return this.chatService.addUserToRoom(id, useradd);
+  }
+
+  @Get('/:id')//get full room info including baned muted and users
   async getRoom(@Param('id', ParseIntPipe) id: number)
   {
     return await this.chatService.getRoomInfo(id);
   }
 
-  @Get(':id/check')
+  @Get(':id/check')//check if password is correct
   async checkPass(@Body() room: ChatRoom, @Param('id', ParseIntPipe) id: number)
   {
     return (this.chatService.checkPassword(id, room.password));
   }
 
-  @Post('/:id')
+  @Post('/:id')//create channel for specific user
   async createChannelForUser(@Param('id', ParseIntPipe) id: number, @Body() channel: any)
   {
     const user = await this.userService.getUserById(id);
     return await this.chatService.createRoom(channel, user);
   }
 
-  @Put(':id/mute')
-  async muteUserFromRoom(@Param('id', ParseIntPipe) id: number, @Body() user: User)
+  @Put(':id/mute')//mute user from channel
+  async muteUserFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() user: User)
   {
-    let time = new Date();
     const curuser = await this.userService.getUserById(user.id);
-    time = new Date(time.getTime() + (30 * 60 * 1000))
-    const newMutedUser = new MutedUser;
-    newMutedUser.userId = curuser.id;
-    newMutedUser.endOfMute = time;
-    this.chatService.MuteUserInRoom(newMutedUser, id);
+    const admin = await this.userService.getUserById(req.user.userId);
+    return this.chatService.MuteUserInRoom(curuser, id, admin);
   }
 
   @Put(':id/ban')
-  async banUserFromRoom(@Param('id', ParseIntPipe) id: number, @Body() user: User)
+  async banUserFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() user: User)
   {
-    let time = new Date();
     const curuser = await this.userService.getUserById(user.id);
-    time = new Date(time.getTime() + (30 * 60 * 1000))
-    const newBannedUser = new BannedUser;
-    newBannedUser.userId = curuser.id;
-    newBannedUser.endOfBan = time;
-    this.chatService.BanUserInRoom(newBannedUser, id);
+    const admin = await this.userService.getUserById(req.user.userId);
+    return this.chatService.BanUserInRoom(curuser, id, admin);
+  }
+
+  @Get(':id/log')//get current room logs
+  async getLogsFromRoom(@Param('id', ParseIntPipe) id: number)
+  {
+    return this.chatService.getLogsForRoom(id);
+  }
+
+  @Put(':id/log')//add log to room
+  async addLogsToRoom(@Param('id', ParseIntPipe) id: number, @Body() message: string, @Request() req)
+  {
+    const user = await this.userService.getUserById(req.user.userId);
+    return this.chatService.addLogForRoom(id, message, user);
   }
 }

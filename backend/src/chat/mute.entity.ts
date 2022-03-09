@@ -13,5 +13,5 @@ export class MutedUser{
     public endOfMute: Date;
 
     @ManyToOne(() => ChatRoom, room => room.muted, { nullable: true })
-    room: ChatRoom;
+    room: ChatRoom['id'];
 }
