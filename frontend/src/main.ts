@@ -8,7 +8,6 @@ import "vue-toastification/dist/index.css";
 import App from './App.vue';
 import router from './router';
 import vuetify from './plugins/vuetify';
-import Component from 'vue-class-component';
 import store from './store'
 
 Vue.prototype.$http = axios;
