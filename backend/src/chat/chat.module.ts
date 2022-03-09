@@ -8,9 +8,10 @@ import { MeController } from './controllers/me.controller';
 import { IdController } from './controllers/id.controller';
 import { MutedUser } from './mute.entity';
 import { BannedUser } from './banned.entity';
+import { Log } from './log.entity';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([ChatRoom, MutedUser, BannedUser]), AuthModule],
+  imports: [TypeOrmModule.forFeature([ChatRoom, MutedUser, BannedUser, Log]), AuthModule],
   providers: [ChatGateway, ChatService],
   exports: [ChatService],
   controllers: [MeController, IdController],
