@@ -31,7 +31,7 @@
           <v-list v-if="searchInput != ''"> <!-- "si je cherche un truc, j'affiche les tout le monde sauf les amis" -->
             <v-list-item v-for="user in filteredUsers" v-bind:key="user.id">
               <v-list-item-content>
-                <UserDisplay :user="user"/>
+                <UserDisplay :user="user" :me="me"/>
                 <v-divider class="mt-1"></v-divider>
             </v-list-item-content>
             </v-list-item>
@@ -76,7 +76,7 @@ export default Vue.extend({
     async created() { // retirer les amis des users !!
       await this.$http.get('/user').then(response => {
         this.users = response.data;
-        // console.log(this.users);
+        // console.log("USR IN FL", this.users);
       });
       await this.$http.get('/user/me').then(response => {
         this.friends = response.data.friends;
@@ -93,9 +93,10 @@ export default Vue.extend({
           else
             return false;
         });
-        return cleanUsers.filter((user) => {
+        cleanUsers = cleanUsers.filter((user) => {
           return user.username.match(this.searchInput);
         })
+        return cleanUsers;
       }
     }
 })

@@ -9,10 +9,10 @@
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
-      <v-btn class="mr-3" dark :id="user.id" color="red" height="60" width="60">
+      <v-btn class="mr-3" @click="block" dark id="blockButton" color="red" height="60" width="80">
         BLOCK
       </v-btn>
-      <v-btn dark @click="addStat" :id="user.id" :loading="loader" :color="color" height="60" width="60">
+      <v-btn @click="addStat" class="white--text" :id="user.id" :disabled="disabledAdd" :loading="loader" :color="color" height="60" width="60">
         ADD
       </v-btn>
     </v-row>
@@ -25,6 +25,7 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'UserDisplay',
     props: {
+      me: [],
       user: {
         type: Object,
         required: true,
@@ -32,11 +33,22 @@ export default Vue.extend({
     },
     data(): unknown {
       return {
+        disabledAdd: false,
         loader: false,
         color: 'blue',
       }
     },
     methods: {
+      async block() {
+        await this.$http.post('/user/me/block', {id: this.user.id,}).then(response => {
+          console.log('BLOCK REQUEST', response);
+          });
+        this.disabledAdd = !this.disabledAdd;
+        if (this.disabledAdd == false)
+          document.getElementById('blockButton').innerHTML = "BLOCK";
+        else
+          document.getElementById('blockButton').innerHTML = "UNBLOCK";
+      },
       async addStat() {
         this.loader = !this.loader;
         this.color = 'green';
@@ -51,7 +63,17 @@ export default Vue.extend({
         this.loader = false;
       },
     },
-  })
+    mounted() {
+      // for (let i in this.me.blocked)
+      // {
+        if (this.me.blocked.indexOf(this.user.id) != -1) // si le user est bloque
+        {
+          this.disabledAdd = true;
+          document.getElementById('blockButton').innerHTML = "UNBLOCK";
+        }
+      // }
+    }
+})
 </script>
 
 <style scoped>
