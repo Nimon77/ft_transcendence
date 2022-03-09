@@ -2,16 +2,19 @@ import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToOne} from 'typ
 import { ChatRoom } from './chat.entity';
 
 @Entity()
-export class BannedUser{
+export class Log{
     @PrimaryGeneratedColumn()
     id: number;
 
     @Column()
     public userId: number;
 
-    @Column({ type: 'timestamptz' })
-    public endOfBan: Date;
+    @Column()
+    public message: string;
 
-    @ManyToOne(() => ChatRoom, room => room.banned, { nullable: true})
+    @Column({ type: 'timestamptz', nullable: true })
+    public time: Date;
+
+    @ManyToOne(() => ChatRoom, room => room.logs, { nullable: true })
     room: ChatRoom['id'];
 }

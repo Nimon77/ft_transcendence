@@ -5,8 +5,14 @@
       <span class="span"> PLAYERS </span>
       </v-sheet>
       <v-list>
+        <div class="d-flex justify-left">
+        <v-list-item-content  class="mt-n4 ml-4 yellow--text text-h6">
+          <v-list-item-title> <v-badge dot inline color="blue"> </v-badge> {{user.username}} </v-list-item-title>
+        </v-list-item-content>
+        </div>
+        <v-divider></v-divider>
         <div v-for="player in playersCR" :key="player.id">
-        <v-list-group>
+        <v-list-group v-if="player.id != user.id">
           <template v-slot:activator>
             <v-list-item-content class="mt-n4">
               <v-list-item-title> <v-badge dot inline color="blue"> </v-badge>{{player.username}}</v-list-item-title>
@@ -16,7 +22,12 @@
 
           <v-list-item dense>
               <v-list-item-title class="d-flex justify-center text-button">
-                <v-btn color="blue" tile dark min-width="100%"> INVITE </v-btn>
+                <v-btn color="yellow darken-1" tile dark min-width="100%"> INVITE </v-btn>
+              </v-list-item-title>
+          </v-list-item>
+          <v-list-item dense>
+              <v-list-item-title class="d-flex justify-center text-button">
+                <v-btn color="blue" tile dark min-width="100%"> DIRECT MSG </v-btn>
               </v-list-item-title>
           </v-list-item>
           <v-list-item dense>
@@ -24,13 +35,13 @@
               <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="100%"> PROFILE </v-btn>
             </v-list-item-title>
           </v-list-item>
-          <v-list-item dense>
+          <v-list-item dense v-if="isAdmin">
             <v-list-item-title class="d-flex justify-center text-button">
               <v-btn color="red" tile dark min-width="50%" > MUTE </v-btn>
               <v-btn color="red" class="ml-1" tile dark min-width="50%" > BAN </v-btn>
             </v-list-item-title>
           </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
-          <v-list-item dense>
+          <v-list-item dense v-if="isOwner">
             <v-list-item-title class="d-flex justify-center text-button">
               <v-btn color="blue" tile dark min-width="100%" > SET ADMIN </v-btn>
             </v-list-item-title>
@@ -52,20 +63,38 @@ export default Vue.extend({
     name: 'PlayerChannel',
     props: {
       playersCR: [],
+      user: [],
+      isOwner: Boolean,
+      isAdmin: Boolean,
+      idCR: Number,
     },
     data() {
         return {
           test: true,
         }    
     },
-    // created() {
-    //   this.$watch(() => this.playersCR, () => {return},{ immediate: true })
-    // },
+    created() {
+      // this.$watch(() => this.playersCR, () => {return},{ immediate: true })
+      // this.$watch(() => this.idCR, () => {if (this.idCR == 0) { this.playersCR = [] } },{ immediate: true })
+      // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true })
+      
+    },
 })
 </script>
 
 <style scoped>
-
+::-webkit-scrollbar {
+  width: 5px;
+}
+::-webkit-scrollbar-track {
+  background: #f1f1f1;
+}
+::-webkit-scrollbar-thumb {
+  background: #888;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #555;
+}
 
 .v-list {
   display: flex !important;

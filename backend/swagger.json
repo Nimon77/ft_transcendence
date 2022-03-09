@@ -86,6 +86,15 @@
           "avatarId": {
             "type": "number",
             "example": 65000
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/Avatar"
+          },
+          "rooms": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Channel"
+            }
           }
         }
       },
@@ -117,53 +126,7 @@
           "users": {
             "type": "array",
             "items": {
-              "type": "object",
-              "properties": {
-                "id": {
-                  "type": "number",
-                  "example": 65000
-                },
-                "username": {
-                  "type": "string",
-                  "example": "dimitri"
-                },
-                "profileCompleted": {
-                  "type": "boolean",
-                  "example": "true"
-                },
-                "rank": {
-                  "type": "number",
-                  "example": 100
-                },
-                "friends": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  },
-                  "example": [
-                    65255,
-                    65350
-                  ]
-                },
-                "blocked": {
-                  "type": "array",
-                  "items": {
-                    "type": "number"
-                  },
-                  "example": [
-                    65243,
-                    65379
-                  ]
-                },
-                "otp": {
-                  "type": "string",
-                  "example": "lnrtuvcbdefghijk"
-                },
-                "avatarId": {
-                  "type": "number",
-                  "example": 65000
-                }
-              }
+              "$ref": "#/components/schemas/User"
             }
           },
           "public": {
@@ -173,6 +136,88 @@
           "password": {
             "type": "string",
             "example": "password"
+          },
+          "muted": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/MutedUser"
+            }
+          },
+          "banned": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/BannedUser"
+            }
+          }
+        }
+      },
+      "BannedUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "example": 65000
+          },
+          "endOfBan": {
+            "type": "string",
+            "example": "2022-06-29"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        }
+      },
+      "MutedUser": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "example": 65000
+          },
+          "endOfMute": {
+            "type": "string",
+            "example": "2022-06-29"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Channel"
+          }
+        }
+      },
+      "Avatar": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 65000
+          },
+          "filename": {
+            "type": "string",
+            "example": "image.png"
+          },
+          "data": {
+            "type": "string",
+            "format": "Uint8Array"
+          }
+        }
+      },
+      "Password": {
+        "type": "object",
+        "properties": {
+          "oldPassword": {
+            "type": "string",
+            "example": "oldpass"
+          },
+          "newPassword": {
+            "type": "string",
+            "example": "newpass"
           }
         }
       }
@@ -187,8 +232,20 @@
       "UnauthorizedValue": {
         "description": "You tried to modify a value you don't have access to"
       },
-      "NotExist": {
+      "UserNotExist": {
         "description": "User and / or avatar does not exist"
+      },
+      "ChannelNotExist": {
+        "description": "Channel does not exist"
+      },
+      "NotExist": {
+        "description": "User and / or Channel does not exist"
+      },
+      "ValueNotSpecified": {
+        "description": "One value that was requiered was not specified"
+      },
+      "WrongPass": {
+        "description": "oldPassword is incorect"
       }
     }
   },
@@ -307,6 +364,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       }
@@ -340,6 +400,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       }
@@ -382,6 +445,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -396,7 +462,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Returns all the channels objects of the server (some information is excluded, compare the returned JSON and the Channel Schemas to see the differences)",
+        "summary": "Returns all the channels objects of the server (some information is excluded)",
         "operationId": "IdController_getAllChannels",
         "parameters": [],
         "responses": {
@@ -417,7 +483,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Creates a channel object (only id and name will be saved on the database)",
+        "summary": "Creates a channel object",
         "operationId": "IdController_createChannel",
         "parameters": [],
         "requestBody": {
@@ -449,6 +515,9 @@
           "201": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/ValueNotSpecified"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           }
@@ -465,7 +534,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WIP",
+        "summary": "Returns the channel object (specified by id)",
         "operationId": "IdController_getRoom",
         "parameters": [
           {
@@ -484,6 +553,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       },
@@ -517,8 +589,13 @@
               "schema": {
                 "type": "object",
                 "properties": {
-                  "PLACEHOLDER": {
-                    "type": "number"
+                  "name": {
+                    "type": "string",
+                    "example": "uwu"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "example": true
                   }
                 }
               }
@@ -531,6 +608,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       },
@@ -543,16 +623,40 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WIP",
+        "summary": "Creates a channel object for the user (specified by id)",
         "operationId": "IdController_createChannelForUser",
-        "parameters": [],
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of user",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
         "requestBody": {
-          "description": "WIP",
+          "description": "New channel object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "name": {
+                    "type": "string",
+                    "example": "le gang"
+                  },
+                  "public": {
+                    "type": "boolean",
+                    "example": "false"
+                  },
+                  "password": {
+                    "type": "string",
+                    "example": "password"
+                  }
+                }
               }
             }
           }
@@ -561,8 +665,14 @@
           "201": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/ValueNotSpecified"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       },
@@ -594,6 +704,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       }
@@ -608,7 +721,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WIP",
+        "summary": "WORK IN PROGRESS",
         "operationId": "IdController_muteUserFromRoom",
         "parameters": [
           {
@@ -622,12 +735,18 @@
           }
         ],
         "requestBody": {
-          "description": "WIP",
+          "description": "New MutedUser object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 65000
+                  }
+                }
               }
             }
           }
@@ -638,6 +757,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -652,7 +774,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WIP",
+        "summary": "WORK IN PROGRESS",
         "operationId": "IdController_banUserFromRoom",
         "parameters": [
           {
@@ -666,12 +788,18 @@
           }
         ],
         "requestBody": {
-          "description": "WIP",
+          "description": "New BannedUser object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 65000
+                  }
+                }
               }
             }
           }
@@ -682,6 +810,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -696,7 +827,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WIP",
+        "summary": "DOES NOT WORK FOR NOW",
         "operationId": "IdController_checkPass",
         "parameters": [
           {
@@ -715,6 +846,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       }
@@ -729,7 +863,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WIP",
+        "summary": "Modifies the channel object (specified by id) (more specifically the password)",
         "operationId": "IdController_changePass",
         "parameters": [
           {
@@ -743,12 +877,12 @@
           }
         ],
         "requestBody": {
-          "description": "WIP",
+          "description": "New password object",
           "required": true,
           "content": {
             "application/json": {
               "schema": {
-                "type": "object"
+                "$ref": "#/components/schemas/Password"
               }
             }
           }
@@ -757,8 +891,14 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/WrongPass"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       }
@@ -897,7 +1037,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/NotExist"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       },
@@ -982,7 +1122,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "description": "User doesn't exist in database"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       }
@@ -1025,7 +1165,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "description": "User doesn't exist in database"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       }
@@ -1061,7 +1201,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Creates a user object (only id and log will be saved on the database)",
+        "summary": "Creates a user object",
         "operationId": "IdController_createUser",
         "parameters": [],
         "requestBody": {
@@ -1128,7 +1268,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/NotExist"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       },
@@ -1199,7 +1339,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/NotExist"
+            "$ref": "#/components/responses/UserNotExist"
           },
           "409": {
             "$ref": "#/components/responses/UnauthorizedValue"
@@ -1235,7 +1375,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/NotExist"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       }
@@ -1278,7 +1418,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/NotExist"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       },
@@ -1333,7 +1473,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/NotExist"
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       }
