@@ -6,6 +6,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
 import { PasswordI } from './password.interface';
 import { BannedUser } from './banned.entity';
+import { Log } from './log.entity';
 import * as bcrypt from 'bcrypt';
 
 @Injectable()
@@ -17,6 +18,8 @@ export class ChatService {
     private readonly mutedRepo: Repository<MutedUser>,
     @InjectRepository(BannedUser)
     private readonly bannedRepo: Repository<BannedUser>,
+    @InjectRepository(Log)
+    private readonly logRepo: Repository<Log>,
   ) {}
 
   async getRoomById(id: number): Promise<ChatRoom> {
@@ -58,14 +61,24 @@ export class ChatService {
   }
 
   async deleteRoom(id: number) {
-    const roomid = await this.chatRepo.findOne(id);
+    const roomid = await this.getRoomInfo(id);
     if (roomid) {
+      roomid.muted.forEach(muted => {
+        this.mutedRepo.remove(muted);
+      })
+      roomid.banned.forEach(banned => {
+        this.bannedRepo.remove(banned);
+      })
+      roomid.logs.forEach(log => {
+        this.logRepo.remove(log);
+      })
       await this.chatRepo.remove(roomid);
+
     } else throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
   }
 
   async getRoomInfo(roomId: number) {
-    const room = await this.chatRepo.findOne(roomId, { relations: ['users', 'muted', 'banned'] });
+    const room = await this.chatRepo.findOne(roomId, { relations: ['users', 'muted', 'banned', 'logs'] });
     if (!room)
       throw new HttpException("Room not found", HttpStatus.NOT_FOUND);
     room.password = undefined;
@@ -171,8 +184,18 @@ export class ChatService {
   }
 
   async addUserToRoom(roomid: number, user: User) {
-    const room = await this.chatRepo.findOne(roomid, { relations: ['users'] });
+    const room = await this.chatRepo.findOne(roomid, { relations: ['users', 'banned'] });
     const page = await this.getUsersForRoom(roomid);
+    room.banned.forEach(banned => {
+      if (banned.userId == user.id)
+      {
+        let time = new Date();
+        if (banned.endOfBan < time)
+          this.UnBanUserInRoom(banned, room);
+        else
+          throw new HttpException('User is banned from Room', HttpStatus.FORBIDDEN);
+      }
+    })
     let userexists = false;
     room.users.forEach((curuser) => {
       if (curuser.id == user.id) userexists = true;
@@ -187,29 +210,111 @@ export class ChatService {
       });
   }
 
-  async MuteUserInRoom(user: MutedUser, roomid: number)
+  async UnBanUserInRoom(user: BannedUser, room: ChatRoom)
   {
-    const currentroom = await this.chatRepo.findOne(roomid, {relations : ['muted']});
+    var index = room.banned.map((user) => user.id).indexOf(user.id);
+      if (index !== -1) room.banned.splice(index, 1);
+    await this.chatRepo.save(room);
+    this.bannedRepo.delete(user);
+  }
+
+  async UnMuteUserInRoom(user: MutedUser, room: ChatRoom)
+  {
+    var index = room.muted.map((user) => user.id).indexOf(user.id);
+      if (index !== -1) room.muted.splice(index, 1);
+    await this.chatRepo.save(room);
+    this.mutedRepo.delete(user);
+  }
+
+  async MuteUserInRoom(user: User, roomid: number, admin: User)
+  {
+    let time = new Date();
+    time = new Date(time.getTime() + (30 * 60 * 1000))
+    const currentroom = await this.chatRepo.findOne(roomid, {relations : ['users', 'muted']});
+    if (currentroom.ownerId == user.id)
+      throw new HttpException('User is owner and thus cannot be muted', HttpStatus.FORBIDDEN);
+    if (currentroom.users.map((user) => user.id).indexOf(user.id) == -1)
+      throw new HttpException(
+        'User isnt in room',
+        HttpStatus.NOT_FOUND,
+      );
+    var index = currentroom.adminId.indexOf(admin.id);
+    if (index == -1)
+      throw new HttpException(
+        'User isnt admin in room',
+        HttpStatus.UNAUTHORIZED,
+      );
     const muted = this.mutedRepo.create({
-      userId: user.userId,
-      endOfMute: user.endOfMute,
-      room: currentroom,
+      userId: user.id,
+      endOfMute: time,
+      room: currentroom.id,
     });
     this.mutedRepo.save(muted);
     currentroom.muted.push(muted);
     return await this.chatRepo.save(currentroom);
   }
 
-  async BanUserInRoom(user: BannedUser, roomid: number)
+  async BanUserInRoom(user: User, roomid: number, admin: User)
   {
-    const currentroom = await this.chatRepo.findOne(roomid, {relations : ['banned']});
+    let time = new Date();
+    time = new Date(time.getTime() + (30 * 60 * 1000))
+    const currentroom = await this.chatRepo.findOne(roomid, {relations : ['users','banned']});
+    if (currentroom.ownerId == user.id)
+      throw new HttpException('User is owner and thus cannot be banned', HttpStatus.FORBIDDEN);
+    if (currentroom.users.map((user) => user.id).indexOf(user.id) == -1)
+      throw new HttpException(
+        'User isnt in room',
+        HttpStatus.NOT_FOUND,
+      );
+    var index = currentroom.adminId.indexOf(admin.id);
+    if (index == -1)
+      throw new HttpException(
+        'User isnt admin in room',
+        HttpStatus.UNAUTHORIZED,
+      );
     const banned = this.bannedRepo.create({
-      userId: user.userId,
-      endOfBan: user.endOfBan,
-      room: currentroom,
+      userId: user.id,
+      endOfBan: time,
+      room: currentroom.id,
     });
+    var index = currentroom.users.map((user) => user.id).indexOf(user.id);
+      if (index !== -1) currentroom.users.splice(index, 1);
     this.bannedRepo.save(banned);
     currentroom.banned.push(banned);
     return await this.chatRepo.save(currentroom);
+  }
+
+  async addLogForRoom(id: number, message: string, user: User)
+  {
+    console.log(user);
+    const currentroom = await this.chatRepo.findOne(id, {relations : ['users', 'logs']});
+    console.log(currentroom);
+    if (currentroom.users.map((user) => user.id).indexOf(user.id) === -1)
+      throw new HttpException(
+        'User isnt in room',
+        HttpStatus.NOT_FOUND,
+      );
+      const log = this.logRepo.create({
+        userId: user.id,
+        message: message,
+        time: new Date(),
+        room: currentroom.id
+      });
+      this.logRepo.save(log);
+      if (currentroom.logs.length > 100)
+      {
+        this.logRepo.delete(currentroom.logs[0]);
+        currentroom.logs.shift();
+      }
+      currentroom.logs.push(log);
+      console.log(currentroom.logs);
+      return await this.chatRepo.save(currentroom);
+  }
+
+  async getLogsForRoom(id: number)
+  {
+    const currentroom = await this.chatRepo.findOne(id, {relations : ['logs']});
+
+    return currentroom.logs;
   }
 }
