@@ -81,20 +81,24 @@ export default Vue.extend({
   },
   methods: {
     validate() {
-      const { canvas } = this.$refs.cropper.getResult();
-      if (canvas) {
-        canvas.toBlob((blob) => {
-          const form = new FormData();
-          form.append('file', blob, this.image.name);
-          this.$http.put('/user/me/avatar', form);
-        }, this.image.type);
+      if (this.image.src) {
+        const { canvas } = this.$refs.cropper.getResult();
+        if (canvas) {
+          canvas.toBlob((blob) => {
+            const form = new FormData();
+            form.append('file', blob, this.image.name);
+            this.$http.put('/user/me/avatar', form);
+          }, this.image.type);
+        }
       }
-      this.$http.put('/user/me', {
-        username: this.username,
-      }).then(() => {
-        localStorage.setItem('ready', 'true');
-        this.$router.push({ name: 'Main' });
-      });
+      if (this.username) {
+        this.$http.put('/user/me', {
+          username: this.username,
+        }).then(() => {
+          localStorage.setItem('ready', 'true');
+          this.$router.push({ name: 'Main' });
+        });
+      }
     },
     reset() {
       this.image = {
