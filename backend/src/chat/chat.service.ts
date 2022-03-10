@@ -110,6 +110,11 @@ export class ChatService {
   }
 
   async changePassword(pass: PasswordI, room: ChatRoom) {
+    if (pass.newPassword == '')
+      throw new HttpException(
+        'New password cannot be empty',
+        HttpStatus.BAD_REQUEST,
+      );
     if (await this.checkPassword(room.id, pass.oldPassword)) 
     {
       const hashedPassword = await bcrypt.hash(pass.newPassword, 10);
