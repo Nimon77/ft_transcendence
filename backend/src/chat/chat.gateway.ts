@@ -29,8 +29,9 @@ export class ChatGateway implements OnGatewayConnection {
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    const user =
-      payload.sub && (await this.userService.getUserById(payload.sub));
+    const user = await this.userService
+      .getUserById(payload.sub)
+      .catch(() => {});
     if (!user) return client.disconnect();
 
     client.data.user = user;

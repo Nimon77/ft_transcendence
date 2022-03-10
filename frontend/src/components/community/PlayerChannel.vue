@@ -22,7 +22,7 @@
 
           <v-list-item dense>
               <v-list-item-title class="d-flex justify-center text-button">
-                <v-btn color="yellow darken-1" tile dark min-width="100%"> INVITE </v-btn>
+                <v-btn color="yellow darken-1" tile dark min-width="100%" @click="invite(player.id)"> INVITE </v-btn>
               </v-list-item-title>
           </v-list-item>
           <v-list-item dense>
@@ -79,6 +79,17 @@ export default Vue.extend({
       // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true })
       
     },
+    methods: {
+      invite(id: number) {
+        const payload = {
+          id: id,
+          data: {
+            message: this.user.username + " has invited you to play",
+          }
+        };
+        this.$socket.emit('notify', payload);
+      },
+    }
 })
 </script>
 
