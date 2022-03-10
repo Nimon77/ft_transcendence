@@ -3,8 +3,9 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket, Server } from 'socket.io';
+import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
@@ -19,8 +20,9 @@ export class PongGateway {
     private readonly userService: UserService,
   ) {}
   @WebSocketServer()
-  server: Server;
-  rooms: Map<string, number[]> = new Map();
+  server: any;
+  queue: Array<number> = new Array();
+  rooms: Map<string, Array<number>> = new Map();
   //static options: Map<string, object> = new Map();
 
   async handleConnection(client: Socket) {
@@ -28,18 +30,36 @@ export class PongGateway {
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    const user = await this.userService
+    const user: User = await this.userService
       .getUserById(payload.sub)
-      .catch(() => {});
-    !user && client.disconnect();
+      .catch(() => null);
+    if (!user) client.disconnect();
 
     client.data.user = user;
-    process.nextTick(async () => client.emit('info', { user }));
+    client.emit('info', { user });
+
+    this.queue.push(user.id);
+    if (this.queue.length < 2) return;
+
+    const sockets: Array<Socket> = Array.from(this.server.sockets.values());
+    let code = null;
+    for (let index = 0; index < 2; index++) {
+      const id = this.queue.shift();
+      const socket = sockets.find((socket) => socket.data.user.id == id);
+      if (!socket) continue;
+
+      code = this.joinRoom(socket, code);
+    }
+    console.log(this.queue);
   }
 
   handleDisconnect(client: Socket) {
     const code = client.data.code;
-    if (!code) return;
+    if (!code) {
+      const index = this.queue.indexOf(client.data.user.id);
+      if (index != -1) this.queue.splice(index, 1);
+      return;
+    }
 
     const index = this.rooms.get(code).indexOf(client.data.user.id);
     this.rooms.get(code).splice(index, 1);
@@ -48,7 +68,7 @@ export class PongGateway {
   }
 
   @SubscribeMessage('room')
-  joinRoom(client: Socket, code: string) {
+  joinRoom(client: Socket, code: string): string {
     if (!code) {
       const length = 5;
       code = Math.floor(Math.random() * Math.pow(16, length)).toString(16);
@@ -58,5 +78,6 @@ export class PongGateway {
     this.rooms.get(code).push(client.data.user.id);
     client.data.code = code;
     client.emit('room', code);
+    return code;
   }
 }
