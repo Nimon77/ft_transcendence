@@ -44,7 +44,7 @@
           <v-list-item dense v-if="isOwner">
             <v-list-item-title class="d-flex justify-center text-button">
               <v-btn @click="setAdmin(player.id)" color="blue" tile dark min-width="100%" >
-                <div id="admin"> {{isPlayerAdmin(player.id)}} </div>
+                <div id="admin">{{isPlayerAdmin(player.id)}}</div>
               </v-btn>
             </v-list-item-title>
           </v-list-item>
@@ -84,8 +84,6 @@ export default Vue.extend({
     },
     methods: {
       isPlayerAdmin(idPlayer) {
-        console.log('indexOf', this.admins.indexOf(idPlayer));
-        console.log('admins', this.admins);
         if (this.admins.indexOf(idPlayer) == -1)
           return "SET ADMIN";
         else
@@ -93,7 +91,6 @@ export default Vue.extend({
       },
 
       async setAdmin(idPlayer) {
-        console.log('SETADMIN');
         await this.$http.put('channel/' + this.idCR + '/admin', {id: idPlayer}).then((resp)=>{
           console.log(resp);
         });
