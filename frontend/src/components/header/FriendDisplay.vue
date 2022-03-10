@@ -25,7 +25,7 @@
             <v-list-item-title>Spectate</v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> <DirectChat/> </v-list-item-title>
+            <v-list-item-title> Chat </v-list-item-title>
           </v-list-item>
           <v-list-item @click="removeFriend">
             <v-list-item-title>Remove Player</v-list-item-title>
@@ -38,10 +38,6 @@
 
 <script lang="ts">
 import Vue from 'vue';
-
-import DirectChat from './DirectChat.vue';
-
-Vue.component('DirectChat', DirectChat);
 
 export default Vue.extend({
     name: 'FriendDisplay',
