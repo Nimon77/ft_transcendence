@@ -3,7 +3,7 @@
     <v-row class="fill-height" align="start" justify="center">
       <Channel :CRs="CRs" :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
       <Chat :socket="socket" :user="user" v-bind:idCR="idCR" />
-      <PlayerChannel :userCR="userCR" :playersCR="playersCR" :user="user" :idCR="idCR" v-bind:isOwner="isOwner" :isAdmin="isAdmin"/>
+      <PlayerChannel :userCR="userCR" :playersCR="playersCR" :user="user" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
     </v-row>
   </v-container>
 </template>
@@ -33,6 +33,7 @@ export default Vue.extend({
         user: [],
         userCR: [],
         playersCR: [],
+        playerAdmins: [],
         CRs: [],
       }
     },
@@ -52,6 +53,7 @@ export default Vue.extend({
             this.isOwner = true;
           else
             this.isOwner = false;
+          this.playerAdmins = this.userCR[i].adminId;
           for (let j in this.userCR[i].adminId)
             if (this.userCR[i].adminId[j] == this.user.id)
             {
