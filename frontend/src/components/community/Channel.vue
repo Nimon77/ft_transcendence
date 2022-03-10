@@ -77,7 +77,7 @@
           </v-btn>
           <v-dialog v-else v-model="PWdialog" max-width="600px" >
           <template v-slot:activator="{ on, attrs }">
-            <v-btn  dark color="blue" @click.prevent="PWdialog = !PWdialog">
+            <v-btn dark color="blue" @click.prevent="PWdialog = !PWdialog">
               <v-list-item-title v-bind="attrs" v-on="on" class="text-center">JOIN</v-list-item-title>
             </v-btn>
           </template>
@@ -89,14 +89,14 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" >
-                    <v-text-field v-model="name" type="password" label="Enter password channel"></v-text-field>
+                    <v-text-field v-model="password" type="password" label="Enter password channel"></v-text-field>
                   </v-col>
                 </v-row>
               </v-container>
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="checkPW"> JOIN </v-btn>
+              <v-btn color="blue darken-1 white--text" depressed tile  @click="joinRoom(cr.id)"> JOIN </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -157,8 +157,8 @@ export default Vue.extend({
         this.PWdialog=!this.PWdialog
       },
       async joinRoom(idCR) {
-        console.log('Join ROOM', idCR);
-        await this.$http.put('/channel/' + idCR + '/join/', {userId: this.user.id,}).then((resp) => console.log(resp))
+        console.log('Join ROOM', idCR), this.password;
+        await this.$http.put('/channel/' + idCR + '/join/', {id: idCR, password: this.password}).then((resp) => console.log(resp)).catch( alert("wrong password") )
         this.searchCR = '';
         this.$emit('newCR');
       },
