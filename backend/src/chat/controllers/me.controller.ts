@@ -27,7 +27,7 @@ export class MeController {
   @Put('/:id/join')
   async joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() room: ChatRoom) {
     const user = await this.userService.getUserById(req.user.userId);
-    this.chatService.addUserToRoom(room, user);
+    return this.chatService.addUserToRoom(room, user);
   }
 
   @Put(':id/admin')
