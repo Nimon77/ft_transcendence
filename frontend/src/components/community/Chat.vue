@@ -47,7 +47,6 @@ export default Vue.extend({
     name: 'Chat',
     props: {
         socket: {},
-        user: [],
         idCR: Number,
     },
     data() {
@@ -79,6 +78,11 @@ export default Vue.extend({
                 document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
             }
         });
+    },
+    computed: {
+        user() {
+            return this.$store.state.user;
+        },
     },
 })
 </script>

@@ -119,7 +119,6 @@ Vue.component('OptionChannel', OptionChannel);
 export default Vue.extend({
     name: 'Channel',
     props: {
-      user: [],
       userCR: [],
       CRs: [],
     },
@@ -182,6 +181,9 @@ export default Vue.extend({
       }
     },
     computed: {
+      user() {
+        return this.$store.state.user;
+      },
       filteredCRs(): unknown {
         // console.log('FILTERED CR');
         return this.CRs.filter((cr) => {
