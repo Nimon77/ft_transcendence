@@ -5,6 +5,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
@@ -26,10 +27,11 @@ export class NotifyGateway {
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    const user = await this.userService
+    const user: User = await this.userService
       .getUserById(payload.sub)
-      .catch(() => {});
-    !user && client.disconnect();
+      .catch(() => null);
+    if (!user) client.disconnect();
+
     client.data.user = user;
   }
 

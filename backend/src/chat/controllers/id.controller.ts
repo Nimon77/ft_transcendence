@@ -100,9 +100,17 @@ export class IdController {
   }
 
   @Get(':id/log')//get current room logs
-  async getLogsFromRoom(@Param('id', ParseIntPipe) id: number)
+  async getLogsFromRoom(@Param('id', ParseIntPipe) id: number, @Request() req)
   {
-    return this.chatService.getLogsForRoom(id);
+    const user = await this.userService.getUserById(req.user.userId);
+    return this.chatService.getLogsForRoom(id, user);
+  }
+
+  @Put(':id/:userid/log')
+  async addLogToRoom(@Param('id', ParseIntPipe) id: number, @Body() message: string, @Param('userid', ParseIntPipe) userid: number)
+  {
+    const user = await this.userService.getUserById(userid);
+    return this.chatService.addLogForRoom(id, message, user);
   }
 
   @Put(':id/log')//add log to room

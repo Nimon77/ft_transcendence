@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Get,
   Param,
@@ -6,6 +7,7 @@ import {
   Put,
   Request,
 } from '@nestjs/common';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { ChatService } from '../chat.service';
 
@@ -25,6 +27,14 @@ export class MeController {
   async joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.getUserById(req.user.userId);
     this.chatService.addUserToRoom(id, user);
+  }
+
+  @Put(':id/admin')
+  async changeUserAdmin(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() admin: User)
+  {
+    const user = await this.userService.getUserById(req.user.userId);
+    const newAdmin = await this.userService.getUserById(admin.id);
+    return this.chatService.UserAdminRole(user, newAdmin, id);
   }
 
   //for testing 
