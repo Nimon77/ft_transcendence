@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Pong</title>
+    <link rel="stylesheet" href="style.css" />
+    <script
+      src="https://cdn.socket.io/4.4.1/socket.io.min.js"
+      integrity="sha384-fKnu0iswBIqkjxrhQCTZ7qlLHOFEgNkRmK2vaO/LbTZSXdJfAu6ewRBdwHPhBo/H"
+      crossorigin="anonymous"
+    ></script>
+  </head>
+  <body>
+    <canvas id="pong" width="1920" height="1080"></canvas>
+    <script src="pong.js"></script>
+    <script src="connection.js"></script>
+    <script src="event.js"></script>
+    <script src="socket.js"></script>
+    <script>
+      socket(
+        'http://localhost:3000/pong',
+        'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJzdWIiOiI2MDAyNyIsImlhdCI6MTY0Njg3Njc1MCwiZXhwIjoxNjQ3NDgxNTUwfQ.Mqe97YBL_I-ncJ9f3isrlvUE4D65UU22sx1xB-wiXOk',
+      );
+    </script>
+  </body>
+</html>
