@@ -61,13 +61,13 @@ export default Vue.extend({
         { title: 'Two-Factor-Auth' },
         { title: 'Delete Account' },
         ],
-        user: [],
+        // user: [],
       }
     },
-    mounted() {
-      this.$http.get('/user/me').then(response => {
-        this.user = response.data
-      })
+    computed: {
+      user() {
+        return this.$store.state.user
+      }
     }
   })
 </script>
