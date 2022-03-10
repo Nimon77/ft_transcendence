@@ -97,13 +97,15 @@ export default Vue.extend({
         methods: {
           async setNewInfos() {
             this.dialog = false;
-            const { canvas } = this.$refs.cropper.getResult();
-            if (canvas) {
-              canvas.toBlob((blob) => {
-                const form = new FormData();
-                form.append('file', blob, this.image.name);
-                this.$http.put('/user/me/avatar', form);
-              }, this.image.type);
+            if (this.image.src) {
+              const { canvas } = this.$refs.cropper.getResult();
+              if (canvas) {
+                canvas.toBlob((blob) => {
+                  const form = new FormData();
+                  form.append('file', blob, this.image.name);
+                  this.$http.put('/user/me/avatar', form);
+                }, this.image.type);
+              }
             }
             if (this.username != '') {
               await this.$http.put('/user/me', {username: this.username,}).then(response => {
