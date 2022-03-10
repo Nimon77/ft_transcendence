@@ -6,6 +6,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket, Server } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
+import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { ChatService } from './chat.service';
 
@@ -29,18 +30,16 @@ export class ChatGateway implements OnGatewayConnection {
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
     );
-    const user = await this.userService
+    const user: User = await this.userService
       .getUserById(payload.sub)
-      .catch(() => {});
-    if (!user) return client.disconnect();
+      .catch(() => null);
+    if (!user) client.disconnect();
 
     client.data.user = user;
-    process.nextTick(async () =>
-      client.emit('info', {
-        user,
-        channels: await this.chatService.getRoomsForUser(user.id),
-      }),
-    );
+    client.emit('info', {
+      user,
+      channels: await this.chatService.getRoomsForUser(user.id),
+    });
   }
 
   @SubscribeMessage('channel')
