@@ -12,7 +12,7 @@
                             <!-- v-if="cM.sender n'est pas bloqué par le user" -->
                             <div class="font-weight-bold mt-2 ml-3"> {{cM.sender}} </div>
                             <div class="mr-2 mb-2 ml-3"> {{cM.msg}} </div>
-                    </v-card >                
+                    </v-card >
                     <div class="d-flex justify-end">
                     <v-card v-if="cM.sender == user.username" class="mb-1 mr-2 text-right d-flex justify-center" tile flat width="25%" color="blue" dark>
                             <div class="font-weight-bold mr-4 mt-1"> {{cM.sender}} </div>
