@@ -8,7 +8,7 @@ import { PasswordI } from './password.interface';
 import { BannedUser } from './banned.entity';
 import { Log } from './log.entity';
 import * as bcrypt from 'bcrypt';
-import { func } from 'joi';
+import { func, string } from 'joi';
 
 @Injectable()
 export class ChatService {
@@ -38,7 +38,7 @@ export class ChatService {
     if (room.public == false)
     {
       if (room.password)
-        hashedPassword = await bcrypt.hash(room.password, 10);
+        hashedPassword = await bcrypt.hash(String(room.password), 10);
       else
         throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
     }
@@ -110,8 +110,8 @@ export class ChatService {
   }
 
   async changePassword(pass: PasswordI, room: ChatRoom) {
-    if (!pass.oldPassword || !pass.newPassword) return;
-    if (this.checkPassword(room.id, pass.oldPassword)) {
+    if (await this.checkPassword(room.id, pass.oldPassword)) 
+    {
       const hashedPassword = await bcrypt.hash(pass.newPassword, 10);
       room.password = hashedPassword;
       this.chatRepo.save(room);

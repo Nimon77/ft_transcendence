@@ -5,43 +5,50 @@
         </template>
         <template v-slot:default="dialog">
           <v-card>
-            <v-toolbar color="primary" elevation="0" class="text-h5 pl-5" dark>CHANGE YOUR THINGS HERE</v-toolbar>
-            <v-card-text>
-              <v-container fluid>
-              <v-row>
-              <v-col align="center" cols="12" class="mt-11" >
+            <v-form @submit.prevent="setNewInfos(dialog)" ref="form" v-model="valid">
+              <v-toolbar color="primary" elevation="0" class="text-h5 pl-5" dark>CHANGE YOUR THINGS HERE</v-toolbar>
+              <v-card-text>
+                <v-container fluid>
+                <v-row>
+                <v-col align="center" cols="12" class="mt-11" >
+                  
+                  <!-- <v-form ref="form" v-model="valid"> -->
+                  <v-text-field v-model="username" :rules="rules" label="new username" solo></v-text-field>
+                  <!-- </v-form> -->
                 
-                <v-form ref="form" v-model="valid">
-                <v-text-field v-model="username" :rules="rules" label="new username" solo></v-text-field>
-                </v-form>
-              
-              </v-col>
-              <v-col cols="12">
-                <v-card class="mt-6" v-if="image.src">
-                  <cropper
-                    :src="image.src"
-                    :stencil-props="{
-                      aspectRatio: 1,
-                    }"
-                    ref="cropper"
-                  />
-                </v-card>
-              </v-col>
-              </v-row>
-              <v-row>
-              <v-col cols="12" class="text-center">
-                <v-btn @click="$refs.file.click()">
-                  <v-icon>mdi-upload</v-icon> Upload Avatar
-                  <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
-                </v-btn>
-              </v-col>
-              </v-row>
-              </v-container>
-            </v-card-text>
-            <v-card-actions class="justify-end">
-              <v-btn color="red" dark @click="dialog.value = false" >CANCEL</v-btn>
-              <v-btn color="blue" class="white--text" :disabled="!valid" @click="setNewInfos" >OK!</v-btn>
-            </v-card-actions>
+                </v-col>
+                <v-col cols="12">
+                  <v-card class="mt-6" v-if="image.src">
+                    <cropper
+                      :src="image.src"
+                      :stencil-props="{
+                        aspectRatio: 1,
+                      }"
+                      ref="cropper"
+                    />
+                  </v-card>
+                </v-col>
+                </v-row>
+                <v-row>
+                <v-col cols="12" class="text-center">
+                  <v-btn @click="$refs.file.click()">
+                    <v-icon>mdi-upload</v-icon> Upload Avatar
+                    <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
+                  </v-btn>
+                </v-col>
+                </v-row>
+                </v-container>
+              </v-card-text>
+              <v-card-actions class="justify-end">
+                <v-btn color="red" dark @click="dialog.value = false" >CANCEL</v-btn>
+                <v-btn
+                  color="blue"
+                  class="white--text"
+                  :disabled="!valid"
+                  @click="setNewInfos(dialog)"
+                >OK!</v-btn>
+              </v-card-actions>
+            </v-form>
           </v-card>
         </template>
       </v-dialog>
@@ -95,22 +102,32 @@ export default Vue.extend({
             }
         },
         methods: {
-          async setNewInfos() {
-            this.dialog = false;
-            const { canvas } = this.$refs.cropper.getResult();
-            if (canvas) {
-              canvas.toBlob((blob) => {
-                const form = new FormData();
-                form.append('file', blob, this.image.name);
-                this.$http.put('/user/me/avatar', form);
-              }, this.image.type);
+          async setNewInfos(dialog) {
+            if (this.valid) {
+              dialog.value = false;
+              if (this.image.src) {
+                const { canvas } = this.$refs.cropper.getResult();
+                if (canvas) {
+                  canvas.toBlob((blob) => {
+                    const form = new FormData();
+                    form.append('file', blob, this.image.name);
+                    this.$http.put('/user/me/avatar', form);
+                  }, this.image.type);
+                }
+              }
+              if (this.username != '') {
+                await this.$http.put('/user/me', {username: this.username,}).then(response => {
+                  console.log('PUT REQUEST', response);
+                  });
+              }
+              await this.$http.get('/user/me').then(response => {
+                this.$store.commit('setUser', response.data);
+              });
+              this.username = '';
+              this.$http.get('/user').then(response => {
+                this.users = response.data;
+              });
             }
-            if (this.username != '') {
-              await this.$http.put('/user/me', {username: this.username,}).then(response => {
-                console.log('PUT REQUEST', response);
-                });
-            }
-            location.reload();
           },
 
           loadImage(event) {
@@ -161,11 +178,6 @@ export default Vue.extend({
             return rules;
           }
         }
-        // watch: {
-        //   username: function() {
-        //     console.log('CHECKING USERNAME')
-        //   },
-        // },
     });
 </script>
 
