@@ -2,7 +2,7 @@
   <v-container >
     <v-row align="center">
       <v-avatar class="mr-n2" tile size="65">
-        <img v-auth-image="'/user/'+user.id+'/avatar'"/>
+        <img v-if="user.id !== undefined" v-auth-image="'/user/'+user.id+'/avatar'"/>
       </v-avatar>
 
       <v-badge class="ml-3" inline left color="blue">

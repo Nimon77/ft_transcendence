@@ -2,7 +2,7 @@
   <v-container >
     <v-row align="center">
       <v-avatar class="mr-n2" tile size="65">
-        <img v-auth-image="'/user/'+ user.id +'/avatar'"/>
+        <img v-if="user.id !== undefined" v-auth-image="'/user/'+ user.id +'/avatar'"/>
       </v-avatar>
 
       <v-badge class="ml-3" inline left color="blue">
@@ -18,7 +18,7 @@
           <v-list-item @click="toProfile">
             <v-list-item-title>Profile Player</v-list-item-title>
           </v-list-item>
-          <v-list-item>
+          <v-list-item @click="invite">
             <v-list-item-title>Invite to Game</v-list-item-title>
           </v-list-item>
           <v-list-item>
@@ -45,7 +45,8 @@ export default Vue.extend({
       id: {
         type: Number,
         required: true,
-      }
+      },
+      me: []
     },
     data(): unknown {
       return {
@@ -74,7 +75,17 @@ export default Vue.extend({
       async fetchFriend() {
         return (await this.$http.get('/user/' + this.id).then(response => {
           this.user = response.data; }).catch(console.log('Ressource waiting..')))
-      }
+      },
+
+      invite() {
+        const payload = {
+          id: this.user.id,
+          data: {
+            message: this.me.username + " has invited you to play",
+          }
+        };
+        this.$socket.emit('notify', payload);
+      },
     },
     created() {
       this.fetchFriend();
