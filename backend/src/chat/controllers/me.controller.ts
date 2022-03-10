@@ -9,6 +9,7 @@ import {
 } from '@nestjs/common';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
+import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
 
 @Controller('channel')
@@ -24,9 +25,9 @@ export class MeController {
   }
 
   @Put('/:id/join')
-  async joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
+  async joinChannel(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() room: ChatRoom) {
     const user = await this.userService.getUserById(req.user.userId);
-    this.chatService.addUserToRoom(id, user);
+    this.chatService.addUserToRoom(room, user);
   }
 
   @Put(':id/admin')
