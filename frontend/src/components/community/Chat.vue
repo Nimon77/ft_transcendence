@@ -8,14 +8,14 @@
         
             <v-list id="Chat" max-height="70vh" class="mt-3 d-flex flex-column">
                 <div v-for="(cM, index) in chatMsg" :key="index">
-                    <v-card v-if="cM.sender != user.username" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
+                    <v-card v-if="cM.sender.id != user.id" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
                             <!-- v-if="cM.sender n'est pas bloqué par le user" -->
-                            <div class="font-weight-bold mt-2 ml-3"> {{cM.sender}} </div>
+                            <div class="font-weight-bold mt-2 ml-3"> {{cM.sender.username}} </div>
                             <div class="mr-2 mb-2 ml-3"> {{cM.msg}} </div>
                     </v-card >
                     <div class="d-flex justify-end">
-                    <v-card v-if="cM.sender == user.username" class="mb-1 mr-2 text-right d-flex justify-center" tile flat width="25%" color="blue" dark>
-                            <div class="font-weight-bold mr-4 mt-1"> {{cM.sender}} </div>
+                    <v-card v-if="cM.sender.id == user.id" class="mb-1 mr-2 text-right d-flex justify-center" tile flat width="25%" color="blue" dark>
+                            <div class="font-weight-bold mr-4 mt-1"> {{user.username}} </div>
                             <div class="mr-4 mb-1 ml-2"> {{cM.msg}} </div>
                     </v-card>
                     </div>
@@ -74,7 +74,7 @@ export default Vue.extend({
             console.log("TEXT EVENT", data);
             if (data.id == this.idCR)
             {
-                this.chatMsg.push( { sender: data.user.username, msg: data.value } );
+                this.chatMsg.push( { sender: data.user, msg: data.value } );
                 document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
             }
         });
