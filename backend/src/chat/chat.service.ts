@@ -8,6 +8,7 @@ import { PasswordI } from './password.interface';
 import { BannedUser } from './banned.entity';
 import { Log } from './log.entity';
 import * as bcrypt from 'bcrypt';
+import { func } from 'joi';
 
 @Injectable()
 export class ChatService {
@@ -155,14 +156,16 @@ export class ChatService {
   }
 
   async getRoomsForUser(userId: number) {
+    let rooms = [];
     const query = await this.chatRepo
       .createQueryBuilder('room')
       .leftJoin('room.users', 'user')
       .where('user.id = :userId', { userId })
-      .leftJoinAndSelect('room.users', 'all_users')
+      .innerJoinAndSelect(MutedUser, "muted", "muted.room.id = room.id")
       .getMany();
     query.forEach((chat) => {
-      chat.password = undefined;
+      const room = this.getRoomInfo(chat.id).then(room => {return room});
+      rooms.push(room);
     });
     return query;
   }
@@ -208,6 +211,33 @@ export class ChatService {
           .of(room)
           .add(user);
       });
+  }
+
+  async UserAdminRole(owner: User, newAdmin: User, roomid: number)
+  {
+    const room = await this.getRoomInfo(roomid);
+
+    if (room.ownerId == owner.id)
+    {
+      console.log(newAdmin);
+      console.log(owner);
+      var index = room.users.map((user) => user.id).indexOf(newAdmin.id);
+      if (newAdmin.id === room.ownerId)
+        throw new HttpException('Owner canno\'t be demoted', HttpStatus.FORBIDDEN);
+      if (index === -1)
+        throw new HttpException('User getting promoted isn\'t part of the room', HttpStatus.FORBIDDEN);
+      else
+      {
+        index = room.adminId.indexOf(newAdmin.id);
+        if (index === -1)
+          room.adminId.push(newAdmin.id);
+        else
+          room.adminId.splice(index, 1);
+        await this.chatRepo.save(room);
+      }
+    }
+    else
+      throw new HttpException('User isn\'t the room\'s owner', HttpStatus.FORBIDDEN);
   }
 
   async UnBanUserInRoom(user: BannedUser, room: ChatRoom)
@@ -286,15 +316,18 @@ export class ChatService {
 
   async addLogForRoom(id: number, message: string, user: User)
   {
-    console.log(user);
-    const currentroom = await this.chatRepo.findOne(id, {relations : ['users', 'logs']});
-    console.log(currentroom);
+    const currentroom = await this.chatRepo.findOne(id, {relations : ['users', 'logs', 'muted']});
     if (currentroom.users.map((user) => user.id).indexOf(user.id) === -1)
       throw new HttpException(
         'User isnt in room',
         HttpStatus.NOT_FOUND,
       );
-      const log = this.logRepo.create({
+    if (currentroom.muted.map((muted) => muted.userId).indexOf(user.id) != -1)
+      throw new HttpException(
+        'User is muted',
+        HttpStatus.FORBIDDEN,
+      );
+    const log = this.logRepo.create({
         userId: user.id,
         message: message,
         time: new Date(),
@@ -307,14 +340,18 @@ export class ChatService {
         currentroom.logs.shift();
       }
       currentroom.logs.push(log);
-      console.log(currentroom.logs);
       return await this.chatRepo.save(currentroom);
   }
 
-  async getLogsForRoom(id: number)
+  async getLogsForRoom(id: number, user: User)
   {
     const currentroom = await this.chatRepo.findOne(id, {relations : ['logs']});
-
+    // let logs = [];
+    // currentroom.logs.map(log => {
+    //   if (user.blocked.indexOf(log.userId) == -1)
+    //     logs.push(log);
+    // })
+    // return logs;
     return currentroom.logs;
   }
 }
