@@ -190,7 +190,7 @@ export class ChatService {
     const page = await this.getUsersForRoom(room.id);
 
     if (!curroom.public)
-      if (!(await bcrypt.compare(room.password, curroom.password)))
+      if ((room.password == undefined) || !(await bcrypt.compare(room.password, curroom.password)))
         throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN); 
     curroom.banned.forEach(banned => {
       if (banned.userId == user.id)
