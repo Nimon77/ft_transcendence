@@ -5,15 +5,16 @@
         </template>
         <template v-slot:default="dialog">
           <v-card>
+                <v-form @submit.prevent="setNewInfos(dialog)">
             <v-toolbar color="primary" elevation="0" class="text-h5 pl-5" dark>CHANGE YOUR THINGS HERE</v-toolbar>
             <v-card-text>
               <v-container fluid>
               <v-row>
               <v-col align="center" cols="12" class="mt-11" >
                 
-                <v-form ref="form" v-model="valid">
+                <!-- <v-form ref="form" v-model="valid"> -->
                 <v-text-field v-model="username" :rules="rules" label="new username" solo></v-text-field>
-                </v-form>
+                <!-- </v-form> -->
               
               </v-col>
               <v-col cols="12">
@@ -40,8 +41,14 @@
             </v-card-text>
             <v-card-actions class="justify-end">
               <v-btn color="red" dark @click="dialog.value = false" >CANCEL</v-btn>
-              <v-btn color="blue" class="white--text" :disabled="!valid" @click="setNewInfos" >OK!</v-btn>
+              <v-btn
+                color="blue"
+                class="white--text"
+                :disabled="!valid"
+                @click="setNewInfos(dialog)"
+              >OK!</v-btn>
             </v-card-actions>
+            </v-form>
           </v-card>
         </template>
       </v-dialog>
@@ -95,8 +102,8 @@ export default Vue.extend({
             }
         },
         methods: {
-          async setNewInfos() {
-            this.dialog = false;
+          async setNewInfos(dialog) {
+            dialog.value = false;
             if (this.image.src) {
               const { canvas } = this.$refs.cropper.getResult();
               if (canvas) {
@@ -112,7 +119,16 @@ export default Vue.extend({
                 console.log('PUT REQUEST', response);
                 });
             }
-            location.reload();
+            await this.$http.get('/user/me').then(response => {
+              const user = {
+                id: response.data.id,
+                username: response.data.username,
+                avatar: response.data.avatar,
+              };
+              this.$store.commit('setUser', user);
+            });
+            console.log('USER', this.$store.state.user);
+            // location.reload();
           },
 
           loadImage(event) {
