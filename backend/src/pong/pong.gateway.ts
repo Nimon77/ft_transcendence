@@ -43,6 +43,10 @@ export class PongGateway {
       .catch(() => null);
     if (!user) client.disconnect();
 
+    const sockets: Array<Socket> = Array.from(this.server.sockets.values());
+    const socket = sockets.find((socket) => socket.data.user.id == user.id);
+    if (socket) client.disconnect();
+
     client.data.user = user;
     client.emit('info', { user });
   }
@@ -111,8 +115,6 @@ export class PongGateway {
     this.rooms.get(code).player.push(client.data.user.id);
     client.data.code = code;
     client.emit('room', code);
-
-    console.log(this.rooms.get(code));
     return code;
   }
 }
