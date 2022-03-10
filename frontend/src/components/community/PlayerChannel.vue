@@ -43,13 +43,15 @@
           </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
           <v-list-item dense v-if="isOwner">
             <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn color="blue" tile dark min-width="100%" > SET ADMIN </v-btn>
+              <v-btn @click="setAdmin(player.id)" color="blue" tile dark min-width="100%" >
+                <div id="admin">{{isPlayerAdmin(player.id)}}</div>
+              </v-btn>
             </v-list-item-title>
           </v-list-item>
         </v-list-group>
         <v-divider></v-divider>
       </div>
-      </v-list>      
+      </v-list>
     </v-card>
 
 </template>
@@ -66,6 +68,7 @@ export default Vue.extend({
       user: [],
       isOwner: Boolean,
       isAdmin: Boolean,
+      admins: [],
       idCR: Number,
     },
     data() {
@@ -80,6 +83,24 @@ export default Vue.extend({
       
     },
     methods: {
+      isPlayerAdmin(idPlayer) {
+        if (this.admins.indexOf(idPlayer) == -1)
+          return "SET ADMIN";
+        else
+          return "UNSET ADMIN"
+      },
+
+      async setAdmin(idPlayer) {
+        await this.$http.put('channel/' + this.idCR + '/admin', {id: idPlayer}).then((resp)=>{
+          console.log(resp);
+        });
+        if (document.getElementById('admin').innerHTML == "UNSET ADMIN")
+          document.getElementById('admin').innerHTML = "SET ADMIN";
+        else
+          document.getElementById('admin').innerHTML = "UNSET ADMIN";
+
+      },
+
       invite(id: number) {
         const payload = {
           id: id,
