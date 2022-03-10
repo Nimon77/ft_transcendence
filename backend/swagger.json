@@ -148,6 +148,12 @@
             "items": {
               "$ref": "#/components/schemas/BannedUser"
             }
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Log"
+            }
           }
         }
       },
@@ -205,6 +211,30 @@
           "data": {
             "type": "string",
             "format": "Uint8Array"
+          }
+        }
+      },
+      "Log": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "userId": {
+            "type": "number",
+            "example": 65000
+          },
+          "message": {
+            "type": "string",
+            "example": "salut"
+          },
+          "time": {
+            "type": "string",
+            "example": "2022-06-29"
+          },
+          "room": {
+            "$ref": "#/components/schemas/Channel"
           }
         }
       },
@@ -345,7 +375,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Makes the current user join the channel (specified by id)",
+        "summary": "WIP Makes the current user join the channel (specified by id)",
         "operationId": "MeController_joinChannel",
         "parameters": [
           {
@@ -364,6 +394,62 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
+          }
+        }
+      }
+    },
+    "/channel/{id}/admin": {
+      "put": {
+        "tags": [
+          "channel me"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifies the channel object (specified by id) (more specifically the adminId)",
+        "operationId": "MeController_changeUserAdmin",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "in": "path",
+            "required": true,
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "Id of the user whom you wish to make admin of the channel",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 65000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
             "$ref": "#/components/responses/ChannelNotExist"
@@ -711,7 +797,97 @@
         }
       }
     },
-    "/channel/{id}/mute/": {
+    "/channel/{id}/log/": {
+      "get": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Returns the log object of the channel object (specified by id)",
+        "operationId": "IdController_getLogsFromRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
+          }
+        }
+      },
+      "put": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifies the log object of the channel object (specified by id)",
+        "operationId": "IdController_addLogToRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "New message",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "hello"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
+          }
+        }
+      }
+    },
+    "/channel/{id}/add/": {
       "put": {
         "tags": [
           "channel id"
@@ -722,7 +898,7 @@
           }
         ],
         "summary": "WORK IN PROGRESS",
-        "operationId": "IdController_muteUserFromRoom",
+        "operationId": "IdController_addUserToRoom",
         "parameters": [
           {
             "name": "id",
@@ -759,6 +935,62 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
+          }
+        }
+      }
+    },
+    "/channel/{id}/mute/": {
+      "put": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifies the muteduser object of the channel object (specified by id)",
+        "operationId": "IdController_muteUserFromRoom",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "New MutedUser object",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "id": {
+                    "type": "number",
+                    "example": 65000
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
+          "404": {
             "$ref": "#/components/responses/NotExist"
           }
         }
@@ -774,7 +1006,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "WORK IN PROGRESS",
+        "summary": "Modifies the banneduser object of the channel object (specified by id)",
         "operationId": "IdController_banUserFromRoom",
         "parameters": [
           {
@@ -810,6 +1042,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
             "$ref": "#/components/responses/NotExist"
@@ -899,6 +1134,71 @@
           },
           "404": {
             "$ref": "#/components/responses/ChannelNotExist"
+          }
+        }
+      }
+    },
+    "/channel/{id}/{userid}/log": {
+      "put": {
+        "tags": [
+          "channel id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Modifies the log object of the channel object (specified by id) (for the user specified by userid)",
+        "operationId": "IdController_addLogToRoom2",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          },
+          {
+            "name": "userid",
+            "description": "Id of the channel",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "requestBody": {
+          "description": "New message",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "message": {
+                    "type": "string",
+                    "example": "hello"
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
+          "404": {
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
