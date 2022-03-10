@@ -156,17 +156,16 @@ export class ChatService {
   }
 
   async getRoomsForUser(userId: number) {
-    let rooms = [];
     const query = await this.chatRepo
       .createQueryBuilder('room')
       .leftJoin('room.users', 'user')
       .where('user.id = :userId', { userId })
-      .innerJoinAndSelect(MutedUser, "muted", "muted.room.id = room.id")
+      .leftJoinAndSelect('room.users', 'all_users')
       .getMany();
     query.forEach((chat) => {
-      const room = this.getRoomInfo(chat.id).then(room => {return room});
-      rooms.push(room);
+      chat.password = undefined;
     });
+    return query;
     return query;
   }
 
@@ -186,21 +185,25 @@ export class ChatService {
     } else throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
   }
 
-  async addUserToRoom(roomid: number, user: User) {
-    const room = await this.chatRepo.findOne(roomid, { relations: ['users', 'banned'] });
-    const page = await this.getUsersForRoom(roomid);
-    room.banned.forEach(banned => {
+  async addUserToRoom(room: ChatRoom, user: User) {
+    const curroom = await this.chatRepo.findOne(room.id, { relations: ['users', 'banned'] });
+    const page = await this.getUsersForRoom(room.id);
+
+    if (!curroom.public)
+      if ((room.password == undefined) || !(await bcrypt.compare(room.password, curroom.password)))
+        throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN); 
+    curroom.banned.forEach(banned => {
       if (banned.userId == user.id)
       {
         let time = new Date();
         if (banned.endOfBan < time)
-          this.UnBanUserInRoom(banned, room);
+          this.UnBanUserInRoom(banned, curroom);
         else
           throw new HttpException('User is banned from Room', HttpStatus.FORBIDDEN);
       }
     })
     let userexists = false;
-    room.users.forEach((curuser) => {
+    curroom.users.forEach((curuser) => {
       if (curuser.id == user.id) userexists = true;
     });
     if (!userexists)
@@ -208,7 +211,7 @@ export class ChatService {
         await this.chatRepo
           .createQueryBuilder()
           .relation(ChatRoom, 'users')
-          .of(room)
+          .of(curroom)
           .add(user);
       });
   }
@@ -219,8 +222,6 @@ export class ChatService {
 
     if (room.ownerId == owner.id)
     {
-      console.log(newAdmin);
-      console.log(owner);
       var index = room.users.map((user) => user.id).indexOf(newAdmin.id);
       if (newAdmin.id === room.ownerId)
         throw new HttpException('Owner canno\'t be demoted', HttpStatus.FORBIDDEN);
