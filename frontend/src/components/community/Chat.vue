@@ -65,6 +65,7 @@ export default Vue.extend({
                 id: this.idCR,
                 value: this.input,
             });
+            // this.$http.put
             this.input = '';
         },
     },
