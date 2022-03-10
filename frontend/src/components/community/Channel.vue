@@ -158,7 +158,8 @@ export default Vue.extend({
       },
       async joinRoom(idCR) {
         console.log('Join ROOM', idCR), this.password;
-        await this.$http.put('/channel/' + idCR + '/join/', {id: idCR, password: this.password}).then((resp) => console.log(resp)).catch( alert("wrong password") )
+        try { await this.$http.put('/channel/' + idCR + '/join/', {id: idCR, password: this.password}).then((resp) => console.log(resp)) }
+        catch(error) {alert("wrong password")}
         this.searchCR = '';
         this.$emit('newCR');
       },
