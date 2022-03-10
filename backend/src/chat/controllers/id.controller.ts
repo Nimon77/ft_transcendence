@@ -58,10 +58,10 @@ export class IdController {
   // for testing purposes
 
   @Put(':id/add')//add any user to any channel
-  async addUserToRoom(@Body() user: User, @Param('id', ParseIntPipe) id: number)
+  async addUserToRoom(@Body() body: any, @Param('id', ParseIntPipe) id: number)
   {
-    const useradd = await this.userService.getUserById(user.id);
-    return this.chatService.addUserToRoom(id, useradd);
+    const useradd = await this.userService.getUserById(body.user.id);
+    return this.chatService.addUserToRoom(body.room, useradd);
   }
 
   @Get('/:id')//get full room info including baned muted and users
