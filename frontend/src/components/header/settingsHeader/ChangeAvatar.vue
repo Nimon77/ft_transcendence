@@ -121,12 +121,7 @@ export default Vue.extend({
                   });
               }
               await this.$http.get('/user/me').then(response => {
-                const user = {
-                  id: response.data.id,
-                  username: response.data.username,
-                  avatar: response.data.avatar,
-                };
-                this.$store.commit('setUser', user);
+                this.$store.commit('setUser', response.data);
               });
               this.username = '';
               this.$http.get('/user').then(response => {

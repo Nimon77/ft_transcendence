@@ -94,6 +94,7 @@ router.beforeEach((to, from, next) => {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
       axios.get("/user/me").then(res => {
+        store.commit('setUser', res.data);
         if (res.data.profileCompleted) {
           localStorage.setItem('ready', 'true');
           return next({ name: 'Main' });
@@ -117,7 +118,6 @@ router.beforeEach((to, from, next) => {
     if (store.state.user.id === null) {
       axios.get("/user/me").then(res => {
         store.commit('setUser', res.data);
-        console.log(store.state.user);
       });
     }
     next();
