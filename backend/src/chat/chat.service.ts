@@ -124,7 +124,6 @@ export class ChatService {
 
   async checkPassword(id: number, password: string) {
     const currentRoom = await this.chatRepo.findOne(id);
-    console.log(password);
     if (password)
       if (await bcrypt.compare(password, currentRoom.password)) return true;
     return false;
@@ -189,8 +188,7 @@ export class ChatService {
   async addUserToRoom(room: ChatRoom, user: User) {
     const curroom = await this.chatRepo.findOne(room.id, { relations: ['users', 'banned'] });
     const page = await this.getUsersForRoom(room.id);
-    console.log(curroom);
-    console.log(room);
+
     if (!curroom.public)
       if (!(await bcrypt.compare(room.password, curroom.password)))
         throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN); 
@@ -224,8 +222,6 @@ export class ChatService {
 
     if (room.ownerId == owner.id)
     {
-      console.log(newAdmin);
-      console.log(owner);
       var index = room.users.map((user) => user.id).indexOf(newAdmin.id);
       if (newAdmin.id === room.ownerId)
         throw new HttpException('Owner canno\'t be demoted', HttpStatus.FORBIDDEN);
