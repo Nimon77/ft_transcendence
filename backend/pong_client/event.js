@@ -1,4 +1,5 @@
 let me;
+let code = null;
 
 const event = (socket) => {
   socket.on('info', (info) => {
@@ -7,10 +8,6 @@ const event = (socket) => {
 
   socket.on('room', (code) => {
     console.log(`Joined code ${code}`);
-    const url = new URL(document.location.href);
-    if (!url.searchParams.has('code')) {
-      url.searchParams.set('code', code);
-      document.location.href = url.href;
-    }
+    this.code = code;
   });
 };
