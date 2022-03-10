@@ -95,8 +95,11 @@ export default Vue.extend({
         this.$http.put('/user/me', {
           username: this.username,
         }).then(() => {
-          localStorage.setItem('ready', 'true');
-          this.$router.push({ name: 'Main' });
+          this.$http.get('/user/me').then((res) => {
+            this.$store.commit('setUser', res.data);
+            localStorage.setItem('ready', 'true');
+            this.$router.push({ name: 'Main' });
+          });
         });
       }
     },

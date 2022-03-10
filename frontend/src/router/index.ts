@@ -9,6 +9,7 @@ import Pregame from '@/views/Pregame.vue'
 import Game from '@/views/Game.vue'
 import Main from '@/views/Main.vue'
 import UpdateProfile from '@/views/UpdateProfile.vue'
+import store from '@/store'
 
 Vue.use(VueRouter)
 
@@ -112,6 +113,12 @@ router.beforeEach((to, from, next) => {
     }
     else if (to.name === 'Login' && Status.loggedIn && Status.JWTvalide) {
       return next({ name: 'Main' })
+    }
+    if (store.state.user.id === null) {
+      axios.get("/user/me").then(res => {
+        store.commit('setUser', res.data);
+        console.log(store.state.user);
+      });
     }
     next();
   });
