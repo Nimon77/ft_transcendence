@@ -23,8 +23,7 @@ export class PongService {
                 ++room.players[0].score;
             else
                 ++room.players[1].score;
-            for (const player of room.players)
-                player.socket.emit('score', room.players.map(player => player.tray));
+            this.roomService.emit(room, 'score', room.players.map(player => player.score));
 
             //MODIFY
             if (room.players[0].score == room.options.score.max)
@@ -51,8 +50,7 @@ export class PongService {
         //normal behavior
         room.ball.x += room.ball.velocity.x;
         room.ball.y += room.ball.velocity.y;
-        for (const player of room.players)
-            player.socket.emit('ball', room.ball);
+        this.roomService.emit(room, 'ball', room.ball);
     }
 	
     updateBall(x : number, y : number, radian : number, room: Room)
@@ -60,7 +58,6 @@ export class PongService {
         room.ball.x = x;
         room.ball.y = y;
         room.ball.velocity = this.velocity(room.options.ball.speed, radian);
-        for (const player of room.players)
-            player.socket.emit('ball', room.ball);
+        this.roomService.emit(room, 'ball', room.ball);
     }
 }

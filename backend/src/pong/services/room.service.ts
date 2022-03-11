@@ -116,7 +116,7 @@ export class RoomService {
       room.players.map((player) => player.socket.data.user),
     );
 
-    //room.inGame = true;
+    room.inGame = true;
   }
 
   @Interval(1000 / 60)
