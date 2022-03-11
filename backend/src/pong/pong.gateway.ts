@@ -8,7 +8,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Input } from './interfaces/input.interface';
-import { PongService } from './pong.service';
+import { RoomService } from './services/room.service';
 
 @WebSocketGateway({
   cors: {
@@ -20,7 +20,7 @@ export class PongGateway {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly pongService: PongService,
+    private readonly roomService: RoomService,
   ) {}
   @WebSocketServer()
   server: any;
@@ -41,17 +41,22 @@ export class PongGateway {
 
   handleDisconnect(client: Socket) {
     if (!client.data.user) return;
-    this.pongService.removeSocket(client);
+    this.roomService.removeSocket(client);
   }
 
   @SubscribeMessage('queue')
   joinQueue(client: Socket) {
-    this.pongService.addQueue(client);
+    if (!client.data.user) return;
+    this.roomService.addQueue(client);
   }
 
   @SubscribeMessage('room')
-  joinRoom(client: Socket, code: string) {}
+  joinRoom(client: Socket, code: string) {
+    if (!client.data.user) return;
+  }
 
   @SubscribeMessage('ready')
-  onReady(client: Socket, input: Input) {}
+  onReady(client: Socket, input: Input) {
+    if (!client.data.user) return;
+  }
 }
