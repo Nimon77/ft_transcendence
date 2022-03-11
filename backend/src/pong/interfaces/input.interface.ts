@@ -1,10 +1,10 @@
 export enum Plan {
-  default = 0,
+  DEFAULT = 0,
 }
 
 export enum Mode {
-  none = 0,
-  blind,
+  NONE = 0,
+  BLIND,
 }
 
 export interface Input {
