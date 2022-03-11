@@ -2,11 +2,11 @@ import { Player } from './player.interface';
 import { Socket } from 'socket.io';
 import { Option } from './option.interface';
 
-interface Velocity
-{
+interface Velocity {
   x: number;
   y: number;
 }
+
 interface Ball {
   x: number;
   y: number;
@@ -15,9 +15,9 @@ interface Ball {
 
 export interface Room {
   code: string;
-  player: Array<Player>;
-  spectator?: Array<Socket>;
+  players: Array<Player>;
+  spectators?: Array<Socket>;
   inGame: boolean;
-  option: Option;
+  options: Option;
   ball: Ball;
 }

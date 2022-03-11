@@ -1,9 +1,9 @@
 export enum Plan {
-  default,
+  default = 0,
 }
 
 export enum Mode {
-  none,
+  none = 0,
   blind,
 }
 

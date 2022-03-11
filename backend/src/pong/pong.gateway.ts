@@ -9,6 +9,7 @@ import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { Input } from './interfaces/input.interface';
 import { RoomService } from './services/room.service';
+import { Player } from './interfaces/player.interface';
 
 @WebSocketGateway({
   cors: {
@@ -58,5 +59,10 @@ export class PongGateway {
   @SubscribeMessage('ready')
   onReady(client: Socket, input: Input) {
     if (!client.data.user) return;
+
+    const player: Player = this.roomService.getPlayer(client.data.user.id);
+    if (!player) return;
+
+    this.roomService.ready(player, input);
   }
 }
