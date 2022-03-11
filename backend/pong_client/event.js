@@ -3,20 +3,20 @@ const canvas = document.getElementById('pong');
 let me;
 let pong = null;
 
-const handleMouseMove = (event) => {
-  if (!pong) return;
-  const y = event.pageY;
-
-  if (y < canvas.clientTop) return;
-  if (y > canvas.clientTop + canvas.clientHeight) return;
-
-  pong.updateTray(
-    me,
-    ((event.pageY - canvas.clientTop) * 100) / canvas.clientHeight,
-  );
-};
-
 const event = (socket) => {
+  const handleMouseMove = (event) => {
+    if (!pong) return;
+    const y = event.pageY;
+
+    if (y < canvas.clientTop) return;
+    if (y > canvas.clientTop + canvas.clientHeight) return;
+
+    const tray = (event.pageY - canvas.clientTop) / canvas.clientHeight;
+
+    pong.updateTray(me, tray);
+    socket.emit('tray', tray);
+  };
+
   socket.on('info', (info) => {
     me = info.user;
   });
@@ -33,7 +33,7 @@ const event = (socket) => {
     console.log('Game started!');
   });
 
-  socket.on('ball', (ball) => pong.updateBall(ball.x, ball.y, ball.velocity));
+  socket.on('ball', (ball) => pong.updateBall(ball.x, ball.y));
   socket.on('score', (scores) => pong.updateScore(scores));
   socket.on('tray', (player, tray) => pong.updateTray(player, tray));
 

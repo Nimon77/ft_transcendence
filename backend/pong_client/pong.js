@@ -1,6 +1,6 @@
 class Pong {
   stop = false;
-  ball = { x: 0, y: 0, velocity: { x: 0, y: 0 } };
+  ball = { x: 0, y: 0 };
 
   constructor(canvas, options, me, players) {
     canvas.width = options.display.width;
@@ -15,8 +15,8 @@ class Pong {
     });
   }
 
-  updateBall(x, y, velocity) {
-    this.ball = { x, y, velocity };
+  updateBall(x, y) {
+    this.ball = { x, y };
     this.draw();
   }
 
@@ -29,7 +29,7 @@ class Pong {
     const player1 = this.players.find((player1) => player1.id == player.id);
     if (!player1) return;
 
-    let tray = (percent * this.options.display.height) / 100;
+    let tray = percent * this.options.display.height;
 
     if (tray < this.options.tray.height / 2)
       tray = this.options.tray.height / 2;

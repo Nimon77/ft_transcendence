@@ -65,4 +65,15 @@ export class PongGateway {
 
     this.roomService.ready(player, input);
   }
+
+  @SubscribeMessage('tray')
+  updateTray(client: Socket, tray: number) {
+    if (!client.data.user) return;
+
+    const player: Player = this.roomService.getPlayer(client.data.user.id);
+    if (!player) return;
+
+    player.tray = tray * player.room.options.display.height;
+    this.roomService.emit(player.room, 'tray', player.socket.data.user, tray);
+  }
 }
