@@ -317,7 +317,7 @@
         }
       }
     },
-    "auth/generate/{id}": {
+    "/auth/generate/{id}": {
       "get": {
         "tags": [
           "auth"
