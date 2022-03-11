@@ -13,11 +13,18 @@ interface Ball {
   velocity: Velocity;
 }
 
+export enum State {
+  WAITING,
+  STARTING,
+  INGAME,
+  END,
+}
+
 export interface Room {
   code: string;
+  state: State;
   players: Array<Player>;
   spectators?: Array<Socket>;
-  inGame: boolean;
   options: Option;
   ball: Ball;
 }

@@ -10,6 +10,7 @@ import { UserService } from 'src/user/user.service';
 import { Input } from './interfaces/input.interface';
 import { RoomService } from './services/room.service';
 import { Player } from './interfaces/player.interface';
+import { Room } from './interfaces/room.interface';
 
 @WebSocketGateway({
   cors: {
@@ -54,6 +55,11 @@ export class PongGateway {
   @SubscribeMessage('room')
   joinRoom(client: Socket, code: string) {
     if (!client.data.user) return;
+
+    let room: Room = this.roomService.getRoom(code);
+    if (!room) room = this.roomService.createRoom(code);
+
+    this.roomService.joinRoom(client, room);
   }
 
   @SubscribeMessage('ready')

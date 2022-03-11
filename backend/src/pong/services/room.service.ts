@@ -4,7 +4,7 @@ import { Socket } from 'socket.io';
 import { Input, Mode, Plan } from '../interfaces/input.interface';
 import { Option } from '../interfaces/option.interface';
 import { Player } from '../interfaces/player.interface';
-import { Room } from '../interfaces/room.interface';
+import { Room, State } from '../interfaces/room.interface';
 import { PongService } from './pong.service';
 
 @Injectable()
@@ -15,7 +15,7 @@ export class RoomService {
     ball: { speed: 20, radius: 20 },
     tray: { width: 20, height: 200, x: 50 },
     score: { y: 15, max: 10 },
-    input: { plan: Plan.default, mode: Mode.none },
+    input: { plan: Plan.DEFAULT, mode: Mode.NONE },
   };
 
   queue: Array<Socket> = new Array();
@@ -32,6 +32,9 @@ export class RoomService {
       for (const player of room.players)
         if (player.socket.id == socket.id) {
           room.players.splice(room.players.indexOf(player), 1);
+
+          if (room.state == State.INGAME) this.stopGame(room, room.players[0]);
+          break;
         }
       if (!room.players.length) return this.rooms.delete(room.code);
     }
@@ -47,30 +50,9 @@ export class RoomService {
 
     const room: Room = this.createRoom();
     while (this.queue.length && room.players.length < 2)
-      this.createPlayer(this.queue.shift(), room);
+      this.joinRoom(this.queue.shift(), room);
   }
-
-  createPlayer(socket: Socket, room: Room) {
-    const player: Player = {
-      socket,
-      room,
-      input: null,
-      tray: RoomService.options.display.height / 2,
-      score: 0,
-    };
-    room.players.push(player);
-    socket.emit('room', room.code);
-  }
-
-  getPlayer(userId: number): Player {
-    for (const room of this.rooms.values())
-      for (const player of room.players)
-        if (player.socket.data.user.id == userId) return player;
-    return null;
-  }
-
-  createRoom(): Room {
-    let code: string = null;
+  createRoom(code: string = null): Room {
     while (!code) {
       const length = 10;
       const generated = Math.floor(
@@ -81,13 +63,48 @@ export class RoomService {
 
     const room: Room = {
       code,
+      state: State.WAITING,
       players: new Array(),
-      inGame: false,
       options: RoomService.options,
       ball: { x: 0, y: 0, velocity: { x: 0, y: 0 } },
     };
     this.rooms.set(code, room);
     return room;
+  }
+
+  joinRoom(socket: Socket, room: Room) {
+    if (room.state == State.WAITING) {
+      const player: Player = {
+        socket,
+        room,
+        input: null,
+        tray: RoomService.options.display.height / 2,
+        score: 0,
+      };
+      room.players.push(player);
+      if (room.players.length == 2) room.state = State.STARTING;
+    } else {
+      if (!room.spectators) room.spectators = new Array();
+      room.spectators.push(socket);
+      this.emit(
+        room,
+        'start',
+        room.options,
+        room.players.map((player) => player.socket.data.user),
+      );
+    }
+    socket.emit('room', room.code);
+  }
+
+  getPlayer(userId: number): Player {
+    for (const room of this.rooms.values())
+      for (const player of room.players)
+        if (player.socket.data.user.id == userId) return player;
+    return null;
+  }
+
+  getRoom(code: string): Room {
+    return this.rooms.get(code);
   }
 
   ready(player: Player, input: Input) {
@@ -102,6 +119,7 @@ export class RoomService {
   }
 
   startGame(room: Room) {
+    if (room.state != State.STARTING) return;
     for (const player of room.players) if (!player.input) return;
 
     room.options.input.plan =
@@ -116,17 +134,17 @@ export class RoomService {
       room.players.map((player) => player.socket.data.user),
     );
 
-    room.inGame = true;
+    room.state = State.INGAME;
   }
 
   @Interval(1000 / 60)
   loop() {
     for (const room of this.rooms.values())
-      if (room.inGame) this.pong.update(room);
+      if (room.state == State.INGAME) this.pong.update(room);
   }
 
   stopGame(room: Room, player: Player) {
-    room.inGame = false;
+    room.state = State.END;
 
     this.emit(room, 'stop', player.socket.data.user);
   }
