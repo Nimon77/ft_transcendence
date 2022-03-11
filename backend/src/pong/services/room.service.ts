@@ -1,12 +1,12 @@
 import { Injectable } from '@nestjs/common';
 import { Socket } from 'socket.io';
-import { Mode, Plan } from './interfaces/input.interface';
-import { Option } from './interfaces/option.interface';
-import { Player } from './interfaces/player.interface';
-import { Room } from './interfaces/room.interface';
+import { Mode, Plan } from '../interfaces/input.interface';
+import { Option } from '../interfaces/option.interface';
+import { Player } from '../interfaces/player.interface';
+import { Room } from '../interfaces/room.interface';
 
 @Injectable()
-export class PongService {
+export class RoomService {
   static option: Option = {
     display: { width: 1920, height: 1080 },
     ball: { speed: 20, radius: 20 },
@@ -50,7 +50,7 @@ export class PongService {
       socket,
       room,
       input: null,
-      tray: PongService.option.display.height / 2,
+      tray: RoomService.option.display.height / 2,
     };
     room.player.push(player);
     socket.emit('room', room.code);
@@ -77,7 +77,7 @@ export class PongService {
       code,
       player: new Array(),
       start: false,
-      option: PongService.option,
+      option: RoomService.option,
       ball: { x: 0, y: 0 },
     };
     this.rooms.set(code, room);
