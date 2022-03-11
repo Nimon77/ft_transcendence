@@ -13,7 +13,7 @@ import {
 import { ChatRoom } from '../chat.entity';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/user/user.service';
-import { PasswordI } from '../password.interface';
+import { AddI } from '../interfaces/Add.interface';
 import { User } from 'src/user/user.entity';
 import { MutedUser } from '../mute.entity';
 import { BannedUser } from '../banned.entity';
@@ -30,35 +30,15 @@ export class IdController {
     return await this.chatService.getAllRooms();
   }
 
-  @Post('/')
-  async createChannel(@Request() req, @Body() channel: ChatRoom) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return await this.chatService.createRoom(channel, user);
-  }
-
-  @Put('/:id')
-  updateChannel(@Param('id', ParseIntPipe) id: number, @Body() channel: any) {
-      return this.chatService.updateRoom(id, channel);
-  }
+  // for testing purposes
 
   @Delete('/:id')
   deleteChannel(@Param('id', ParseIntPipe) id: number) {
     this.chatService.deleteRoom(id);
   }
 
-  @Post(':id/change/')
-  async changePass(@Body() pass: PasswordI, @Request() req, @Param('id', ParseIntPipe) id: number)
-  {
-    const user = await this.userService.getUserById(req.user.userId);
-    const room = await this.chatService.getRoomById(id);
-    if (room.ownerId == user.id && room.public == false)
-      return this.chatService.changePassword(pass, room);
-    return ("user unathorized to change password");
-  }
-  // for testing purposes
-
-  @Put(':id/add')//add any user to any channel
-  async addUserToRoom(@Body() body: any, @Param('id', ParseIntPipe) id: number)
+  @Put('/add')//add any user to any channel
+  async addUserToRoom(@Body() body: AddI)
   {
     const useradd = await this.userService.getUserById(body.user.id);
     return this.chatService.addUserToRoom(body.room, useradd);
@@ -83,40 +63,10 @@ export class IdController {
     return await this.chatService.createRoom(channel, user);
   }
 
-  @Put(':id/mute')//mute user from channel
-  async muteUserFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() user: User)
-  {
-    const curuser = await this.userService.getUserById(user.id);
-    const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.MuteUserInRoom(curuser, id, admin);
-  }
-
-  @Put(':id/ban')
-  async banUserFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number, @Body() user: User)
-  {
-    const curuser = await this.userService.getUserById(user.id);
-    const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.BanUserInRoom(curuser, id, admin);
-  }
-
-  @Get(':id/log')//get current room logs
-  async getLogsFromRoom(@Param('id', ParseIntPipe) id: number, @Request() req)
-  {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.getLogsForRoom(id, user);
-  }
-
-  @Put(':id/:userid/log')
+  @Put(':id/:userid/log')//add log to room based on userid
   async addLogToRoom(@Param('id', ParseIntPipe) id: number, @Body() message: string, @Param('userid', ParseIntPipe) userid: number)
   {
     const user = await this.userService.getUserById(userid);
-    return this.chatService.addLogForRoom(id, message, user);
-  }
-
-  @Put(':id/log')//add log to room
-  async addLogsToRoom(@Param('id', ParseIntPipe) id: number, @Body() message: string, @Request() req)
-  {
-    const user = await this.userService.getUserById(req.user.userId);
     return this.chatService.addLogForRoom(id, message, user);
   }
 }
