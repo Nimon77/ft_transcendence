@@ -5,9 +5,11 @@ import { Input, Mode, Plan } from '../interfaces/input.interface';
 import { Option } from '../interfaces/option.interface';
 import { Player } from '../interfaces/player.interface';
 import { Room } from '../interfaces/room.interface';
+import { PongService } from './pong.service';
 
 @Injectable()
 export class RoomService {
+  constructor(private readonly pong: PongService) {}
   static option: Option = {
     display: { width: 1920, height: 1080 },
     ball: { speed: 20, radius: 20 },
@@ -53,6 +55,7 @@ export class RoomService {
       room,
       input: null,
       tray: RoomService.option.display.height / 2,
+      score: 0,
     };
     room.player.push(player);
     socket.emit('room', room.code);
@@ -80,7 +83,7 @@ export class RoomService {
       player: new Array(),
       inGame: false,
       option: RoomService.option,
-      ball: { x: 0, y: 0 },
+      ball: { x: 0, y: 0, velocity: {x: 0, y: 0}},
     };
     this.rooms.set(code, room);
     return room;
@@ -104,6 +107,7 @@ export class RoomService {
   loop() {
     for (const room of this.rooms.values())
       if (room.inGame) {
+        this.pong.update(room);
       }
   }
 

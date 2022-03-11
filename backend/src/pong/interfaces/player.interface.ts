@@ -7,4 +7,5 @@ export interface Player {
   room: Room;
   input: Input;
   tray: number;
+  score: number;
 }
