@@ -1,6 +1,7 @@
 import { Injectable } from '@nestjs/common';
+import { Interval } from '@nestjs/schedule';
 import { Socket } from 'socket.io';
-import { Mode, Plan } from '../interfaces/input.interface';
+import { Input, Mode, Plan } from '../interfaces/input.interface';
 import { Option } from '../interfaces/option.interface';
 import { Player } from '../interfaces/player.interface';
 import { Room } from '../interfaces/room.interface';
@@ -42,7 +43,8 @@ export class RoomService {
     if (this.queue.length < 2) return;
 
     const room: Room = this.createRoom();
-    while (room.player.length < 2) this.createPlayer(this.queue.shift(), room);
+    while (this.queue.length && room.player.length < 2)
+      this.createPlayer(this.queue.shift(), room);
   }
 
   createPlayer(socket: Socket, room: Room) {
@@ -76,11 +78,36 @@ export class RoomService {
     const room: Room = {
       code,
       player: new Array(),
-      start: false,
+      inGame: false,
       option: RoomService.option,
       ball: { x: 0, y: 0 },
     };
     this.rooms.set(code, room);
     return room;
+  }
+
+  ready(player: Player, input: Input) {
+    player.input = input;
+    this.startGame(player.room);
+  }
+
+  startGame(room: Room) {
+    for (const player of room.player) if (!player.input) return;
+
+    room.option.input.plan = room.player[Math.round(Math.random())].input.plan;
+    room.option.input.mode = room.player[Math.round(Math.random())].input.mode;
+
+    room.inGame = true;
+  }
+
+  @Interval(1000 / 60)
+  loop() {
+    for (const room of this.rooms.values())
+      if (room.inGame) {
+      }
+  }
+
+  stopGame(room: Room) {
+    room.inGame = false;
   }
 }

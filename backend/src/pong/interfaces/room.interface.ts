@@ -11,7 +11,7 @@ export interface Room {
   code: string;
   player: Array<Player>;
   spectator?: Array<Socket>;
-  start: boolean;
+  inGame: boolean;
   option: Option;
   ball: Ball;
 }
