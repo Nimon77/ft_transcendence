@@ -2,7 +2,7 @@
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="start" justify="center">
       <Channel :CRs="CRs" :user="user" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
-      <Chat :socket="socket" :user="user" v-bind:idCR="idCR" />
+      <Chat :socket="socket" :user="user" v-bind:idCR="idCR"/>
       <PlayerChannel :userCR="userCR" :playersCR="playersCR" :user="user" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
     </v-row>
   </v-container>
@@ -35,6 +35,7 @@ export default Vue.extend({
         playersCR: [],
         playerAdmins: [],
         CRs: [],
+        // logs: [],
       }
     },
     methods: {
@@ -44,8 +45,10 @@ export default Vue.extend({
         
         if (this.idCR == 0)
           return (this.playersCR = []);
+        
         while(i < this.userCR.length && this.userCR[i].id != this.idCR)
           i++;
+          // console.log(this.userCR[i].id);
         if (this.userCR[i].id == this.idCR)
         {
           this.playersCR = this.userCR[i].users;
@@ -79,8 +82,10 @@ export default Vue.extend({
           this.userCR = resp.data;
           // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
-        if (this.$route.params.idCR)
+        if (this.$route.params.idCR) {
           this.idCR = +this.$route.params.idCR;
+
+        }
         if (this.userCR != undefined)
           this.getPlayersCR();
       },
@@ -105,18 +110,9 @@ export default Vue.extend({
           },
       });
       this.fetchSocket();
-      // console.log('CREATED');
       this.$watch(() => this.newCR, () => {this.fetchInfos()},{ immediate: true })
       this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
     },
-    mounted() {
-      // console.log('MOUNTED');
-        // this.socket.on("info", data => {
-        //   this.socketData = data;
-        //   console.log("INFO ", this.socketData);
-        // });
-        // this.fetchInfos();
-    }
 })
 </script>
 

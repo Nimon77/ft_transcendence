@@ -157,9 +157,12 @@ export default Vue.extend({
         this.PWdialog=!this.PWdialog
       },
       async joinRoom(idCR) {
-        console.log('Join ROOM', idCR), this.password;
+        console.log('Join ROOM', idCR, this.password);
         try { await this.$http.put('/channel/' + idCR + '/join/', {id: idCR, password: this.password}).then((resp) => console.log(resp)) }
-        catch(error) {alert("wrong password")}
+        catch(error) {
+          console.log(error.message);
+          alert("You can't access this channel")
+        }
         this.searchCR = '';
         this.$emit('newCR');
       },
@@ -199,7 +202,7 @@ export default Vue.extend({
       }
     },
     mounted() {
-      console.log('CRs :', this.CRs);
+      // console.log('CRs :', this.CRs);
     }
 })
 </script>
