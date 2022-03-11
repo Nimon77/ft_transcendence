@@ -38,7 +38,9 @@ const event = (socket) => {
   socket.on('tray', (player, tray) => pong.updateTray(player, tray));
 
   socket.on('stop', (user) => {
+    pong.draw();
     window.alert(`${user.username} has won!`);
+
     document.removeEventListener('mousemove', handleMouseMove);
     delete pong;
     pong = null;

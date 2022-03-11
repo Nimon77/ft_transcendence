@@ -19,17 +19,16 @@ export class PongService {
         // sides + score
         if (next.x - room.options.ball.radius < 0 || next.x + room.options.ball.radius > room.options.display.width)
         {
-            if (next.x - room.options.ball.radius < 0)
+            if (next.x > room.options.ball.radius)
                 ++room.players[0].score;
             else
                 ++room.players[1].score;
+			
             this.roomService.emit(room, 'score', room.players.map(player => player.score));
 
-            //MODIFY
-            if (room.players[0].score == room.options.score.max)
-                return;
-            else if (room.players[1].score == room.options.score.max)
-                return;
+			for (const player of room.players)
+				if (player.score == room.options.score.max)
+					return this.roomService.stopGame(room, player);
 
             let ajust = 0;
             if (next.x + room.options.ball.radius > room.options.display.width)

@@ -125,7 +125,9 @@ export class RoomService {
       if (room.inGame) this.pong.update(room);
   }
 
-  stopGame(room: Room) {
+  stopGame(room: Room, player: Player) {
     room.inGame = false;
+
+    this.emit(room, 'stop', player.socket.data.user);
   }
 }
