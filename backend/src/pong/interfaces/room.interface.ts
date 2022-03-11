@@ -1,3 +1,5 @@
+import { Player } from './player.interface';
+import { Socket } from 'socket.io';
 import { Option } from './option.interface';
 
 interface Ball {
@@ -5,16 +7,11 @@ interface Ball {
   y: number;
 }
 
-interface Tray {
-  left: number;
-  right: number;
-}
-
 export interface Room {
+  code: string;
+  player: Array<Player>;
+  spectator?: Array<Socket>;
   start: boolean;
   option: Option;
   ball: Ball;
-  tray: Tray;
-  player: Array<string>;
-  spectator?: Array<string>;
 }
