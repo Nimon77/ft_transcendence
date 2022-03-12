@@ -138,9 +138,9 @@ export default Vue.extend({
         get() {
           return this.$store.getters.getIdCR;
         },
-        set(id) {
+        set(id: number) {
           this.$store.commit('setIdCR', id);
-        },
+        }
       },
       user() {
         return this.$store.state.user;
