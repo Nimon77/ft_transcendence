@@ -26,7 +26,7 @@ export class ChatService {
   async getRoomById(id: number): Promise<ChatRoom> {
     const chat = await this.chatRepo.findOne(id);
 
-    if (!chat) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (!chat) throw new HttpException('Chat not found', HttpStatus.NOT_FOUND);
     delete chat.password;
     return chat;
   }
@@ -273,6 +273,8 @@ export class ChatService {
     let time = new Date();
     time = new Date(time.getTime() + (30 * 60 * 1000))
     const currentroom = await this.chatRepo.findOne(roomid, {relations : ['users', 'muted']});
+    if (!currentroom)
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     if (currentroom.ownerId == user.id)
       throw new HttpException('User is owner and thus cannot be muted', HttpStatus.FORBIDDEN);
     if (currentroom.users.map((user) => user.id).indexOf(user.id) == -1)
@@ -301,6 +303,8 @@ export class ChatService {
     let time = new Date();
     time = new Date(time.getTime() + (30 * 60 * 1000))
     const currentroom = await this.chatRepo.findOne(roomid, {relations : ['users','banned']});
+    if (!currentroom)
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     if (currentroom.ownerId == user.id)
       throw new HttpException('User is owner and thus cannot be banned', HttpStatus.FORBIDDEN);
     if (currentroom.users.map((user) => user.id).indexOf(user.id) == -1)
@@ -371,7 +375,8 @@ export class ChatService {
     for (const log of currentroom.logs)
     {
       const currelog = await this.logRepo.findOne(log.id, { relations : ['user']});
-      logs.push(currelog);
+      if (user.blocked.indexOf(currelog.user.id) == -1)
+         logs.push(currelog);
     }
     return logs;
   }
