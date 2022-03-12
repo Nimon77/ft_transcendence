@@ -20,7 +20,7 @@ const routes: Array<RouteConfig> = [
     component: Main
   },
   {
-    path: '/community/:idCR',
+    path: '/community',
     name: 'community',
     component: Community
   },
@@ -74,20 +74,22 @@ async function checkJWT() {
       status.JWTvalide = res.data;
     });
     if (status.JWTvalide) {
-      await axios.get('/user/me', {
-        headers: {
-          Authorization: 'Bearer ' + token
-      }}).then(me => {
-        status.ProfileCompleted = me.data.profileCompleted;
-      }).catch(err => {
-        if (err.response.status === 404) {
+      try {
+        await axios.get('/user/me', {
+          headers: {
+            Authorization: 'Bearer ' + token
+        }}).then(me => {
+          status.ProfileCompleted = me.data.profileCompleted;
+        })
+      } catch (error) {
+        if (error.message.match('404')) {
           status.JWTvalide = false;
           status.loggedIn = false;
           status.ProfileCompleted = false;
           localStorage.removeItem('token');
           store.commit('setReady', false);
         }
-      });
+      }
     }
   }
   return status;
@@ -127,6 +129,9 @@ router.beforeEach((to, from, next) => {
       axios.get("/user/me").then(res => {
         store.commit('setUser', res.data);
       });
+    }
+    if (store.state.ready === false && Status.JWTvalide && Status.ProfileCompleted && to.name !== 'Login') {
+      store.commit('setReady', true);
     }
     next();
   });

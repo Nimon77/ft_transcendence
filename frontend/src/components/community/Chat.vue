@@ -62,8 +62,8 @@ export default Vue.extend({
                 return;
 
             try {
-                await this.$http.put('/channel/'+ this.idCR +'/log', {msg: this.input}).then((resp)=>{console.log('PUT LOG', resp);
-                });
+                // await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp);
+                // });
             } catch (error) {
                 // console.log(error.message.match("404"));
                 if (error.message.match("403"))

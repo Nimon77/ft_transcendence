@@ -45,7 +45,7 @@
   
       <v-list v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
         <div v-for="CR in userCR" :key="CR.id">
-        <v-list-item two-line router :to="'/community/' + CR.id">
+        <v-list-item two-line @click="changeCR(CR.id)">
           <v-list-item-content>
             <v-list-item-title > {{CR.name}} </v-list-item-title>
             <v-list-item-subtitle v-if="CR.public"> public
@@ -133,6 +133,34 @@ export default Vue.extend({
           searchCR: '',
         }
     },
+    computed: {
+      currentIdCR: {
+        get() {
+          return this.$store.getters.getIdCR;
+        },
+        set(id) {
+          this.$store.commit('setIdCR', id);
+        },
+      },
+      user() {
+        return this.$store.state.user;
+      },
+      filteredCRs(): unknown {
+        // console.log('FILTERED CR', this.CRs);
+        return this.CRs.filter((cr) => {
+          return cr.name.match(this.searchCR);
+        })
+      },
+
+      rules() {
+        const rules = [];
+        let rule = v => !!v;
+        rules.push(rule);
+        let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
+        rules.push(rule2);
+        return rules;
+      },
+    },
     methods: {
       isAdmin(adminIds: []) {
         let adminId;
@@ -157,21 +185,21 @@ export default Vue.extend({
       },
       async joinRoom(idCR) {
         console.log('Join ROOM', idCR, this.password);
-        try { await this.$http.put('/channel/' + idCR + '/join/', {id: idCR, password: this.password}).then((resp) => console.log(resp)) }
+        try { await this.$http.put('/channel/join', {id: idCR, password: this.password}).then((resp) => console.log(resp)) }
         catch(error) {
           console.log(error.message);
           alert("You can't access this channel")
         }
         this.searchCR = '';
-        this.$emit('newCR');
+        this.$emit('fetchCR');
       },
       async leaveRoom(idCR) {
         console.log("leave ROOM ", idCR);
-        await this.$http.put('/channel/' + idCR + '/leave/', {id: this.user.id,}).then((resp) => console.log(resp))
-        if (this.$route.path !== '/community/0')
-          this.$router.push('/community/0');
-        else
-          location.reload();
+        await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp))
+        if (this.currentIdCR != 0)
+          this.currentIdCR = 0;
+        this.$emit('fetchCR');
+          // location.reload(); //TODO: fix this
       },
       async newChannel() {
         // console.log('USER ID IN CHANNEL', this.user.id);
@@ -180,31 +208,16 @@ export default Vue.extend({
         else
           await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => console.log(resp))
         this.dialog = false;
-        this.$emit('newCR');
-      }
-    },
-    computed: {
-      user() {
-        return this.$store.state.user;
+        this.$emit('fetchCR');
       },
-      filteredCRs(): unknown {
-        // console.log('FILTERED CR');
-        return this.CRs.filter((cr) => {
-          return cr.name.match(this.searchCR);
-        })
+      changeCR(idCR) {
+        this.currentIdCR = idCR;
+        this.$emit('fetchCR');
       },
-
-      rules() {
-        const rules = [];
-        let rule = v => !!v;
-        rules.push(rule);
-        let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
-        rules.push(rule2);
-        return rules;
-      }
     },
     mounted() {
       // console.log('CRs :', this.CRs);
+      // console.log('UserCR :', this.userCR);
     }
 })
 </script>

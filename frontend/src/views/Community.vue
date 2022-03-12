@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="start" justify="center">
-      <Channel :CRs="CRs" :userCR="userCR" v-on:newCR="newCR=!newCR"/>
+      <Channel :CRs="CRs" :userCR="userCR" v-on:fetchCR="fetchCR=!fetchCR"/>
       <Chat :socket="socket" v-bind:idCR="idCR" />
       <PlayerChannel :userCR="userCR" :playersCR="playersCR" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
     </v-row>
@@ -24,19 +24,49 @@ export default Vue.extend({
     name: 'Community',
     data() {
       return {
-        idCR: 0,
-        newCR: false,
+        fetchCR: false,
         socket: {},
         socketData: [],
         isOwner: false,
         isAdmin: false,
         user: [],
-        userCR: [],
-        playersCR: [],
         playerAdmins: [],
-        CRs: [],
         // logs: [],
       }
+    },
+    computed: {
+      idCR: {
+        get() {
+          return this.$store.getters.getIdCR;
+        },
+        set(value) {
+          this.$store.commit('setIdCR', value);
+        }
+      },
+      CRs: {
+        get() {
+          return this.$store.getters.getCRs;
+        },
+        set(value) {
+          this.$store.commit('setCRs', value);
+        }
+      },
+      userCR: {
+        get() {
+          return this.$store.getters.getUserCR;
+        },
+        set(value) {
+          this.$store.commit('setUserCR', value);
+        }
+      },
+      playersCR: {
+        get() {
+          return this.$store.getters.getPlayersCR;
+        },
+        set(value) {
+          this.$store.commit('setPlayersCR', value);
+        }
+      },
     },
     methods: {
       
@@ -110,7 +140,7 @@ export default Vue.extend({
           },
       });
       this.fetchSocket();
-      this.$watch(() => this.newCR, () => {this.fetchInfos()},{ immediate: true })
+      this.$watch(() => this.fetchCR, () => {this.fetchInfos()},{ immediate: true })
       this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
     },
 })

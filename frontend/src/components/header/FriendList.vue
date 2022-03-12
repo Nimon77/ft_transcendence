@@ -69,7 +69,7 @@ export default Vue.extend({
         await this.$http.post('/user/me/follow', {id: rmId,}).then(response => {
           console.log('POST REQUEST', response);
           });
-        location.reload();
+        location.reload(); //TODO: fix this
       },
     },
     // fetch all users + la friendlist

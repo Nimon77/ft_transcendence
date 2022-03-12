@@ -21,11 +21,22 @@ export default new Vuex.Store({
         message: String,
       }
     },
+
+    chat: {
+      idCR: 0,
+      CRs: {},
+      userCR: {},
+      playersCR: {},
+    },
   },
   getters: {
     getReady: state => state.ready,
     getUser: state => state.user,
     getMessage: state => state.message,
+    getIdCR: state => state.chat.idCR,
+    getCRs: state => state.chat.CRs,
+    getUserCR: state => state.chat.userCR,
+    getPlayersCR: state => state.chat.playersCR,
   },
   mutations: {
     setUser(state, user) {
@@ -33,6 +44,18 @@ export default new Vuex.Store({
     },
     setReady(state, ready) {
       state.ready = ready;
+    },
+    setIdCR(state, idCR) {
+      state.chat.idCR = idCR;
+    },
+    setCRs(state, CRs) {
+      state.chat.CRs = CRs;
+    },
+    setUserCR(state, userCR) {
+      state.chat.userCR = userCR;
+    },
+    setPlayersCR(state, playersCR) {
+      state.chat.playersCR = playersCR;
     },
     'NOTIFY_notify': (state, payload) => {
       state.message = payload;
