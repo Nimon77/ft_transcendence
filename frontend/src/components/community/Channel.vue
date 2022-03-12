@@ -192,6 +192,7 @@ export default Vue.extend({
         }
         this.searchCR = '';
         this.$emit('fetchCR');
+        this.currentIdCR = idCR;
       },
       async leaveRoom(idCR) {
         console.log("leave ROOM ", idCR);
@@ -204,9 +205,17 @@ export default Vue.extend({
       async newChannel() {
         // console.log('USER ID IN CHANNEL', this.user.id);
         if (this.password == '')
-          await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => console.log(resp))
+          await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
+            console.log(resp);
+            if (resp.status == 201)
+              this.currentIdCR = resp.data.id;
+          });
         else
-          await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => console.log(resp))
+          await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
+            console.log(resp);
+            if (resp.status == 201)
+              this.currentIdCR = resp.data.id;
+          });
         this.dialog = false;
         this.$emit('fetchCR');
       },
