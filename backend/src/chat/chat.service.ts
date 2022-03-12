@@ -327,6 +327,8 @@ export class ChatService {
   async addLogForRoom(id: number, message: string, user: User)
   {
     const currentroom = await this.chatRepo.findOne(id, {relations : ['users', 'logs', 'muted']});
+    if (!currentroom)
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     if (currentroom.users.map((user) => user.id).indexOf(user.id) === -1)
       throw new HttpException(
         'User isnt in room',
@@ -361,6 +363,8 @@ export class ChatService {
   async getLogsForRoom(id: number, user: User)
   {
     const currentroom = await this.chatRepo.findOne(id, {relations : ['logs']});
+    if (!currentroom)
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND); 
     // let logs = [];
     // currentroom.logs.map(log => {
     //   if (user.blocked.indexOf(log.userId) == -1)
