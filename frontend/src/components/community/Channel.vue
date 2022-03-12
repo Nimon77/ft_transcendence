@@ -200,7 +200,6 @@ export default Vue.extend({
         if (this.currentIdCR != 0)
           this.currentIdCR = 0;
         this.$emit('fetchCR');
-          // location.reload(); //TODO: fix this
       },
       async newChannel() {
         // console.log('USER ID IN CHANNEL', this.user.id);

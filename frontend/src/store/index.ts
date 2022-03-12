@@ -11,7 +11,8 @@ export default new Vuex.Store({
     user: {
       id: null,
       username: null,
-      avatar: null
+      avatar: null,
+      friends: []
     },
     ready: false,
 

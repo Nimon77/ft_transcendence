@@ -25,7 +25,6 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'UserDisplay',
     props: {
-      me: [],
       user: {
         type: Object,
         required: true,
@@ -37,6 +36,16 @@ export default Vue.extend({
         loader: false,
         color: 'blue',
       }
+    },
+    computed: {
+      me: {
+        get() {
+          return this.$store.getters.getUser;
+        },
+        set(user: unknown) {
+          this.$store.commit('setUser', user);
+        },
+      },
     },
     methods: {
       async block() {
@@ -56,10 +65,14 @@ export default Vue.extend({
         await this.$http.post('/user/me/follow', {id: this.user.id,}).then(response => {
           console.log('PUT REQUEST', response);
           });
-        location.reload(); //TODO: fix this
+        await this.$http.get('/user/me').then(response => {
+          console.log('GET REQUEST', response);
+          this.me = response.data;
+        });
+        this.$emit('added');
       },
       setDone(): void {
-        document.getElementById(this.user.id).innerHTML = "DONE!";
+        // document.getElementById(this.user.id).innerHTML = "DONE!";
         this.loader = false;
       },
     },
