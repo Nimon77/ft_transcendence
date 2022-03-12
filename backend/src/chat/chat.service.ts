@@ -365,12 +365,12 @@ export class ChatService {
     const currentroom = await this.chatRepo.findOne(id, {relations : ['logs']});
     if (!currentroom)
       throw new HttpException('Room not found', HttpStatus.NOT_FOUND); 
-    // let logs = [];
-    // currentroom.logs.map(log => {
-    //   if (user.blocked.indexOf(log.userId) == -1)
-    //     logs.push(log);
-    // })
-    // return logs;
-    return currentroom.logs;
+    let logs = [];
+    for (const log of currentroom.logs)
+    {
+      const currelog = await this.logRepo.findOne(log.id, { relations : ['user']});
+      logs.push(currelog);
+    }
+    return logs;
   }
 }
