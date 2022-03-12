@@ -1,20 +1,30 @@
+import { Player } from './player.interface';
+import { Socket } from 'socket.io';
 import { Option } from './option.interface';
 
-interface Ball {
+interface Velocity {
   x: number;
   y: number;
 }
 
-interface Tray {
-  left: number;
-  right: number;
+interface Ball {
+  x: number;
+  y: number;
+  velocity: Velocity;
+}
+
+export enum State {
+  WAITING,
+  STARTING,
+  INGAME,
+  END,
 }
 
 export interface Room {
-  start: boolean;
-  option: Option;
+  code: string;
+  state: State;
+  players: Array<Player>;
+  spectators?: Array<Socket>;
+  options: Option;
   ball: Ball;
-  tray: Tray;
-  player: Array<string>;
-  spectator?: Array<string>;
 }

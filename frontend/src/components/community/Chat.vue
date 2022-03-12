@@ -1,11 +1,11 @@
 <template>
-    <v-card tile flat class="mx-10" color="white" min-width="50%" max-width="100%" height="80%">
-    
+    <v-card tile flat class="mx-10" color="white" width="50%" height="80%">
+
         <v-sheet color="green" height="100" dark width="100%" class="text-center">
         <v-divider class="pt-4"></v-divider>
         <span class="span"> CHAT </span>
         </v-sheet>
-        
+
             <v-list id="Chat" max-height="70vh" class="mt-3 d-flex flex-column">
                 <div v-for="(cM, index) in chatMsg" :key="index">
                     <v-card v-if="cM.sender.id != user.id" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
@@ -53,23 +53,46 @@ export default Vue.extend({
         return {
             input: '',
             chatMsg,
+            logs: [],
         }
     },
     methods: {
-        sendMsg() {
+        async sendMsg() {
             if (this.input == '' || this.idCR == 0)
                 return;
 
+            try {
+                await this.$http.put('/channel/'+ this.idCR +'/log', {msg: this.input}).then((resp)=>{console.log('PUT LOG', resp);
+                });
+            } catch (error) {
+                // console.log(error.message.match("404"));
+                if (error.message.match("403"))
+                    alert("You've been MUTED in this channel");
+                else
+                    alert("You cannot do anything in here");
+                return;
+            }
             this.socket.emit('text', {
                 id: this.idCR,
                 value: this.input,
             });
-            // this.$http.put
             this.input = '';
+        },
+        async cleanLogs() {
+            if (this.idCR == 0)
+                this.chatMsg = [];
+            if (this.idCR > 0)
+                await this.$http.get('/channel/'+ this.idCR +'/log').then((resp) => {
+                this.logs = resp.data;})
+            // console.log('LOGS', this.logs);
+            this.chatMsg = [];
+            for (let i in this.logs)
+                this.chatMsg.push( { sender: this.logs[i].userId, msg:  this.logs[i].message} )
+            // document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
         },
     },
     created() {
-        this.$watch(() => this.idCR, () => {this.chatMsg = []; },{ immediate: true })
+        this.$watch(() => this.idCR, () => { this.cleanLogs(); },{ immediate: true })
         this.socket.on( "text", data => {
             console.log("TEXT EVENT", data);
             if (data.id == this.idCR)

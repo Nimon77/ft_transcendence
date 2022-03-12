@@ -4,7 +4,7 @@ import { MutedUser } from './mute.entity';
 import { In, Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from 'src/user/user.entity';
-import { PasswordI } from './password.interface';
+import { PasswordI } from './interfaces/password.interface';
 import { BannedUser } from './banned.entity';
 import { Log } from './log.entity';
 import * as bcrypt from 'bcrypt';
@@ -134,10 +134,12 @@ export class ChatService {
     return false;
   }
 
-  async updateRoom(id: number, room: ChatRoom) {
+  async updateRoom(id: number, room: ChatRoom, user: User) {
     let updatedRoom = await this.chatRepo.findOne(id);
     if (!updatedRoom)
       throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    if (updatedRoom.ownerId !== user.id)
+      throw new HttpException('User isnt owner of Room', HttpStatus.FORBIDDEN);
     room.password = undefined;
     const currentRoom = this.chatRepo.create({
       id: updatedRoom.id,
@@ -161,17 +163,19 @@ export class ChatService {
   }
 
   async getRoomsForUser(userId: number) {
+    let rooms : ChatRoom[] = []
     const query = await this.chatRepo
       .createQueryBuilder('room')
       .leftJoin('room.users', 'user')
       .where('user.id = :userId', { userId })
       .leftJoinAndSelect('room.users', 'all_users')
       .getMany();
-    query.forEach((chat) => {
-      chat.password = undefined;
-    });
-    return query;
-    return query;
+    for (const room of query)
+    {
+      const currentRoom = await this.getRoomInfo(room.id);
+      rooms.push(currentRoom);
+    }
+    return rooms;
   }
 
   async getUsersForRoom(roomId: number) {
@@ -328,16 +332,21 @@ export class ChatService {
         'User isnt in room',
         HttpStatus.NOT_FOUND,
       );
-    if (currentroom.muted.map((muted) => muted.userId).indexOf(user.id) != -1)
-      throw new HttpException(
-        'User is muted',
-        HttpStatus.FORBIDDEN,
-      );
+      currentroom.muted.forEach(muted => {
+        if (muted.userId == user.id)
+        {
+          let time = new Date();
+          if (muted.endOfMute < time)
+            this.UnMuteUserInRoom(muted, currentroom);
+          else
+            throw new HttpException('User is muted from Room', HttpStatus.FORBIDDEN);
+        }
+      })
     const log = this.logRepo.create({
-        userId: user.id,
         message: message,
         time: new Date(),
-        room: currentroom.id
+        room: currentroom.id,
+        user: user,
       });
       this.logRepo.save(log);
       if (currentroom.logs.length > 100)

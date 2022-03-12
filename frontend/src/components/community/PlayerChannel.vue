@@ -37,8 +37,8 @@
           </v-list-item>
           <v-list-item dense v-if="isAdmin">
             <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn color="red" tile dark min-width="50%" > MUTE </v-btn>
-              <v-btn color="red" class="ml-1" tile dark min-width="50%" > BAN </v-btn>
+              <v-btn @click="mutePlayer(player.id)" color="red" tile dark min-width="50%" > MUTE </v-btn>
+              <v-btn @click="banPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" > BAN </v-btn>
             </v-list-item-title>
           </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
           <v-list-item dense v-if="isOwner">
@@ -73,15 +73,42 @@ export default Vue.extend({
     data() {
         return {
           test: true,
+          // muted: [],
+          // banned: [],
         }    
     },
     created() {
       // this.$watch(() => this.playersCR, () => {return},{ immediate: true })
-      // this.$watch(() => this.idCR, () => {if (this.idCR == 0) { this.playersCR = [] } },{ immediate: true })
       // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true })
+      // this.$watch(() => this.idCR, () => { this.fetchChannel() },{ immediate: true })
       
     },
     methods: {
+      // async fetchChannel() {
+      //   await this.$http.get('/channel/'+ this.idCR).then((resp) => {
+      //     this.muted = resp.data.muted;
+      //     this.banned = resp.data.banned;
+      //   })
+      // },
+      async mutePlayer(idPlayer) {
+        try {
+          await this.$http.put('/channel/' + this.idCR + '/mute/', {id: idPlayer}).then((resp)=>{
+            console.log('MUTE PLAYER', resp);
+          })
+        } catch (error) {
+          alert('You have no rights to MUTE this user');
+        } 
+      },
+      async banPlayer (idPlayer) {
+        
+        try {
+          await this.$http.put('/channel/' + this.idCR + '/ban/', {id: idPlayer}).then((resp)=>{
+            console.log('BAN PLAYER', resp);
+          })
+        } catch (error) {
+          alert('You have no rights to BAN this user');
+        } 
+      },
       isPlayerAdmin(idPlayer) {
         if (this.admins.indexOf(idPlayer) == -1)
           return "SET ADMIN";
