@@ -25,7 +25,7 @@
             <v-list-item-title>Spectate</v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> Chat </v-list-item-title>
+            <v-list-item-title>Chat</v-list-item-title>
           </v-list-item>
           <v-list-item @click="removeFriend">
             <v-list-item-title>Remove Player</v-list-item-title>

@@ -75,7 +75,12 @@ export default Vue.extend({
         
         if (this.idCR == 0)
           return (this.playersCR = []);
-        
+
+        if (!this.userCR.find(CR => CR.id == this.idCR)) {
+          this.idCR = 0;
+          return (this.playersCR = []);
+        }
+
         while(i < this.userCR.length && this.userCR[i].id != this.idCR)
           i++;
           // console.log(this.userCR[i].id);
@@ -112,10 +117,7 @@ export default Vue.extend({
           this.userCR = resp.data;
           // console.log("GET userCR IN COMMUNITY", this.userCR)
         })
-        if (this.$route.params.idCR) {
-          this.idCR = +this.$route.params.idCR;
 
-        }
         if (this.userCR != undefined)
           this.getPlayersCR();
       },
@@ -125,8 +127,6 @@ export default Vue.extend({
           this.socketData = data;
           this.user = data.user;
           this.userCR = data.channels;
-          if (this.$route.params.idCR)
-            this.idCR = +this.$route.params.idCR;
           if (this.userCR != undefined)
             this.getPlayersCR();
         });
@@ -141,7 +141,7 @@ export default Vue.extend({
       });
       this.fetchSocket();
       this.$watch(() => this.fetchCR, () => {this.fetchInfos()},{ immediate: true })
-      this.$watch(() => this.$route.params, () => {this.fetchInfos()},{ immediate: true })
+      this.$watch(() => this.idCR, () => {this.fetchInfos()},{ immediate: true })
     },
 })
 </script>
