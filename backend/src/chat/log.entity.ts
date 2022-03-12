@@ -8,9 +8,6 @@ export class Log{
     id: number;
 
     @Column()
-    public userId: number;
-
-    @Column()
     public message: string;
 
     @Column({ type: 'timestamptz', nullable: true })
