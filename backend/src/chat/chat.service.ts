@@ -196,6 +196,8 @@ export class ChatService {
 
   async addUserToRoom(room: ChatRoom, user: User) {
     const curroom = await this.chatRepo.findOne(room.id, { relations: ['users', 'banned'] });
+    if (!curroom)
+      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
     const page = await this.getUsersForRoom(room.id);
 
     if (!curroom.public)
