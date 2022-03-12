@@ -16,7 +16,7 @@ export class Log{
     @ManyToOne(() => ChatRoom, room => room.logs, { nullable: true })
     room: ChatRoom['id'];
 
-    @OneToOne(() => User)
+    @ManyToOne(() => User, )
     @JoinColumn()
     user: User;
 }
