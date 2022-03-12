@@ -1,14 +1,14 @@
 
 <template>
   <v-app>
-    <Header v-if="isLogged()"/>
+    <Header v-if="isReady"/>
     <v-main class="yellow">
       <transition name="bounce" mode="out-in">
         <router-view>
         </router-view>
       </transition>
     </v-main>
-    <Footer v-if="isLogged()"/>
+    <Footer v-if="isReady"/>
   </v-app>
 </template>
 
@@ -21,11 +21,11 @@
       Header,
       Footer,
     },
-    methods: {
-      isLogged(): boolean {
-        return localStorage.getItem('ready') === 'true';
+    computed: {
+      isReady(): boolean {
+        return this.$store.getters.getReady;
       }
-    },
+    }
   };
 </script>
 

@@ -42,7 +42,8 @@ export default Vue.extend({
     async deleteAccount() {
       await this.$http.delete('/user/me').then(() => {
         localStorage.removeItem('token');
-        localStorage.setItem('ready', 'false');
+        this.$store.commit('setUser', {});
+        this.$store.commit('setReady', false);
         this.$router.push({ name: 'Login' });
       });
     }

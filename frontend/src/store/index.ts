@@ -13,6 +13,7 @@ export default new Vuex.Store({
       username: null,
       avatar: null
     },
+    ready: false,
 
     message: {
       id: Number,
@@ -21,9 +22,17 @@ export default new Vuex.Store({
       }
     },
   },
+  getters: {
+    getReady: state => state.ready,
+    getUser: state => state.user,
+    getMessage: state => state.message,
+  },
   mutations: {
     setUser(state, user) {
       state.user = user;
+    },
+    setReady(state, ready) {
+      state.ready = ready;
     },
     'NOTIFY_notify': (state, payload) => {
       state.message = payload;

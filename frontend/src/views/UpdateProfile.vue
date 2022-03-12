@@ -97,7 +97,7 @@ export default Vue.extend({
         }).then(() => {
           this.$http.get('/user/me').then((res) => {
             this.$store.commit('setUser', res.data);
-            localStorage.setItem('ready', 'true');
+            this.$store.commit('setReady', true);
             this.$router.push({ name: 'Main' });
           });
         });

@@ -79,6 +79,14 @@ async function checkJWT() {
           Authorization: 'Bearer ' + token
       }}).then(me => {
         status.ProfileCompleted = me.data.profileCompleted;
+      }).catch(err => {
+        if (err.response.status === 404) {
+          status.JWTvalide = false;
+          status.loggedIn = false;
+          status.ProfileCompleted = false;
+          localStorage.removeItem('token');
+          store.commit('setReady', false);
+        }
       });
     }
   }
@@ -96,17 +104,17 @@ router.beforeEach((to, from, next) => {
       axios.get("/user/me").then(res => {
         store.commit('setUser', res.data);
         if (res.data.profileCompleted) {
-          localStorage.setItem('ready', 'true');
+          store.commit('setReady', true);
           return next({ name: 'Main' });
         }
         else {
-          localStorage.setItem('ready', 'false');
+          store.commit('setReady', false);
           return next({ name: 'UpdateProfile' });
         }
       });
     }
     else if (to.name !== 'Login' && (!Status.loggedIn || !Status.JWTvalide)) {
-      localStorage.setItem('ready', 'false');
+      store.commit('setReady', false);
       return next({ name: 'Login' });
     }
     else if (to.name !== 'UpdateProfile' && !Status.ProfileCompleted && Status.loggedIn && Status.JWTvalide) {
@@ -115,7 +123,7 @@ router.beforeEach((to, from, next) => {
     else if (to.name === 'Login' && Status.loggedIn && Status.JWTvalide) {
       return next({ name: 'Main' })
     }
-    if (store.state.user.id === null) {
+    if (store.state.user.id === null && Status.JWTvalide) {
       axios.get("/user/me").then(res => {
         store.commit('setUser', res.data);
       });
