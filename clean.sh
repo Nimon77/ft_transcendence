@@ -1,8 +1,29 @@
 #!/bin/sh
 
-docker-compose down
+RED='\033[0;31m'
+GREEN='\033[0;32m'
+NC='\033[0m'
 
-docker system prune -af
-docker volume prune -f
-
-rm -rf */node_modules */*lock*
+if [[ $1 == "bdd" ]]
+then
+	docker-compose down && \
+	docker volume prune -f
+	if [ $? -eq 0 ]; then
+		echo "${GREEN}Cleanup success${NC}"
+	else
+		echo "${RED}Cleanup failed${NC}"
+	fi
+elif [[ $1 == "all" ]]
+then
+	docker-compose down && \
+	docker volume prune -f && \
+	docker network prune -f && \
+	rm -rf */node_modules */*lock*
+	if [ $? -eq 0 ]; then
+		echo "${GREEN}Cleanup success${NC}"
+	else
+		echo "${RED}Cleanup failed${NC}"
+	fi
+else
+	echo "Usage: ./clean.sh [bdd|all]"
+fi
