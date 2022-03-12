@@ -1,5 +1,6 @@
-import { Column, Entity, PrimaryGeneratedColumn, JoinTable, ManyToOne} from 'typeorm';
+import { Column, Entity, PrimaryGeneratedColumn, JoinTable, JoinColumn, ManyToOne, OneToOne} from 'typeorm';
 import { ChatRoom } from './chat.entity';
+import { User } from 'src/user/user.entity';
 
 @Entity()
 export class Log{
@@ -17,4 +18,8 @@ export class Log{
 
     @ManyToOne(() => ChatRoom, room => room.logs, { nullable: true })
     room: ChatRoom['id'];
+
+    @OneToOne(() => User)
+    @JoinColumn()
+    user: User;
 }
