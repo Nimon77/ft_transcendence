@@ -31,7 +31,6 @@ export default Vue.extend({
         isAdmin: false,
         user: [],
         playerAdmins: [],
-        // logs: [],
       }
     },
     computed: {

@@ -44,6 +44,7 @@
       <v-divider class="mt-1"></v-divider>
   
       <v-list v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
+       <v-list-item-group>
         <div v-for="CR in userCR" :key="CR.id">
         <v-list-item two-line @click="changeCR(CR.id)">
           <v-list-item-content>
@@ -61,6 +62,7 @@
         </v-list-item>
         <v-divider></v-divider>
         </div>
+      </v-list-item-group>
       </v-list>
 
       <v-list v-if="searchCR!=''" > <!-- Si je cherche un CR -->
