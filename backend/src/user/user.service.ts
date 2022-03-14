@@ -39,7 +39,7 @@ export class UserService {
   async updateUser(id: number, user: User): Promise<User> {
     await this.getUserById(id);
 
-    const can: Array<String> = ['username', 'friends', 'blocked'];
+    const can: Array<string> = ['username', 'friends', 'blocked'];
 
     for (const key of Object.keys(user))
       if (can.indexOf(key) == -1)
@@ -63,9 +63,9 @@ export class UserService {
     const user: User = await this.getUserById(id);
     try {
       const rooms = await this.chatService.getRoomsForUser(id);
-      rooms.forEach(room => {
+      rooms.forEach((room) => {
         this.chatService.removeUserFromRoom(user, room.id, room.adminId[0]);
-      })
+      });
       await this.repo.remove({ id, ...new User() });
       if (user.avatarId) await this.avatarService.deleteAvatar(user.avatarId);
     } catch (error) {
@@ -90,7 +90,7 @@ export class UserService {
     });
     const found = userFollow.find((element) => element.id == followed_user.id);
     if (found) {
-      var index = user.friends.indexOf(found.id);
+      const index = user.friends.indexOf(found.id);
       if (index !== -1) user.friends.splice(index, 1);
     } else user.friends.push(followed_user.id);
     await this.repo.update(user.id, {
@@ -103,7 +103,7 @@ export class UserService {
     const userBlock = await this.repo.find({ where: { id: In(user.blocked) } });
     const found = userBlock.find((element) => element.id == blocked_user.id);
     if (found) {
-      var index = user.blocked.indexOf(found.id);
+      const index = user.blocked.indexOf(found.id);
       if (index !== -1) user.blocked.splice(index, 1);
     } else user.blocked.push(blocked_user.id);
     await this.repo.update(user.id, {
