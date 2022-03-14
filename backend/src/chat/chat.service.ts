@@ -8,7 +8,7 @@ import { PasswordI } from './interfaces/password.interface';
 import { BannedUser } from './entity/banned.entity';
 import { Log } from './entity/log.entity';
 import * as bcrypt from 'bcrypt';
-
+import passport from 'passport';
 
 @Injectable()
 export class ChatService {
@@ -26,51 +26,56 @@ export class ChatService {
   async getRoomById(id: number): Promise<ChatRoom> {
     const chat = await this.chatRepo.findOne(id);
     if (!chat) throw new HttpException('Chat not found', HttpStatus.NOT_FOUND);
+
     delete chat.password;
     return chat;
   }
 
-  async createRoom(room: ChatRoom, admin: User) {
+  async createRoom(room: ChatRoom, admin: User): Promise<ChatRoom> {
     if (room.name == undefined)
       throw new HttpException(
         'Room name needs to be specified',
         HttpStatus.BAD_REQUEST,
       );
+
     let hashedPassword = null;
     if (room.public == false) {
       if (!room.password)
         throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
-      hashedPassword = await bcrypt.hash(String(room.password), 10);
+
+      try {
+        hashedPassword = await bcrypt.hash(String(room.password), 10);
+      } catch (error) {
+        throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+      }
     }
+
     const currentRoom = this.chatRepo.create({
       name: room.name,
-      adminId: [],
-      public: room.public,
+      adminId: [admin.id],
+      public: room.public !== false,
       ownerId: admin.id,
       users: [admin],
       muted: [],
       password: hashedPassword,
     });
-    currentRoom.adminId.push(admin.id);
-    await this.chatRepo.save(currentRoom).catch(() => null);
+
+    try {
+      await this.chatRepo.save(currentRoom);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
     delete currentRoom.password;
     return currentRoom;
   }
 
-  async deleteRoom(id: number) {
-    const roomid = await this.getRoomInfo(id);
-    if (!roomid)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-    roomid.muted.forEach((muted) => {
-      this.mutedRepo.remove(muted);
-    });
-    roomid.banned.forEach((banned) => {
-      this.bannedRepo.remove(banned);
-    });
-    roomid.logs.forEach((log) => {
-      this.logRepo.remove(log);
-    });
-    await this.chatRepo.remove(roomid).catch(() => null);
+  async deleteRoom(id: number): Promise<void> {
+    const room = await this.getRoomInfo(id);
+
+    await this.logRepo.remove(room.logs);
+    await this.mutedRepo.remove(room.muted);
+    await this.bannedRepo.remove(room.banned);
+    await this.chatRepo.remove(room);
   }
 
   async getRoomInfo(roomId: number) {
@@ -78,79 +83,118 @@ export class ChatService {
       relations: ['users', 'muted', 'banned', 'logs'],
     });
     if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+
     delete room.password;
     return room;
   }
 
-  async removeUserFromRoom(user: User, roomId: number, adminId: number) {
+  async removeUserFromRoom(
+    user: User,
+    roomId: number,
+    adminId: number,
+  ): Promise<void> {
     const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
-    let index = room.adminId.indexOf(adminId);
-    if (index == -1)
+    if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+
+    if (room.adminId.indexOf(adminId) == -1)
       throw new HttpException(
         'User isnt admin in room',
         HttpStatus.UNAUTHORIZED,
       );
-    if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-    if (user.id == room.ownerId && adminId == room.ownerId) {
-      this.deleteRoom(room.id);
-      return;
+
+    if (user.id == room.ownerId && adminId == room.ownerId)
+      return await this.deleteRoom(room.id);
+
+    {
+      const index = room.adminId.indexOf(user.id);
+      if (index != -1) room.adminId.splice(index, 1);
     }
-    if (room.adminId.indexOf(user.id) != -1)
-      room.adminId.splice(room.adminId.indexOf(user.id));
-    index = room.users.map((user) => user.id).indexOf(user.id);
-    if (index == -1)
-      throw new HttpException('User not in room', HttpStatus.NOT_FOUND);
-    room.users.splice(index, 1);
-    await this.chatRepo.save(room).catch(() => null);
+
+    {
+      const index = room.users.findIndex((user1) => user1.id == user.id);
+      if (index == -1)
+        throw new HttpException('User not in room', HttpStatus.NOT_FOUND);
+      room.users.splice(index, 1);
+    }
+
+    try {
+      await this.chatRepo.save(room);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
-  async changePassword(pass: PasswordI, room: ChatRoom) {
-    if (pass.newPassword == '')
+  async changePassword(pass: PasswordI, room: ChatRoom): Promise<void> {
+    if (!pass.newPassword)
       throw new HttpException(
         'New password cannot be empty',
         HttpStatus.BAD_REQUEST,
       );
+
     if (!(await this.checkPassword(room.id, pass.oldPassword)))
       throw new HttpException(
         'Wrong credentials provided',
         HttpStatus.BAD_REQUEST,
       );
-    const hashedPassword = await bcrypt.hash(pass.newPassword, 10);
-    room.password = hashedPassword;
-    this.chatRepo.save(room).catch(() => null);
+
+    try {
+      const password = await bcrypt.hash(pass.newPassword, 10);
+      this.chatRepo.update(room.id, { password });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
-  async checkPassword(id: number, password: string) {
+  async checkPassword(id: number, password: string): Promise<boolean> {
+    if (!password) return false;
+
     const currentRoom = await this.chatRepo.findOne(id);
-    if (currentRoom && password)
-      if (await bcrypt.compare(password, currentRoom.password)) return true;
-    return false;
+    if (!currentRoom) return false;
+
+    return await bcrypt.compare(password, currentRoom.password);
   }
 
   async updateRoom(id: number, room: ChatRoom, user: User) {
-    const updatedRoom = await this.chatRepo.findOne(id);
-    if (!updatedRoom)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-    if (updatedRoom.ownerId !== user.id)
-      throw new HttpException('User isnt owner of Room', HttpStatus.FORBIDDEN);
-    const currentRoom = this.chatRepo.create({
-      id: updatedRoom.id,
-      name: room.name ? room.name : updatedRoom.name,
-      password: updatedRoom.password,
-      public: room.public != undefined ? room.public : updatedRoom.public,
-      adminId: updatedRoom.adminId,
-      ownerId: updatedRoom.ownerId,
-    });
-    return await this.chatRepo
-      .update({ id: currentRoom.id }, currentRoom)
-      .catch(() => null);
+    {
+      const updatedRoom = await this.chatRepo.findOne(id);
+      if (!updatedRoom)
+        throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+      if (updatedRoom.ownerId != user.id)
+        throw new HttpException(
+          'User isnt owner of Room',
+          HttpStatus.FORBIDDEN,
+        );
+    }
+
+    const partial: ChatRoom = { public: room.public !== false } as ChatRoom;
+
+    if (room.name) partial.name = room.name;
+
+    if (room.hasOwnProperty('public')) {
+      partial.public = room.public !== false;
+      if (partial.public) partial.password = null;
+      else {
+        if (!room.password)
+          throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
+
+        try {
+          partial.password = await bcrypt.hash(String(room.password), 10);
+        } catch (error) {
+          throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+        }
+      }
+    }
+
+    try {
+      this.chatRepo.update(room.id, partial);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async getAllRooms() {
     const rooms = await this.chatRepo.find();
-    rooms.forEach((chat) => {
-      delete chat.password;
-    });
+    rooms.forEach((chat) => delete chat.password);
     return rooms;
   }
 
@@ -341,7 +385,7 @@ export class ChatService {
       if (muted.userId == user.id) {
         const time = new Date();
         if (muted.endOfMute > time)
-            throw new HttpException(
+          throw new HttpException(
             'User is muted from Room',
             HttpStatus.FORBIDDEN,
           );
