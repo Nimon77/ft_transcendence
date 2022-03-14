@@ -11,7 +11,7 @@ import {
 import { ChatRoom } from '../entity/chat.entity';
 import { ChatService } from '../chat.service';
 import { UserService } from 'src/user/user.service';
-import { AddI } from '../interfaces/Add.interface';
+import { AddI } from '../interfaces/add.interface';
 
 @Controller('channel')
 export class IdController {
