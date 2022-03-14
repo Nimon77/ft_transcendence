@@ -1,4 +1,4 @@
-export interface PasswordI{
-    oldPassword: string;
-    newPassword: string;
+export interface PasswordI {
+  oldPassword: string;
+  newPassword: string;
 }
