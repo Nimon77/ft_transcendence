@@ -18,7 +18,7 @@ export class RoomService {
     input: { plan: Plan.DEFAULT, mode: Mode.NONE },
   };
 
-  queue: Array<Socket> = new Array();
+  queue: Array<Socket> = [];
   rooms: Map<string, Room> = new Map();
 
   removeSocket(socket: Socket) {
@@ -64,7 +64,7 @@ export class RoomService {
     const room: Room = {
       code,
       state: State.WAITING,
-      players: new Array(),
+      players: [],
       options: RoomService.options,
       ball: { x: 0, y: 0, velocity: { x: 0, y: 0 } },
     };
@@ -84,7 +84,7 @@ export class RoomService {
       room.players.push(player);
       if (room.players.length == 2) room.state = State.STARTING;
     } else {
-      if (!room.spectators) room.spectators = new Array();
+      if (!room.spectators) room.spectators = [];
       room.spectators.push(socket);
       this.emit(
         room,
