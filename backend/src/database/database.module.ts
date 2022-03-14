@@ -3,10 +3,10 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { User } from 'src/user/user.entity';
 import { Avatar } from 'src/user/avatar/avatar.entity';
-import { ChatRoom } from 'src/chat/chat.entity';
-import { MutedUser } from 'src/chat/mute.entity';
-import { BannedUser } from 'src/chat/banned.entity';
-import { Log } from 'src/chat/log.entity';
+import { ChatRoom } from 'src/chat/entity/chat.entity';
+import { MutedUser } from 'src/chat/entity/mute.entity';
+import { BannedUser } from 'src/chat/entity/banned.entity';
+import { Log } from 'src/chat/entity/log.entity';
 
 @Module({
   imports: [
