@@ -126,7 +126,7 @@ export default Vue.extend({
     },
     computed: {
         user() {
-            return this.$store.state.user;
+            return this.$store.getters.getUser;
         },
     },
 })
