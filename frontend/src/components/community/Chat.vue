@@ -6,7 +6,7 @@
       </v-sheet>
       <v-list v-if="idCR != 0" id="Chat" max-height="70vh" class="mt-3 d-flex flex-column">
         <div v-for="(cM, index) in chatMsg" :key="index">
-          <v-card v-if="cM.sender.id != user.id" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
+          <v-card v-if="cM.sender.id != user.id && !isBlocked(cM.sender.id)" flat tile class="mb-1 ml-2 d-flex justify-center" width="25%" color="grey" >
             <!-- v-if="cM.sender n'est pas bloqué par le user" -->
             <div class="font-weight-bold mt-2 ml-3"> {{cM.sender.username}} </div>
             <div class="mr-2 mb-2 ml-3"> {{cM.msg}} </div>
@@ -59,6 +59,11 @@ export default Vue.extend({
         }
     },
     methods: {
+        isBlocked(idPlayer) {
+          if (this.user.blocked.indexOf(idPlayer) == -1)
+            return false;
+          return true;
+        },
         async sendMsg() {
             if (this.input == '' || this.idCR == 0)
                 return;
@@ -67,7 +72,6 @@ export default Vue.extend({
                 await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp);
                 });
             } catch (error) {
-                // console.log(error.message.match("404"));
                 if (error.message.match("403"))
                     alert("You've been MUTED in this channel");
                 else
