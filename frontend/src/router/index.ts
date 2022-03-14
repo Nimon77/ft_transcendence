@@ -133,6 +133,12 @@ router.beforeEach((to, from, next) => {
     if (store.state.ready === false && Status.JWTvalide && Status.ProfileCompleted && to.name !== 'Login') {
       store.commit('setReady', true);
     }
+
+    // mmaj
+    // prevent user to get manually to pregame and game
+    // créer le game sock dans vuex
+    // if (to.name === 'pregame' && store.getters.gameSock == undefined)
+    //   return next({ name: 'Main'});
     next();
   });
 })
