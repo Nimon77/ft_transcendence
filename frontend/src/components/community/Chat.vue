@@ -78,7 +78,7 @@ export default Vue.extend({
         if (this.input == '' || this.idCR == 0)
           return;
         try {
-          await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp);
+          await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp); // TODO: remove
           });
         } catch (error) {
           if (error.message.match("403"))
@@ -115,10 +115,10 @@ export default Vue.extend({
     created() {
         this.$watch(() => this.idCR, () => { this.cleanLogs(); },{ immediate: true })
         this.socket.on('info', (data) => {
-          console.log('INFO', data);
+          console.log('INFO', data); // TODO: remove
         })
         this.socket.on("text", data => {
-          console.log("TEXT EVENT", data);
+          console.log("TEXT EVENT", data); // TODO: remove
           if (data.id == this.idCR)
           {
             this.chatMsg.push( { sender: data.user, msg: data.value } );
@@ -128,7 +128,7 @@ export default Vue.extend({
           }
         });
         this.socket.on("channel", data => {
-          console.log("CHANNEL EVENT", data);
+          console.log("CHANNEL EVENT", data); // TODO: remove
           if (data.id == this.idCR)
           {
             this.logs = data.logs;

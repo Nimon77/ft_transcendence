@@ -50,7 +50,7 @@ export default Vue.extend({
     methods: {
       async block() {
         await this.$http.post('/user/me/block', {id: this.user.id,}).then(response => {
-          console.log('BLOCK REQUEST', response);
+          console.log('BLOCK REQUEST', response); // TODO: remove
           });
         this.disabledAdd = !this.disabledAdd;
         if (this.disabledAdd == false)
@@ -63,10 +63,10 @@ export default Vue.extend({
         this.color = 'green';
         setTimeout(this.setDone, 500);
         await this.$http.post('/user/me/follow', {id: this.user.id,}).then(response => {
-          console.log('PUT REQUEST', response);
+          console.log('PUT REQUEST', response); // TODO: remove
           });
         await this.$http.get('/user/me').then(response => {
-          console.log('GET REQUEST', response);
+          console.log('GET REQUEST', response); // TODO: remove
           this.me = response.data;
         });
         this.$emit('added');

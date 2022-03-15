@@ -79,7 +79,7 @@ export default Vue.extend({
     },
     created() {
       // this.$watch(() => this.playersCR, () => {return},{ immediate: true })
-      // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true })
+      // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true }) // TODO: remove
       // this.$watch(() => this.idCR, () => { this.fetchChannel() },{ immediate: true })
       
     },
@@ -93,7 +93,7 @@ export default Vue.extend({
       async mutePlayer(idPlayer) {
         try {
           await this.$http.put('/channel/' + this.idCR + '/mute/', {id: idPlayer}).then((resp)=>{
-            console.log('MUTE PLAYER', resp);
+            console.log('MUTE PLAYER', resp); // TODO: remove
           })
         } catch (error) {
           alert('You have no rights to MUTE this user');
@@ -103,7 +103,7 @@ export default Vue.extend({
         
         try {
           await this.$http.put('/channel/' + this.idCR + '/ban/', {id: idPlayer}).then((resp)=>{
-            console.log('BAN PLAYER', resp);
+            console.log('BAN PLAYER', resp); // TODO: remove
           })
         } catch (error) {
           alert('You have no rights to BAN this user');
@@ -118,7 +118,7 @@ export default Vue.extend({
 
       async setAdmin(idPlayer) {
         await this.$http.put('channel/' + this.idCR + '/admin', {id: idPlayer}).then((resp)=>{
-          console.log(resp);
+          console.log(resp); // TODO: remove
         });
         if (document.getElementById('admin').innerHTML == "UNSET ADMIN")
           document.getElementById('admin').innerHTML = "SET ADMIN";

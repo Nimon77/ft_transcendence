@@ -64,9 +64,9 @@ export default Vue.extend({
         this.dialog=false;
       },
       async rmFriend(rmId: number) {
-        console.log("rmId = ", rmId);
+        console.log("rmId = ", rmId); // TODO: remove
         await this.$http.post('/user/me/follow', {id: rmId,}).then(response => {
-          console.log('POST REQUEST', response);
+          console.log('POST REQUEST', response); // TODO: remove
           });
         await this.$http.get('/user/me').then(response => {
           this.me = response.data;
@@ -80,9 +80,9 @@ export default Vue.extend({
     async created() { // retirer les amis des users !!
       await this.$http.get('/user').then(response => {
         this.users = response.data;
-        // console.log("USR IN FL", this.users);
+        // console.log("USR IN FL", this.users); // TODO: remove
       });
-      // console.log(this.me);
+      // console.log(this.me); // TODO: remove
     },
     computed: {
       me: {
@@ -90,7 +90,7 @@ export default Vue.extend({
           return this.$store.getters.getUser;
         },
         set(value) {
-          console.log("set me", value);
+          console.log("set me", value); // TODO: remove
           this.$store.commit('setUser', value);
         }
       },
