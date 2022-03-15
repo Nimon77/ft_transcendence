@@ -61,26 +61,51 @@ export class ChatGateway implements OnGatewayConnection {
 
   @SubscribeMessage('text')
   async handleMessage(client: Socket, data: any) {
-    const room = await this.chatService.getRoom(data.id, ['users']);
+    try {
+      const room = await this.chatService.getRoom(data.id, ['users']);
 
-    const user = client.data.user;
+      const user = client.data.user;
 
-    this.chatService.addLogForRoom(data.id, data.value, user);
-    this.emitRoom(room, 'text', {
-      user: { id: user.id, username: user.username },
-      ...data,
-    });
+      await this.chatService.addLogForRoom(data.id, data.value, user);
+      this.emitRoom(room, 'text', {
+        user: { id: user.id, username: user.username },
+        ...data,
+      });
+    } catch {
+      return;
+    }
   }
 
   @SubscribeMessage('join')
   async joinChannel(client: Socket, id: number) {
-    const room = await this.chatService.getRoom(id, ['users']);
-    console.log(room);
+    try {
+      const room = await this.chatService.getRoom(id, ['users']);
+
+      if (room.users.indexOf(client.data.user) != -1) return;
+
+      await this.chatService.addUserToRoom(room, client.data.user);
+      room.users.push(client.data.user);
+
+      this.emitRoom(room, 'join', { room, user: client.data.user });
+    } catch {
+      return;
+    }
   }
 
   @SubscribeMessage('leave')
-  async leaveChannel(client: Socket, roomId: number, adminId?: number) {
-    const room = await this.chatService.getRoom(roomId, []);
+  async leaveChannel(client: Socket, data: any) {
+    try {
+      await this.chatService.removeUserFromRoom(
+        client.data.user,
+        data.roomId,
+        data.adminId,
+      );
+
+      const room = await this.chatService.getRoom(data.roomId, ['users']);
+      this.emitRoom(room, 'join', { room, user: client.data.user });
+    } catch {
+      return;
+    }
   }
 
   @SubscribeMessage('admin')
