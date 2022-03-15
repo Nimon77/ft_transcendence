@@ -11,8 +11,7 @@ const options = {
 
 Vue.use(new VueSocketIO({
 	debug: true,
-	// connection: 'http://' + location.hostname + ':' + process.env.VUE_APP_BACKEND_PORT + '/notify',
-	connection: SocketIO('http://127.0.0.1:3000/notify', options),
+	connection: SocketIO(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}`,options),
 	vuex: {
 		store,
 		actionPrefix: 'NOTIFY_',

@@ -68,10 +68,9 @@ export default Vue.extend({
       },
     },
     methods: {
-      
       getPlayersCR() {
         let i = 0;
-        
+
         if (this.idCR == 0)
           return (this.playersCR = []);
 
@@ -133,10 +132,15 @@ export default Vue.extend({
     },
 
     created() {
-      this.socket = io("http://127.0.0.1:3000/chat", {
-          transportOptions: {
+      // this.socket = io("http://127.0.0.1:3000/chat", {
+      //     transportOptions: {
+      //     polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+      //     },
+      // }); TODO: DELETE
+      this.socket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/chat`, {
+        transportOptions: {
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
-          },
+        },
       });
       this.fetchSocket();
       this.$watch(() => this.fetchCR, () => {this.fetchInfos()},{ immediate: true })
