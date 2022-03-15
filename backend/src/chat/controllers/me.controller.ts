@@ -78,7 +78,7 @@ export class MeController {
     @Body() pass: PasswordI,
   ) {
     const user = await this.userService.getUserById(req.user.userId);
-    const room = await this.chatService.getRoomById(id);
+    const room = await this.chatService.getRoom(id, []);
     if (room.ownerId == user.id && room.public == false)
       return this.chatService.changePassword(pass, room);
     return 'user unathorized to change password';
@@ -115,7 +115,9 @@ export class MeController {
 
   @Put('/:id/leave')
   async leaveChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    const admin = (await this.chatService.getRoomInfo(id)).adminId[0];
+    const admin = (
+      await this.chatService.getRoom(id, ['users', 'muted', 'banned', 'logs'])
+    ).adminId[0];
     const user = await this.userService.getUserById(req.user.userId);
     return this.chatService.removeUserFromRoom(user, id, admin);
   }
