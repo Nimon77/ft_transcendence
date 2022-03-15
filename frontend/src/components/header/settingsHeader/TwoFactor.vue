@@ -17,7 +17,7 @@ export default Vue.extend({
         },
         methods: {
             test(): void {
-                console.log('Two-Factor-Auth');
+                console.log('Two-Factor-Auth'); // TODO: remove
             } 
         }
     });

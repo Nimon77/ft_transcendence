@@ -149,7 +149,7 @@ export default Vue.extend({
         return this.$store.state.user;
       },
       filteredCRs(): unknown {
-        // console.log('FILTERED CR', this.CRs);
+        // console.log('FILTERED CR', this.CRs); // TODO: remove
         return this.CRs.filter((cr) => {
           return cr.name.match(this.searchCR);
         })
@@ -180,17 +180,17 @@ export default Vue.extend({
             return true;
           i++;
         }
-        // console.log("FALSE");
+        // console.log("FALSE"); // TODO: remove
         return false;
       },
       checkPW() {
         this.PWdialog=!this.PWdialog
       },
       async joinRoom(idCR) {
-        console.log('Join ROOM', idCR, this.password);
-        try { await this.$http.put('/channel/join', {id: idCR, password: this.password}).then((resp) => console.log(resp)) }
+        console.log('Join ROOM', idCR, this.password); // TODO: remove
+        try { await this.$http.put('/channel/join', {id: idCR, password: this.password}).then((resp) => console.log(resp)) } // TODO: remove
         catch(error) {
-          console.log(error.message);
+          console.log(error.message); // TODO: remove
           alert("You can't access this channel")
         }
         this.searchCR = '';
@@ -198,23 +198,23 @@ export default Vue.extend({
         this.currentIdCR = idCR;
       },
       async leaveRoom(idCR) {
-        console.log("leave ROOM ", idCR);
-        await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp))
+        console.log("leave ROOM ", idCR); // TODO: remove
+        await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp)) // TODO: remove
         if (this.currentIdCR != 0)
           this.currentIdCR = 0;
         this.$emit('fetchCR');
       },
       async newChannel() {
-        // console.log('USER ID IN CHANNEL', this.user.id);
+        // console.log('USER ID IN CHANNEL', this.user.id); // TODO: remove
         if (this.password == '')
           await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
-            console.log(resp);
+            console.log(resp); // TODO: remove
             if (resp.status == 201)
               this.currentIdCR = resp.data.id;
           });
         else
           await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
-            console.log(resp);
+            console.log(resp); // TODO: remove
             if (resp.status == 201)
               this.currentIdCR = resp.data.id;
           });
@@ -227,8 +227,8 @@ export default Vue.extend({
       },
     },
     mounted() {
-      // console.log('CRs :', this.CRs);
-      // console.log('UserCR :', this.userCR);
+      // console.log('CRs :', this.CRs); // TODO: remove
+      // console.log('UserCR :', this.userCR); // TODO: remove
     },
     watch: {
       searchCR() {

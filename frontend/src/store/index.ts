@@ -81,7 +81,7 @@ export default new Vuex.Store({
     },
     'NOTIFY_notify': (state, payload) => {
       state.message = payload;
-      console.log(state.message);
+      console.log(state.message); // TODO: remove
       Vue.$toast(InvitePlayer, {
         position: POSITION.TOP_LEFT,
         timeout: false,
