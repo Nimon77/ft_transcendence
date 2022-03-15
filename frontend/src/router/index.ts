@@ -10,6 +10,7 @@ import Game from '@/views/Game.vue'
 import Main from '@/views/Main.vue'
 import UpdateProfile from '@/views/UpdateProfile.vue'
 import store from '@/store'
+import { Socket } from 'socket.io-client'
 
 Vue.use(VueRouter)
 
@@ -133,6 +134,23 @@ router.beforeEach((to, from, next) => {
     if (store.state.ready === false && Status.JWTvalide && Status.ProfileCompleted && to.name !== 'Login') {
       store.commit('setReady', true);
     }
+
+    // mmaj
+    // prevent user to get manually to pregame and game
+    // console.log("check gameROOM", store.state.gameRoom.length);
+    if (to.name === 'preGame' && !store.state.gameRoom.length) {
+      console.log("to PREGAME");
+      return next({ name: 'Main'});
+    }
+    if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
+      alert("you are leaving the room!");
+      store.state.gameSock.on('disconnect', ()=>{
+        console.log("disconnected");
+        store.commit('setGameRoom', '');
+        store.state.gameSock.disconnect();
+        store.state.gameSock.close();});
+        store.state.gameSock.disconnect(true);
+      }
     next();
   });
 })
