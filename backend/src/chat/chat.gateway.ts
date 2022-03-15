@@ -44,7 +44,7 @@ export class ChatGateway implements OnGatewayConnection {
 
   @SubscribeMessage('channel')
   async joinChannel(client: Socket, id: number) {
-    const channel = await this.chatService.getRoomInfo(id);
+    const channel = await this.chatService.getRoom(id, ['users', 'muted', 'banned', 'logs']);
     client.emit('channel', channel);
   }
 

@@ -24,12 +24,12 @@ export class ChatService {
     private readonly logRepo: Repository<Log>,
   ) {}
 
-  async getRoomById(id: number): Promise<ChatRoom> {
-    const chat = await this.chatRepo.findOne(id);
-    if (!chat) throw new HttpException('Chat not found', HttpStatus.NOT_FOUND);
+  async getRoom(roomId: number, relations: string[]): Promise<ChatRoom> {
+    const room = await this.chatRepo.findOne(roomId, { relations });
+    if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
 
-    delete chat.password;
-    return chat;
+    delete room.password;
+    return room;
   }
 
   async createRoom(room: ChatRoom, admin: User): Promise<ChatRoom> {
@@ -71,7 +71,7 @@ export class ChatService {
   }
 
   async deleteRoom(id: number): Promise<void> {
-    const room = await this.getRoomInfo(id);
+    const room = await this.getRoom(id, ['users', 'muted', 'banned', 'logs']);
 
     await this.logRepo.remove(room.logs);
     await this.mutedRepo.remove(room.muted);
@@ -79,23 +79,12 @@ export class ChatService {
     await this.chatRepo.remove(room);
   }
 
-  async getRoomInfo(roomId: number): Promise<ChatRoom> {
-    const room = await this.chatRepo.findOne(roomId, {
-      relations: ['users', 'muted', 'banned', 'logs'],
-    });
-    if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-
-    delete room.password;
-    return room;
-  }
-
   async removeUserFromRoom(
     user: User,
     roomId: number,
     adminId: number,
   ): Promise<void> {
-    const room = await this.chatRepo.findOne(roomId, { relations: ['users'] });
-    if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+    const room = await this.getRoom(roomId, ['users']);
 
     if (room.adminId.indexOf(adminId) == -1)
       throw new HttpException(
@@ -157,9 +146,7 @@ export class ChatService {
 
   async updateRoom(id: number, room: ChatRoom, user: User): Promise<void> {
     {
-      const updatedRoom = await this.chatRepo.findOne(id);
-      if (!updatedRoom)
-        throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
+      const updatedRoom = await this.getRoom(id, []);
       if (updatedRoom.ownerId != user.id)
         throw new HttpException(
           'User isnt owner of Room',
@@ -208,18 +195,13 @@ export class ChatService {
       .getMany();
 
     const unresolved: Promise<ChatRoom>[] = uncompleted.map((room) =>
-      this.getRoomInfo(room.id),
+      this.getRoom(room.id, ['users', 'muted', 'banned', 'logs']),
     );
     return await Promise.all(unresolved);
   }
 
   async addUserToRoom(room: ChatRoom, user: User): Promise<void> {
-    const curroom = await this.chatRepo.findOne(room.id, {
-      relations: ['users', 'banned'],
-    });
-    if (!curroom)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-
+    const curroom = await this.getRoom(room.id, ['users', 'banned']);
     if (!curroom.public)
       if (
         room.password == undefined ||
@@ -254,7 +236,7 @@ export class ChatService {
     user: User,
     roomid: number,
   ): Promise<void> {
-    const room = await this.getRoomInfo(roomid);
+    const room = await this.getRoom(roomid, ['users', 'muted', 'banned', 'logs']);
     if (room.ownerId != owner.id)
       throw new HttpException(
         "User isn't the room's owner",
@@ -298,12 +280,7 @@ export class ChatService {
   }
 
   async muteUserInRoom(user: User, roomid: number, admin: User): Promise<void> {
-    const currentroom = await this.chatRepo.findOne(roomid, {
-      relations: ['users', 'muted'],
-    });
-    if (!currentroom)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-
+    const currentroom = await this.getRoom(roomid, ['users', 'muted']);
     if (currentroom.ownerId == user.id)
       throw new HttpException(
         'User is owner and thus cannot be muted',
@@ -337,12 +314,7 @@ export class ChatService {
   }
 
   async banUserInRoom(user: User, roomid: number, admin: User): Promise<void> {
-    const currentroom = await this.chatRepo.findOne(roomid, {
-      relations: ['users', 'banned'],
-    });
-    if (!currentroom)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-
+    const currentroom = await this.getRoom(roomid, ['users', 'banned']);
     if (currentroom.ownerId == user.id)
       throw new HttpException(
         'User is owner and thus cannot be banned',
@@ -385,12 +357,7 @@ export class ChatService {
   }
 
   async addLogForRoom(id: number, message: string, user: User): Promise<void> {
-    const currentroom = await this.chatRepo.findOne(id, {
-      relations: ['users', 'logs', 'muted'],
-    });
-    if (!currentroom)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-
+    const currentroom = await this.getRoom(id, ['users', 'logs', 'muted']);
     if (!currentroom.users.find((user1) => user1.id == user.id))
       throw new HttpException('User isnt in room', HttpStatus.NOT_FOUND);
 
@@ -425,12 +392,7 @@ export class ChatService {
   }
 
   async getLogsForRoom(id: number, user: User): Promise<Log[]> {
-    const currentroom = await this.chatRepo.findOne(id, {
-      relations: ['logs'],
-    });
-    if (!currentroom)
-      throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
-
+    const currentroom = await this.getRoom(id, ['logs']);
     const logs = [];
     for (const log of currentroom.logs) {
       const currelog = await this.logRepo.findOne(log.id, {
