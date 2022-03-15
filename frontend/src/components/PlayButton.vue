@@ -40,25 +40,30 @@ export default Vue.extend({
     methods: {
       cancelQueue() {
             this.socket.on("disconnect", (reason) => {
-              console.log(reason);
+              console.log(reason); // TODO: remove
             });
             this.socket.disconnect(true);
             this.dialog = false;
       },
       searchPlayer() {
-        this.socket = io("http://127.0.0.1:3000/pong", {
+        // this.socket = io("http://127.0.0.1:3000/pong", {
+        //     transportOptions: {
+        //     polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+        //     },
+        // }); TODO: DELETE
+        this.socket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
             transportOptions: {
             polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
             },
         });
         this.$store.commit('setGameSock', this.socket);
         this.$store.state.gameSock.on('info', (data) => {
-            console.log('Connected', data);
+            console.log('Connected', data); // TODO: remove
             this.socket.emit('queue');
         });
         this.socket.on('room', (code) => {
-            this.dialog=false;
-            console.log(`room ${code} created`);
+            this.dialog = false;
+            console.log(`room ${code} created`); // TODO: remove
             this.$store.commit('setGameRoom', code);
             this.$router.push('/pregame');
         });

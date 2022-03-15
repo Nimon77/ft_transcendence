@@ -71,7 +71,7 @@ async function checkJWT() {
       headers: {
         Authorization: 'Bearer ' + token
     }}).then(res => {
-      console.log(res);
+      console.log(res); // TODO: remove
       status.JWTvalide = res.data;
     });
     if (status.JWTvalide) {
@@ -137,15 +137,15 @@ router.beforeEach((to, from, next) => {
 
     // mmaj
     // prevent user to get manually to pregame and game
-    // console.log("check gameROOM", store.state.gameRoom.length);
+    // console.log("check gameROOM", store.state.gameRoom.length); // TODO: remove
     if (to.name === 'preGame' && !store.state.gameRoom.length) {
-      console.log("to PREGAME");
+      console.log("to PREGAME"); // TODO: remove
       return next({ name: 'Main'});
     }
     if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
       alert("you are leaving the room!");
       store.state.gameSock.on('disconnect', ()=>{
-        console.log("disconnected");
+        console.log("disconnected"); // TODO: remove
         store.commit('setGameRoom', '');
         store.state.gameSock.disconnect();
         store.state.gameSock.close();});

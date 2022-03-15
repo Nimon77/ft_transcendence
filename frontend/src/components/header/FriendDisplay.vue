@@ -62,7 +62,7 @@ export default Vue.extend({
     },
     methods: {
       toProfile() {
-        console.log(this.$route.path, '/profile/' + this.user.id);
+        console.log(this.$route.path, '/profile/' + this.user.id); // TODO: remove
         this.$emit("closedialog");
         if (this.$route.path !== '/profile/' + this.user.id)
           this.$router.push('/profile/' + this.user.id); // supprimer le dialog avec des events
@@ -74,7 +74,7 @@ export default Vue.extend({
       
       async fetchFriend() {
         return (await this.$http.get('/user/' + this.id).then(response => {
-          this.user = response.data; }).catch(console.log('Ressource waiting..')))
+          this.user = response.data; }).catch(console.log('Ressource waiting..'))) // TODO: remove
       },
 
       invite() {

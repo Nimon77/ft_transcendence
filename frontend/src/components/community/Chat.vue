@@ -47,81 +47,93 @@ const chatMsg = [];
 export default Vue.extend({
     name: 'Chat',
     props: {
-        socket: {},
-        idCR: Number,
+      socket: {},
+      idCR: Number,
     },
     data() {
-        return {
-            input: '',
-            chatMsg,
-            logs: [],
-        }
+      return {
+        input: '',
+        chatMsg,
+        logs: [],
+      }
     },
     methods: {
-        senderWidth(msg) {
-          if (msg.length > 70)
-            return "65%";
-          if (msg.length > 39)
-            return "50%";
-          if (msg.length > 20)
-            return "25%";
-          if (msg.length > 30)
-            return "30%";
-          return "25%"
-        },
-        isBlocked(idPlayer) {
-          if (this.user.blocked.indexOf(idPlayer) == -1)
-            return false;
-          return true;
-        },
-        async sendMsg() {
-            if (this.input == '' || this.idCR == 0)
-                return;
-
-            try {
-                await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp);
-                });
-            } catch (error) {
-                if (error.message.match("403"))
-                    alert("You've been MUTED in this channel");
-                else
-                    alert("You cannot do anything in here");
-                return;
-            }
-            this.socket.emit('text', {
-                id: this.idCR,
-                user: this.user,
-                value: this.input,
-            });
-            this.input = '';
-        },
-        async cleanLogs() {
-            if (this.idCR == 0)
-                this.chatMsg = [];
-            if (this.idCR > 0)
-                await this.$http.get('/channel/'+ this.idCR +'/log').then((resp) => {
-                this.logs = resp.data;})
-            console.log('LOGS', this.logs);
+      senderWidth(msg) {
+        if (msg.length > 70)
+          return "65%";
+        if (msg.length > 39)
+          return "50%";
+        if (msg.length > 20)
+          return "25%";
+        if (msg.length > 30)
+          return "30%";
+        return "25%"
+      },
+      isBlocked(idPlayer) {
+        if (this.user.blocked.indexOf(idPlayer) == -1)
+          return false;
+        return true;
+      },
+      async sendMsg() {
+        if (this.input == '' || this.idCR == 0)
+          return;
+        try {
+          await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp); // TODO: remove
+          });
+        } catch (error) {
+          if (error.message.match("403"))
+            alert("You've been MUTED in this channel");
+          else
+            alert("You cannot do anything in here");
+          return;
+        }
+        this.socket.emit('text', {
+          id: this.idCR,
+          user: this.user,
+          value: this.input,
+        });
+        this.input = '';
+      },
+      cleanLogs() {
+        if (this.idCR == 0)
             this.chatMsg = [];
-            for (let i in this.logs)
-                this.chatMsg.push( { sender: this.logs[i].user, msg:  this.logs[i].message} )
-            if (this.idCR != 0)
-              setTimeout(() => {
-                document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
-              }, 100);
-        },
+        if (this.idCR > 0)
+          this.socket.emit('channel', {
+            id: this.idCR
+          });
+      },
+      pushLogs() {
+        this.chatMsg = [];
+        for (let i in this.logs)
+          this.chatMsg.push( { sender: this.logs[i].user, msg:  this.logs[i].message} )
+        if (this.idCR != 0)
+          setTimeout(() => {
+            document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
+          }, 100);
+      }
     },
     created() {
         this.$watch(() => this.idCR, () => { this.cleanLogs(); },{ immediate: true })
-        this.socket.on( "text", data => {
-            console.log("TEXT EVENT", data);
-            if (data.id == this.idCR)
-            {
-                this.chatMsg.push( { sender: data.user, msg: data.value } );
-                setTimeout(() => {
-                    document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
-                }, 100);
-            }
+        this.socket.on('info', (data) => {
+          console.log('INFO', data); // TODO: remove
+        })
+        this.socket.on("text", data => {
+          console.log("TEXT EVENT", data); // TODO: remove
+          if (data.id == this.idCR)
+          {
+            this.chatMsg.push( { sender: data.user, msg: data.value } );
+            setTimeout(() => {
+              document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
+            }, 100);
+          }
+        });
+        this.socket.on("channel", data => {
+          console.log("CHANNEL EVENT", data); // TODO: remove
+          if (data.id == this.idCR)
+          {
+            this.logs = data.logs;
+            this.pushLogs();
+          }
         });
     },
     computed: {
