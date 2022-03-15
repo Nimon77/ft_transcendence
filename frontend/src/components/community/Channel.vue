@@ -133,6 +133,7 @@ export default Vue.extend({
           name: '',
           password: '',
           searchCR: '',
+          awaitingSearch: false,
         }
     },
     computed: {
@@ -228,6 +229,17 @@ export default Vue.extend({
     mounted() {
       // console.log('CRs :', this.CRs);
       // console.log('UserCR :', this.userCR);
+    },
+    watch: {
+      searchCR() {
+        if (!this.awaitingSearch) {
+          setTimeout(() => {
+            this.$emit('fetchCR');
+            this.awaitingSearch = false;
+          }, 1000);
+          this.awaitingSearch = true;
+        }
+      }
     }
 })
 </script>
