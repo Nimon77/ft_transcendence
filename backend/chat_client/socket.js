@@ -5,7 +5,11 @@ const socket = (url, token) => {
     },
   });
 
-  client.on('connect', () => console.log('Connected'));
+  client.on('connect', () => {
+    console.log('Connected');
+
+    client.emit('join', 1);
+  });
   client.on('disconnect', () => console.log('Disconnected'));
 
   event(client);
