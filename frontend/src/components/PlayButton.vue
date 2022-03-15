@@ -46,7 +46,12 @@ export default Vue.extend({
             this.dialog = false;
       },
       searchPlayer() {
-        this.socket = io("http://127.0.0.1:3000/pong", {
+        // this.socket = io("http://127.0.0.1:3000/pong", {
+        //     transportOptions: {
+        //     polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+        //     },
+        // }); TODO: DELETE
+        this.socket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
             transportOptions: {
             polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
             },
@@ -57,7 +62,7 @@ export default Vue.extend({
             this.socket.emit('queue');
         });
         this.socket.on('room', (code) => {
-            this.dialog=false;
+            this.dialog = false;
             console.log(`room ${code} created`);
             this.$store.commit('setGameRoom', code);
             this.$router.push('/pregame');
