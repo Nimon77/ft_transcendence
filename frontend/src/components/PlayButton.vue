@@ -33,7 +33,6 @@ export default Vue.extend({
         let date:number = Date.now();
 
         return {
-            socket: [],
             dialog: false,
             date,
         }
@@ -52,14 +51,16 @@ export default Vue.extend({
             polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
             },
         });
-        this.socket.on('info', (data) => {
+        this.$store.commit('setGameSock', this.socket);
+        this.$store.state.gameSock.on('info', (data) => {
             console.log('Connected', data);
             this.socket.emit('queue');
         });
         this.socket.on('room', (code) => {
-            this.dialog=false
+            this.dialog=false;
+            this.$store.commit('setGameRoom', code);
+            // console.log(`Joined code ${code}`);
             this.$router.push('/pregame');
-            console.log(`Joined code ${code}`);
         });
         return;
       },
