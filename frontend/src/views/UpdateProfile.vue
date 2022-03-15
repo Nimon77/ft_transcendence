@@ -1,38 +1,46 @@
 <template>
-  <v-container >
-    <h1 style="text-align: center;titl;color: white">
-      Complete your profile
-    </h1>
-    <v-row>
-      <v-col align="center" cols="12" class="mt-11">
-        <v-text-field
-          v-model="username"
-          label="Username"
-          filled
-          class="mt-2"
-          color="white"
-        ></v-text-field>
-        <v-card class="mt-6" v-if="image.src">
-          <cropper
-            :src="image.src"
-            :stencil-props="{
-              aspectRatio: 1,
-            }"
-            ref="cropper"
-          />
-        </v-card>
-      </v-col>
-    </v-row>
-    <v-row>
-      <v-col align="center" cols="12" class="mt-11">
-        <v-btn @click="$refs.file.click()">
-          <v-icon>mdi-upload</v-icon> Upload Avatar
-          <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
-        </v-btn>
-        <v-btn @click="validate()">
-          <v-icon>mdi-check</v-icon>  Validate
-        </v-btn>
-      </v-col>
+  <v-container fluid>
+    <v-row justify="center">
+    <v-card class="mt-10">
+      <v-sheet color="green" dark min-height="100" width="100%" class="text-center">
+        <v-divider class="pt-7"></v-divider>
+        <span class="span">COMPLETE YOUR PROFILE</span>
+      </v-sheet>
+      <v-card-text>
+        <v-container>
+          <v-row>
+            <v-col align="center" cols="12" class="mt-11">
+              <v-text-field
+                v-model="username"
+                label="Username"
+                filled
+                class="mt-2"
+              ></v-text-field>
+              <v-card class="mt-6" v-if="image.src">
+                <cropper
+                  :src="image.src"
+                  :stencil-props="{
+                    aspectRatio: 1,
+                  }"
+                  ref="cropper"
+                />
+              </v-card>
+            </v-col>
+          </v-row>
+          <v-row>
+            <v-col align="center" cols="12" class="mt-11">
+              <v-btn @click="$refs.file.click()">
+                <v-icon>mdi-upload</v-icon> Upload Avatar
+                <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
+              </v-btn>
+              <v-btn @click="validate()">
+                <v-icon>mdi-check</v-icon>  Validate
+              </v-btn>
+            </v-col>
+          </v-row>
+        </v-container>
+      </v-card-text>
+    </v-card>
     </v-row>
   </v-container>
 </template>
@@ -130,3 +138,14 @@ export default Vue.extend({
   },
 });
 </script>
+
+<style>
+@import '~@/assets/fonts/LEMONMILK/stylesheet.css';
+
+.span {
+  font-family: "lemon_milkmedium";
+  font-size: 30px;
+  letter-spacing: 0.1em;
+  /* margin-left: 60px; */
+}
+</style>
