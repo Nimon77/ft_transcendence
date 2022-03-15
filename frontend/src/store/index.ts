@@ -32,6 +32,8 @@ export default new Vuex.Store({
 
     gameSock: [],
     gameRoom: '',
+    gameOptions: [],
+    usersInGame: [],
   },
   getters: {
     getReady: state => state.ready,
@@ -43,6 +45,8 @@ export default new Vuex.Store({
     getPlayersCR: state => state.chat.playersCR,
     getGameSock: state => state.gameSock,
     getGameRoom: state => state.gameRoom,
+    getGameOptions: state => state.gameOptions,
+    getUsersInGame: state => state.usersInGame,
   },
   mutations: {
     setUser(state, user) {
@@ -64,12 +68,16 @@ export default new Vuex.Store({
       state.chat.playersCR = playersCR;
     },
     setGameSock(state, gameSock) {
-      // console.log("SET gameSOCK");
       state.gameSock = gameSock;
     },
     setGameRoom(state, gameRoom) {
-      // console.log("SET gameROOM", gameRoom);
       state.gameRoom = gameRoom;
+    },
+    setGameOptions(state, gameOptions) {
+      state.gameOptions = gameOptions;
+    },
+    setUsersInGame(state, users) {
+      state.usersInGame = users;
     },
     'NOTIFY_notify': (state, payload) => {
       state.message = payload;

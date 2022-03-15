@@ -137,12 +137,12 @@ router.beforeEach((to, from, next) => {
 
     // mmaj
     // prevent user to get manually to pregame and game
-    console.log("check gameROOM", store.state.gameRoom.length);
+    // console.log("check gameROOM", store.state.gameRoom.length);
     if (to.name === 'preGame' && !store.state.gameRoom.length) {
       console.log("to PREGAME");
       return next({ name: 'Main'});
     }
-    if (from.name === 'preGame' && store.state.gameRoom.length) {
+    if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
       alert("you are leaving the room!");
       store.state.gameSock.on('disconnect', ()=>{
         console.log("disconnected");
