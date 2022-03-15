@@ -33,6 +33,7 @@
     "@nestjs/typeorm": "^8.0.3",
     "@nestjs/websockets": "^8.3.1",
     "bcrypt": "^5.0.1",
+    "cli": "^1.0.1",
     "express": "^4.17.2",
     "joi": "^17.6.0",
     "multer": "^1.4.4",
