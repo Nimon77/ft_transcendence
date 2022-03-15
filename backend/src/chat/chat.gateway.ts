@@ -43,6 +43,16 @@ export class ChatGateway implements OnGatewayConnection {
     });
   }
 
+  emitRoom(room: ChatRoom, event: string, ...args) {
+    if (!room.users) return;
+
+    const sockets: any[] = Array.from(this.server.sockets.values());
+    sockets.forEach((socket) => {
+      if (room.users.find((user) => user.id == socket.data.user.id))
+        socket.emit(event, ...args);
+    });
+  }
+
   @SubscribeMessage('channel')
   async getChannel(client: Socket, id: number) {
     const channel = await this.chatService.getRoom(id, ['users', 'logs']);
@@ -51,43 +61,40 @@ export class ChatGateway implements OnGatewayConnection {
 
   @SubscribeMessage('text')
   async handleMessage(client: Socket, data: any) {
-    const sockets: any[] = Array.from(this.server.sockets.values());
     const room = await this.chatService.getRoom(data.id, ['users']);
 
     const user = client.data.user;
 
     this.chatService.addLogForRoom(data.id, data.value, user);
-    sockets.forEach((socket) => {
-      if (room.users.find((user) => user.id == socket.data.user.id))
-        socket.emit('text', {
-          user: { id: user.id, username: user.username },
-          ...data,
-        });
+    this.emitRoom(room, 'text', {
+      user: { id: user.id, username: user.username },
+      ...data,
     });
   }
 
   @SubscribeMessage('join')
-  async joinChannel(id: number) {
-    const room = await this.chatService.getRoom(id, []);
+  async joinChannel(client: Socket, id: number) {
+    const room = await this.chatService.getRoom(id, ['users']);
+    console.log(room);
   }
 
   @SubscribeMessage('leave')
-  async leaveChannel(roomId: number, adminId?: number) {
-    const room = await this.chatService.getRoom(adminId, []);
+  async leaveChannel(client: Socket, roomId: number, adminId?: number) {
+    const room = await this.chatService.getRoom(roomId, []);
   }
 
   @SubscribeMessage('admin')
-  async toggleAdmin(roomId: number, userId: number) {
+  async toggleAdmin(client: Socket, roomId: number, userId: number) {
     const room = await this.chatService.getRoom(roomId, []);
   }
 
   @SubscribeMessage('mute')
-  async toggleMute(roomId: number, userId: number) {
+  async toggleMute(client: Socket, roomId: number, userId: number) {
     const room = await this.chatService.getRoom(roomId, []);
   }
 
   @SubscribeMessage('ban')
-  async toggleBan(roomId: number, userId: number) {
+  async toggleBan(client: Socket, roomId: number, userId: number) {
     const room = await this.chatService.getRoom(roomId, []);
   }
 }
