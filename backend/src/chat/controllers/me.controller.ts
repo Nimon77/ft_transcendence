@@ -48,12 +48,12 @@ export class MeController {
   @Put(':id/admin')
   async changeUserAdmin(
     @Request() req,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() admin: User,
+    @Param('id', ParseIntPipe) roomid: number,
+    @Body() user: User,
   ) {
-    const user = await this.userService.getUserById(req.user.userId);
-    const newAdmin = await this.userService.getUserById(admin.id);
-    return this.chatService.UserAdminRole(user, newAdmin, id);
+    const owner = await this.userService.getUserById(req.user.userId);
+    const admin = await this.userService.getUserById(user.id);
+    return this.chatService.toggleAdminRole(owner, admin, roomid);
   }
 
   @Post(':id/change/')
@@ -77,7 +77,7 @@ export class MeController {
   ) {
     const curuser = await this.userService.getUserById(user.id);
     const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.MuteUserInRoom(curuser, id, admin);
+    return this.chatService.muteUserInRoom(curuser, id, admin);
   }
 
   @Put(':id/ban')
@@ -88,7 +88,7 @@ export class MeController {
   ) {
     const curuser = await this.userService.getUserById(user.id);
     const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.BanUserInRoom(curuser, id, admin);
+    return this.chatService.banUserInRoom(curuser, id, admin);
   }
 
   @Get(':id/log') //get current room logs
