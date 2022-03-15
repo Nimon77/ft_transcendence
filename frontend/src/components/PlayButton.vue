@@ -40,7 +40,7 @@ export default Vue.extend({
     methods: {
       cancelQueue() {
             this.socket.on("disconnect", (reason) => {
-              console.log("DISCONNECTED", reason);
+              console.log(reason);
             });
             this.socket.disconnect(true);
             this.dialog = false;
@@ -58,8 +58,8 @@ export default Vue.extend({
         });
         this.socket.on('room', (code) => {
             this.dialog=false;
+            console.log(`room ${code} created`);
             this.$store.commit('setGameRoom', code);
-            // console.log(`Joined code ${code}`);
             this.$router.push('/pregame');
         });
         return;
