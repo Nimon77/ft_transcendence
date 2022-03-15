@@ -1,8 +1,13 @@
-#!/bin/bash
+#!/bin/sh
 
 RED='\033[0;31m'
 GREEN='\033[0;32m'
 NC='\033[0m'
+
+if [[ "$OSTYPE" != "darwin"* ]]
+then
+  alias echo="echo -e"
+fi
 
 if [[ $1 == "bdd" ]]
 then
