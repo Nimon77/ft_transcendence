@@ -1,7 +1,7 @@
 <template>
 <v-dialog width="500" max-height="500" v-model="dialog" persistent>
     <template v-slot:activator="{ on, attrs }">
-    <v-btn elevation="1" v-on:click="playerFund" v-bind="attrs" v-on="on" slot="activator"
+    <v-btn elevation="1" v-on:click="searchPlayer" v-bind="attrs" v-on="on" slot="activator"
     class="btn" style="font-size: 60px !important;" color="yellow--text" tile x-large depressed
     width="395" height="170">
     PLAY
@@ -15,7 +15,7 @@
         </div>
     </v-card-title>
     <v-card-actions>
-        <v-btn @click="dialog=false" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
+        <v-btn @click="cancelQueue" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
     </v-card-actions>
     </v-card>
 </v-dialog>
@@ -25,6 +25,7 @@
 
 <script lang='ts'>
 import Vue from 'vue'
+import io from "socket.io-client";
 
 export default Vue.extend({
     name: 'PlayButton',
@@ -37,18 +38,31 @@ export default Vue.extend({
         }
     },
     methods: {
-      closeDialog(): void {
-        if (this.dialog == true)
-        {
-            // this.dialog = false;
-            this.$router.push('/pregame');
-            return;
-        }
-        return;
+      cancelQueue() {
+            this.socket.on("disconnect", (reason) => {
+              console.log(reason);
+            });
+            this.socket.disconnect(true);
+            this.dialog = false;
       },
-      playerFund() {
-          setTimeout(this.closeDialog, 3000);
-          return;
+      searchPlayer() {
+        this.socket = io("http://127.0.0.1:3000/pong", {
+            transportOptions: {
+            polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+            },
+        });
+        this.$store.commit('setGameSock', this.socket);
+        this.$store.state.gameSock.on('info', (data) => {
+            console.log('Connected', data);
+            this.socket.emit('queue');
+        });
+        this.socket.on('room', (code) => {
+            this.dialog=false;
+            console.log(`room ${code} created`);
+            this.$store.commit('setGameRoom', code);
+            this.$router.push('/pregame');
+        });
+        return;
       },
     },
 })
