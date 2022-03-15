@@ -105,15 +105,15 @@ export default Vue.extend({
       async fetchInfos() {
         await this.$http.get('/user/me').then((resp) => {
           this.user = resp.data;
-          // console.log("GET USER IN COMMUNITY ", this.user);
+          // console.log("GET USER IN COMMUNITY ", this.user); // TODO: remove
         })
         await this.$http.get('/channel').then((resp) => {
           this.CRs = resp.data;
-          // console.log("GET CRs IN COMMUNITY ", this.CRs);
+          // console.log("GET CRs IN COMMUNITY ", this.CRs); // TODO: remove
         })
         await this.$http.get('/channel/me').then((resp) => {
           this.userCR = resp.data;
-          // console.log("GET userCR IN COMMUNITY", this.userCR)
+          // console.log("GET userCR IN COMMUNITY", this.userCR) // TODO: remove
         })
 
         if (this.userCR != undefined)

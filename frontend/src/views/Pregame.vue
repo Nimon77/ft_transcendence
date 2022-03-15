@@ -66,12 +66,12 @@ export default Vue.extend({
   },
   methods:{
     readyStat() {
-      console.log("PLAYER READY");
+      console.log("PLAYER READY"); // TODO: remove
       this.loader = !this.loader;
       this.color = 'red';
       this.$store.state.gameSock.emit('ready', { plan: 0, mode: 0 });
       this.$store.state.gameSock.on('start', (options, users) => {
-        console.log('Game started!', options);
+        console.log('Game started!', options); // TODO: remove
           this.$store.commit('setGameOptions', options);
           this.$store.commit('setUsersInGame', users);
         this.$router.push('/game');

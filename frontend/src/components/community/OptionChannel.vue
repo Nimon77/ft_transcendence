@@ -68,12 +68,12 @@ export default Vue.extend({
     },
     methods: {
         leaveRoom() {
-            console.log("LEAVE");
+            console.log("LEAVE"); // TODO: remove
             this.$emit('leaveRoom');
         },
         async changePW() {
           try {await this.$http.post('/channel/' + this.CR.id + '/change', {oldPassword: this.oldPassword, newPassword: this.newPassword})
-          .then((resp) => console.log(resp))
+          .then((resp) => console.log(resp)) // TODO: remove
           }
           catch(error) {alert("wrong password")}
           this.dialog=!this.dialog;
