@@ -6,6 +6,7 @@
         <v-divider class="pt-7"></v-divider>
         <span class="span">COMPLETE YOUR PROFILE</span>
       </v-sheet>
+      <v-form @submit.prevent="validate()">
       <v-card-text>
         <v-container>
           <v-row>
@@ -40,6 +41,7 @@
           </v-row>
         </v-container>
       </v-card-text>
+      </v-form>
     </v-card>
     </v-row>
   </v-container>
