@@ -45,10 +45,7 @@ export class ChatGateway implements OnGatewayConnection {
 
   @SubscribeMessage('channel')
   async getChannel(client: Socket, id: number) {
-    const channel = await this.chatService.getRoom(id, [
-      'users',
-      'logs',
-    ]);
+    const channel = await this.chatService.getRoom(id, ['users', 'logs']);
     client.emit('channel', channel);
   }
 
@@ -67,5 +64,30 @@ export class ChatGateway implements OnGatewayConnection {
           ...data,
         });
     });
+  }
+
+  @SubscribeMessage('join')
+  async joinChannel(id: number) {
+    const room = await this.chatService.getRoom(id, []);
+  }
+
+  @SubscribeMessage('leave')
+  async leaveChannel(roomId: number, adminId?: number) {
+    const room = await this.chatService.getRoom(adminId, []);
+  }
+
+  @SubscribeMessage('admin')
+  async toggleAdmin(roomId: number, userId: number) {
+    const room = await this.chatService.getRoom(roomId, []);
+  }
+
+  @SubscribeMessage('mute')
+  async toggleMute(roomId: number, userId: number) {
+    const room = await this.chatService.getRoom(roomId, []);
+  }
+
+  @SubscribeMessage('ban')
+  async toggleBan(roomId: number, userId: number) {
+    const room = await this.chatService.getRoom(roomId, []);
   }
 }
