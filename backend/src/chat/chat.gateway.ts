@@ -44,11 +44,9 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('channel')
-  async joinChannel(client: Socket, id: number) {
+  async getChannel(client: Socket, id: number) {
     const channel = await this.chatService.getRoom(id, [
       'users',
-      'muted',
-      'banned',
       'logs',
     ]);
     client.emit('channel', channel);
@@ -61,6 +59,7 @@ export class ChatGateway implements OnGatewayConnection {
 
     const user = client.data.user;
 
+    this.chatService.addLogForRoom(data.id, data.value, user);
     sockets.forEach((socket) => {
       if (room.users.find((user) => user.id == socket.data.user.id))
         socket.emit('text', {
