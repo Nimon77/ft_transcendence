@@ -22,6 +22,12 @@ export class MeController {
     private readonly userService: UserService,
   ) {}
 
+  @Post('/')
+  async createChannel(@Request() req, @Body() room: ChatRoom) {
+    const user = await this.userService.getUserById(req.user.userId);
+    return await this.chatService.createRoom(room, user);
+  }
+
   @Get('/me')
   async getAllChannels(@Request() req): Promise<any> {
     return await this.chatService.getRoomsForUser(req.user.userId);
@@ -33,34 +39,43 @@ export class MeController {
     return this.chatService.addUserToRoom(room, user);
   }
 
-  @Post('/')
-  async createChannel(@Request() req, @Body() channel: ChatRoom) {
+  @Put('/:id')
+  async updateChannel(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() room: ChatRoom,
+  ) {
     const user = await this.userService.getUserById(req.user.userId);
-    return await this.chatService.createRoom(channel, user);
-  }
-
-  @Put('/')
-  async updateChannel(@Body() channel: ChatRoom, @Request() req) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.updateRoom(channel.id, channel, user);
+    return this.chatService.updateRoom(id, room, user);
   }
 
   @Put(':id/admin')
   async changeUserAdmin(
     @Request() req,
-    @Param('id', ParseIntPipe) roomid: number,
+    @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ) {
     const owner = await this.userService.getUserById(req.user.userId);
     const admin = await this.userService.getUserById(user.id);
-    return this.chatService.toggleAdminRole(owner, admin, roomid);
+    return this.chatService.toggleAdminRole(owner, admin, id);
+  }
+
+  @Put(':id/ban')
+  async banUserFromRoom(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() user: User,
+  ) {
+    const curuser = await this.userService.getUserById(user.id);
+    const admin = await this.userService.getUserById(req.user.userId);
+    return this.chatService.banUserInRoom(curuser, id, admin);
   }
 
   @Post(':id/change/')
   async changePass(
-    @Body() pass: PasswordI,
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
+    @Body() pass: PasswordI,
   ) {
     const user = await this.userService.getUserById(req.user.userId);
     const room = await this.chatService.getRoomById(id);
@@ -80,31 +95,20 @@ export class MeController {
     return this.chatService.muteUserInRoom(curuser, id, admin);
   }
 
-  @Put(':id/ban')
-  async banUserFromRoom(
-    @Request() req,
-    @Param('id', ParseIntPipe) id: number,
-    @Body() user: User,
-  ) {
-    const curuser = await this.userService.getUserById(user.id);
-    const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.banUserInRoom(curuser, id, admin);
-  }
-
   @Get(':id/log') //get current room logs
-  async getLogsFromRoom(@Param('id', ParseIntPipe) id: number, @Request() req) {
+  async getLogsFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number) {
     const user = await this.userService.getUserById(req.user.userId);
     return this.chatService.getLogsForRoom(id, user);
   }
 
   @Put(':id/log') //add log to room
   async addLogsToRoom(
-    @Param('id', ParseIntPipe) id: number,
-    @Body() body: MessageI,
     @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+    @Body() message: MessageI,
   ) {
     const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.addLogForRoom(id, body.message, user);
+    return this.chatService.addLogForRoom(id, message.message, user);
   }
 
   //for testing
