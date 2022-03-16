@@ -86,7 +86,7 @@ export class ChatService {
   ): Promise<void> {
     const room = await this.getRoom(roomId, ['users']);
 
-    if (adminId) {
+    if (user.id != adminId) {
       if (room.adminId.indexOf(adminId) == -1)
         throw new HttpException(
           'User isnt admin in room',
