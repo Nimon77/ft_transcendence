@@ -5,6 +5,7 @@ import { User } from './user.entity';
 import { AvatarService } from './avatar/avatar.service';
 import { Avatar } from './avatar/avatar.entity';
 import { ChatService } from 'src/chat/chat.service';
+import { Status } from './status.enum';
 
 @Injectable()
 export class UserService {
@@ -81,6 +82,10 @@ export class UserService {
 
     if (user.avatarId != avatar.id)
       this.repo.update(user.id, { avatarId: avatar.id });
+  }
+
+  setStatus(userId: number, status: Status) {
+    return this.repo.update(userId, { status });
   }
 
   async updateFollow(user: User, followed_user: User) {

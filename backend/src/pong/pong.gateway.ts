@@ -35,7 +35,7 @@ export class PongGateway {
     const user: User = await this.userService
       .getUserById(payload.sub)
       .catch(() => null);
-    if (!user) client.disconnect();
+    if (!user) return client.disconnect();
 
     client.data.user = user;
     client.emit('info', { user });
