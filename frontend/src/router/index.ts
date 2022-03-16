@@ -138,19 +138,32 @@ router.beforeEach((to, from, next) => {
     // mmaj
     // prevent user to get manually to pregame and game
     // console.log("check gameROOM", store.state.gameRoom.length);
-    if (to.name === 'preGame' && !store.state.gameRoom.length) {
+    if ((to.name === 'preGame' || to.name === 'game') && !store.state.gameRoom.length) {
       console.log("to PREGAME");
       return next({ name: 'Main'});
     }
     if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
       alert("you are leaving the room!");
       store.state.gameSock.on('disconnect', ()=>{
-        console.log("disconnected");
-        store.commit('setGameRoom', '');
-        store.state.gameSock.disconnect();
-        store.state.gameSock.close();});
+          console.log("disconnected");
+          store.commit('setGameRoom', '');
+          store.state.gameSock.disconnect();
+          store.state.gameSock.close();
+        });
         store.state.gameSock.disconnect(true);
       }
+    if (from.name === 'game' && store.state.gameRoom.length) {
+      alert("you are gonna leave the game!");
+      store.state.gameSock.on('disconnect', ()=>{
+          console.log("disconnected");
+          store.commit('setGameRoom', '');
+          store.state.gameSock.disconnect();
+          store.state.gameSock.close();
+        });
+        store.state.gameSock.disconnect(true);
+        if (to.name === 'preGame')
+          return next({ name: 'Main'});
+      }  
     next();
   });
 })

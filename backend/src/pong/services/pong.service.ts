@@ -34,6 +34,8 @@ export class PongService {
       for (const player of room.players)
         if (player.score == room.options.score.max)
           return this.roomService.stopGame(room, player);
+        // if (player.score == 1)
+        //   return this.roomService.stopGame(room, player);
 
       let ajust = 0;
       if (next.x + room.options.ball.radius > room.options.display.width)
