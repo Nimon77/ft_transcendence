@@ -56,7 +56,6 @@ const event = (socket) => {
     me = info.user;
     for (const channel of info.channels) createChannel(channel, socket);
   });
-
   socket.on('channel', (channel) => {
     if (currentChannel)
       document.getElementById(currentChannel).classList.remove('active');
@@ -79,7 +78,6 @@ const event = (socket) => {
 
     for (const user of channel.users) createUser(user);
   });
-
   socket.on('text', (message) => createMessage(message));
 
   document
