@@ -1,7 +1,7 @@
 <template>
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="start" justify="center">
-      <Channel :CRs="CRs" :userCR="userCR" v-on:fetchCR="fetchCR=!fetchCR"/>
+      <Channel :socket="socket" :CRs="CRs" :userCR="userCR" v-on:fetchCR="fetchCR=!fetchCR"/>
       <Chat :socket="socket" v-bind:idCR="idCR" />
       <PlayerChannel :userCR="userCR" :playersCR="playersCR" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
     </v-row>

@@ -5,11 +5,11 @@
     </template>
     <v-list>
     
-    <v-list-item>
         <v-btn dark class="ma-1" color="green" tile @click="leaveRoom">
+    <v-list-item>
             <v-list-item-title class="text-center">Leave Channel</v-list-item-title>
-        </v-btn>
     </v-list-item>
+        </v-btn>
 
     <v-list-item v-if="isOwner && CR.public == false">
     <v-dialog v-model="dialog" max-width="600px" >
