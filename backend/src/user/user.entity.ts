@@ -8,6 +8,7 @@ import {
 } from 'typeorm';
 import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
+import { Status } from './status.enum';
 
 @Entity()
 export class User {
@@ -43,4 +44,7 @@ export class User {
   public avatar?: Avatar;
   @Column({ nullable: true })
   public avatarId: number;
+
+  @Column({ default: Status.OFFLINE })
+  public status: Status;
 }
