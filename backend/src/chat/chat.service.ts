@@ -24,10 +24,15 @@ export class ChatService {
     private readonly logRepo: Repository<Log>,
   ) {}
 
-  async getRoom(roomId: number, relations: string[]): Promise<ChatRoom> {
+  async getRoom(
+    roomId: number,
+    relations: string[],
+    needPass?: boolean,
+  ): Promise<ChatRoom> {
     const room = await this.chatRepo.findOne(roomId, { relations });
     if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
 
+    if (!needPass) delete room.password;
     return room;
   }
 
@@ -136,7 +141,7 @@ export class ChatService {
   async checkPassword(id: number, password: string): Promise<boolean> {
     if (!password) return false;
 
-    const currentRoom = await this.chatRepo.findOne(id);
+    const currentRoom = await this.getRoom(id, [], true);
     if (!currentRoom) return false;
 
     return await bcrypt.compare(password, currentRoom.password);
@@ -199,7 +204,7 @@ export class ChatService {
   }
 
   async addUserToRoom(room: ChatRoom, user: User): Promise<void> {
-    const curroom = await this.getRoom(room.id, ['users', 'banned']);
+    const curroom = await this.getRoom(room.id, ['users', 'banned'], true);
     if (!curroom.public)
       if (
         room.password == undefined ||
