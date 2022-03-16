@@ -7,7 +7,7 @@
       <v-list>
         <div class="d-flex justify-left">
         <v-list-item-content  class="mt-n4 ml-4 yellow--text text-h6">
-          <v-list-item-title> <v-badge dot inline color="blue"> </v-badge> {{user.username}} </v-list-item-title>
+          <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{user.username}} </v-list-item-title>
         </v-list-item-content>
         </div>
         <v-divider></v-divider>
@@ -15,7 +15,7 @@
         <v-list-group v-if="player.id != user.id">
           <template v-slot:activator>
             <v-list-item-content class="mt-n4">
-              <v-list-item-title> <v-badge dot inline color="blue"> </v-badge>{{player.username}}</v-list-item-title>
+              <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{player.username}} </v-list-item-title>
             </v-list-item-content>
 
           </template>
@@ -136,6 +136,17 @@ export default Vue.extend({
         };
         this.$socket.emit('notify', payload);
       },
+
+      status(status: number) {
+        if (status == 1)
+          return 'blue';
+        else if (status == 2)
+          return 'orange';
+        else if (status == 3)
+          return 'green';
+        else
+          return 'grey';
+      }
     },
     computed: {
       user() {
