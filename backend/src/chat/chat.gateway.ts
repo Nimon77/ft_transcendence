@@ -89,13 +89,14 @@ export class ChatGateway implements OnGatewayConnection {
       let user = client.data.user;
       if (data.userId) user = await this.userService.getUserById(data.userId);
 
+      const room = await this.chatService.getRoom(data.roomId, ['users']);
+
       await this.chatService.removeUserFromRoom(
         user,
         data.roomId,
         client.data.user.id,
       );
 
-      const room = await this.chatService.getRoom(data.roomId, ['users']);
       this.emitRoom(room, 'leave', { room, user: client.data.user });
     } catch {}
   }
