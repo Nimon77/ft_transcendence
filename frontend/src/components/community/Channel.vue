@@ -211,17 +211,17 @@ export default Vue.extend({
         this.$emit('fetchCR');
       },
       async newChannel() {
-        // console.log('USER ID IN CHANNEL', this.user.id);
+        // console.log('USER ID IN CHANNEL', this.user.id); //TODO: remove
         if (this.valid) {
           if (this.password == '')
             await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
-              console.log(resp);
+              console.log(resp); //TODO: remove
               if (resp.status == 201)
                 this.currentIdCR = resp.data.id;
             });
           else
             await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
-              console.log(resp);
+              console.log(resp); //TODO: remove
               if (resp.status == 201)
                 this.currentIdCR = resp.data.id;
             });
