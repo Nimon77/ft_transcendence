@@ -3,8 +3,8 @@
   <v-container fluid>
     <v-row align="center">
 
-        <v-badge bordered bottom left color="blue" offset-x="15" offset-y="15" >
-          <v-avatar style="border: solid; border-color: white;" tile coolor="blue" size="65" class="mr-2 border">
+        <v-badge bordered bottom left :color="status" offset-x="15" offset-y="15" >
+          <v-avatar style="border: solid; border-color: white;" tile size="65" class="mr-2 border">
             <img v-auth-image="'/user/me/avatar'" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
@@ -67,6 +67,16 @@ export default Vue.extend({
     computed: {
       user() {
         return this.$store.state.user
+      },
+      status() {
+        if (this.user.status == 1)
+          return 'blue';
+        else if (this.user.status == 2)
+          return 'orange';
+        else if (this.user.status == 3)
+          return 'green';
+        else
+          return 'grey';
       }
     }
   })
