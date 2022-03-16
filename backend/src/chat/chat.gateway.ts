@@ -109,17 +109,81 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('admin')
-  async toggleAdmin(client: Socket, roomId: number, userId: number) {
-    const room = await this.chatService.getRoom(roomId, []);
+  async toggleAdmin(client: Socket, data: any) {
+    try
+    {
+      const room = await this.chatService.getRoom(data.roomId, ['users']);
+      const owner = client.data.user;
+      const admin = await this.userService.getUserById(data.userId);
+      let is_admin = false;
+
+      this.chatService.toggleAdminRole(owner, admin, room.id);
+      
+      if (room.adminId.indexOf(admin.id) != -1)
+        is_admin = true;
+      this.emitRoom(room, 'admin', {
+        user: { id: admin.id, username: admin.username },
+        is_admin: is_admin,
+      });
+    }
+    catch {
+      return;
+    }
   }
 
   @SubscribeMessage('mute')
-  async toggleMute(client: Socket, roomId: number, userId: number) {
-    const room = await this.chatService.getRoom(roomId, []);
+  async toggleMute(client: Socket, data: any) {
+    try
+    {
+      const room = await this.chatService.getRoom(data.roomId, ['users', 'muted']);
+      const curuser = await this.userService.getUserById(data.userId)
+      const admin = client.data.user;
+      let is_muted = false;
+
+      const muted = room.muted.find(muted => muted.userId == data.userId);
+
+      if (muted)
+        this.chatService.unMuteUserInRoom(muted, room);
+      else
+      {
+        this.chatService.muteUserInRoom(curuser, room.id, admin);
+        is_muted = true;
+      }
+      this.emitRoom(room, 'mute', {
+        user: { id: admin.id, username: admin.username },
+        is_muted: is_muted,
+      });
+    }
+    catch {
+      return;
+    }
   }
 
   @SubscribeMessage('ban')
-  async toggleBan(client: Socket, roomId: number, userId: number) {
-    const room = await this.chatService.getRoom(roomId, []);
+  async toggleBan(client: Socket, data: any) {
+    try
+    {
+      const room = await this.chatService.getRoom(data.roomId, ['users', 'banned']);
+      const curuser = await this.userService.getUserById(data.userId)
+      const admin = client.data.user;
+      let is_banned = false;
+
+      const banned = room.banned.find(banned => banned.userId == banned.userId);
+
+      if (banned)
+        this.chatService.unBanUserInRoom(banned, room);
+      else
+      {
+        this.chatService.banUserInRoom(curuser, room.id, admin);
+        is_banned = true;
+      }
+      this.emitRoom(room, 'ban', {
+        user: { id: admin.id, username: admin.username },
+        is_banned: is_banned,
+      });
+    }
+    catch {
+      return;
+    }
   }
 }
