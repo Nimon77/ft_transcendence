@@ -5,7 +5,7 @@
         <img v-if="user.id !== undefined" v-auth-image="'/user/'+ user.id +'/avatar'"/>
       </v-avatar>
 
-      <v-badge class="ml-3" inline left color="blue">
+      <v-badge class="ml-3" inline left :color="status">
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
@@ -58,6 +58,7 @@ export default Vue.extend({
         { title: 'Chat' },
         { title: 'Remove Player' },
         ],
+        status: 'grey',
       }
     },
     methods: {
@@ -71,10 +72,24 @@ export default Vue.extend({
       removeFriend() {
         this.$emit("rmFriend", this.user.id);
       },
-      
+
+      getStatusColor(status: number) {
+        if (status == 1)
+          return 'green';
+        else if (status == 2)
+          return 'orange';
+        else if (status == 3)
+          return 'green';
+        else
+          return 'grey';
+      },
+
       async fetchFriend() {
         return (await this.$http.get('/user/' + this.id).then(response => {
-          this.user = response.data; }).catch(console.log('Ressource waiting..'))) // TODO: remove
+          this.user = response.data;
+          this.status = this.getStatusColor(this.user.status);
+          console.log('STATUS', this.status); // TODO: remove
+        }).catch(console.log('Ressource waiting..'))) // TODO: remove
       },
 
       invite() {
