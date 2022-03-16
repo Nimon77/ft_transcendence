@@ -1,4 +1,3 @@
-import { ConsoleLogger } from '@nestjs/common';
 import {
   OnGatewayConnection,
   SubscribeMessage,
