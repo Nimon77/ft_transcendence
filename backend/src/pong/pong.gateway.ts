@@ -53,7 +53,7 @@ export class PongGateway {
   }
 
   @SubscribeMessage('room')
-  joinRoom(client: Socket, code: string) {
+  joinRoom(client: Socket, code?: string) {
     if (!client.data.user) return;
 
     let room: Room = this.roomService.getRoom(code);
