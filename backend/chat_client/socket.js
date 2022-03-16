@@ -5,10 +5,12 @@ const socket = (url, token) => {
     },
   });
 
+  client.on('join', console.log);
+
   client.on('connect', () => {
     console.log('Connected');
 
-    client.emit('join', 1);
+    client.emit('leave', 2);
   });
   client.on('disconnect', () => console.log('Disconnected'));
 
