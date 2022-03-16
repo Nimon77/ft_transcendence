@@ -56,6 +56,8 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('channel')
   async getChannel(client: Socket, id: number) {
     const channel = await this.chatService.getRoom(id, ['users', 'logs']);
+    delete channel.password;
+
     client.emit('channel', channel);
   }
 
@@ -79,11 +81,10 @@ export class ChatGateway implements OnGatewayConnection {
     try {
       await this.chatService.addUserToRoom(room, client.data.user);
 
-      this.emitRoom(
-        await this.chatService.getRoom(room.id, ['users']),
-        'join',
-        { room, user: client.data.user },
-      );
+      room = await this.chatService.getRoom(room.id, ['users']);
+      delete room.password;
+
+      this.emitRoom(room, 'join', { room, user: client.data.user });
     } catch {}
   }
 
