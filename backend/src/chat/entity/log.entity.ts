@@ -22,7 +22,7 @@ export class Log {
   @ManyToOne(() => ChatRoom, (room) => room.logs, { nullable: true })
   room: ChatRoom['id'];
 
-  @ManyToOne(() => User)
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn()
   user: User;
 }
