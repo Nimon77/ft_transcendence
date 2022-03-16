@@ -19,12 +19,14 @@
           <v-container>
             <v-row>
               <v-col cols="12" >
-                <v-form ref="form" v-model="valid">
-                <v-text-field v-model="name" :rules="rules" label="name of channel"></v-text-field>
+                <v-form ref="form" v-model="valid" @submit.prevent="newChannel" >
+                  <v-text-field v-model="name" :rules="rules" label="name of channel"></v-text-field>
                 </v-form>
               </v-col>
               <v-col cols="12">
-                <v-text-field v-model="password" label="Password*" type="password"></v-text-field>
+                <v-form @submit.prevent="newChannel">
+                  <v-text-field v-model="password" label="Password*" type="password"></v-text-field>
+                </v-form>
               </v-col>
             </v-row>
           <small>*not mandatory</small>
@@ -91,7 +93,9 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" >
-                    <v-text-field v-model="password" type="password" label="Enter password channel"></v-text-field>
+                    <v-form @submit.prevent="joinRoom(cr.id)">
+                      <v-text-field v-model="password" type="password" label="Enter password channel"></v-text-field>
+                    </v-form>
                   </v-col>
                 </v-row>
               </v-container>
@@ -196,6 +200,8 @@ export default Vue.extend({
         this.searchCR = '';
         this.$emit('fetchCR');
         this.currentIdCR = idCR;
+        this.password = '';
+        this.PWdialog = false;
       },
       async leaveRoom(idCR) {
         console.log("leave ROOM ", idCR); // TODO: remove
@@ -205,21 +211,25 @@ export default Vue.extend({
         this.$emit('fetchCR');
       },
       async newChannel() {
-        // console.log('USER ID IN CHANNEL', this.user.id); // TODO: remove
-        if (this.password == '')
-          await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
-            console.log(resp); // TODO: remove
-            if (resp.status == 201)
-              this.currentIdCR = resp.data.id;
-          });
-        else
-          await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
-            console.log(resp); // TODO: remove
-            if (resp.status == 201)
-              this.currentIdCR = resp.data.id;
-          });
-        this.dialog = false;
-        this.$emit('fetchCR');
+        // console.log('USER ID IN CHANNEL', this.user.id);
+        if (this.valid) {
+          if (this.password == '')
+            await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
+              console.log(resp);
+              if (resp.status == 201)
+                this.currentIdCR = resp.data.id;
+            });
+          else
+            await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
+              console.log(resp);
+              if (resp.status == 201)
+                this.currentIdCR = resp.data.id;
+            });
+          this.dialog = false;
+          this.$emit('fetchCR');
+          this.name = '';
+          this.password = '';
+        }
       },
       changeCR(idCR) {
         this.currentIdCR = idCR;
