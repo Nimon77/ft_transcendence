@@ -28,7 +28,6 @@ export class ChatService {
     const room = await this.chatRepo.findOne(roomId, { relations });
     if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
 
-    delete room.password;
     return room;
   }
 
@@ -86,21 +85,18 @@ export class ChatService {
   ): Promise<void> {
     const room = await this.getRoom(roomId, ['users']);
 
-    if (user.id != adminId) {
+    if (adminId && adminId != user.id) {
       if (room.adminId.indexOf(adminId) == -1)
         throw new HttpException(
           'User isnt admin in room',
           HttpStatus.UNAUTHORIZED,
         );
 
-      if (user.id == room.ownerId && adminId == room.ownerId)
-        return await this.deleteRoom(room.id);
-
       {
         const index = room.adminId.indexOf(user.id);
         if (index != -1) room.adminId.splice(index, 1);
       }
-    }
+    } else if (user.id == room.ownerId) return await this.deleteRoom(room.id);
 
     {
       const index = room.users.findIndex((user1) => user1.id == user.id);
