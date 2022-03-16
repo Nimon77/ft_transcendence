@@ -82,22 +82,24 @@ export class ChatService {
   async removeUserFromRoom(
     user: User,
     roomId: number,
-    adminId: number,
+    adminId?: number,
   ): Promise<void> {
     const room = await this.getRoom(roomId, ['users']);
 
-    if (room.adminId.indexOf(adminId) == -1)
-      throw new HttpException(
-        'User isnt admin in room',
-        HttpStatus.UNAUTHORIZED,
-      );
+    if (adminId) {
+      if (room.adminId.indexOf(adminId) == -1)
+        throw new HttpException(
+          'User isnt admin in room',
+          HttpStatus.UNAUTHORIZED,
+        );
 
-    if (user.id == room.ownerId && adminId == room.ownerId)
-      return await this.deleteRoom(room.id);
+      if (user.id == room.ownerId && adminId == room.ownerId)
+        return await this.deleteRoom(room.id);
 
-    {
-      const index = room.adminId.indexOf(user.id);
-      if (index != -1) room.adminId.splice(index, 1);
+      {
+        const index = room.adminId.indexOf(user.id);
+        if (index != -1) room.adminId.splice(index, 1);
+      }
     }
 
     {
@@ -236,7 +238,12 @@ export class ChatService {
     user: User,
     roomid: number,
   ): Promise<void> {
-    const room = await this.getRoom(roomid, ['users', 'muted', 'banned', 'logs']);
+    const room = await this.getRoom(roomid, [
+      'users',
+      'muted',
+      'banned',
+      'logs',
+    ]);
     if (room.ownerId != owner.id)
       throw new HttpException(
         "User isn't the room's owner",
