@@ -77,16 +77,15 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('join')
-  async joinChannel(client: Socket, id: number) {
+  async joinChannel(client: Socket, room: ChatRoom) {
     try {
-      const room = await this.chatService.getRoom(id, ['users']);
-
-      if (room.users.indexOf(client.data.user) != -1) return;
-
       await this.chatService.addUserToRoom(room, client.data.user);
-      room.users.push(client.data.user);
 
-      this.emitRoom(room, 'join', { room, user: client.data.user });
+      this.emitRoom(
+        await this.chatService.getRoom(room.id, ['users']),
+        'join',
+        { room, user: client.data.user },
+      );
     } catch {
       return;
     }
@@ -95,10 +94,13 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('leave')
   async leaveChannel(client: Socket, data: any) {
     try {
+      let user = client.data.user;
+      if (data.userId) user = await this.userService.getUserById(data.userId);
+
       await this.chatService.removeUserFromRoom(
-        client.data.user,
+        user,
         data.roomId,
-        data.adminId,
+        client.data.user.id,
       );
 
       const room = await this.chatService.getRoom(data.roomId, ['users']);
