@@ -127,6 +127,7 @@ export default Vue.extend({
     props: {
       userCR: [],
       CRs: [],
+      socket: {},
     },
     data() {
         return {
@@ -192,20 +193,22 @@ export default Vue.extend({
       },
       async joinRoom(idCR) {
         console.log('Join ROOM', idCR, this.password); // TODO: remove
-        try { await this.$http.put('/channel/join', {id: idCR, password: this.password}).then((resp) => console.log(resp)) } // TODO: remove
-        catch(error) {
-          console.log(error.message); // TODO: remove
-          alert("You can't access this channel")
-        }
+        this.socket.emit('join', {id: idCR, password: this.password});
+        // try { await this.$http.put('/channel/join', {id: idCR, password: this.password}).then((resp) => console.log(resp)) } // TODO: remove
+        // catch(error) {
+        //   console.log(error.message); // TODO: remove
+        //   alert("You can't access this channel")
+        // }
         this.searchCR = '';
         this.$emit('fetchCR');
-        this.currentIdCR = idCR;
+        // this.currentIdCR = idCR;
         this.password = '';
         this.PWdialog = false;
       },
       async leaveRoom(idCR) {
         console.log("leave ROOM ", idCR); // TODO: remove
-        await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp)) // TODO: remove
+        this.socket.emit('leave', { roomId: idCR })
+        // await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp)) // TODO: remove
         if (this.currentIdCR != 0)
           this.currentIdCR = 0;
         this.$emit('fetchCR');
@@ -236,9 +239,17 @@ export default Vue.extend({
         this.$emit('fetchCR');
       },
     },
-    mounted() {
-      // console.log('CRs :', this.CRs); // TODO: remove
-      // console.log('UserCR :', this.userCR); // TODO: remove
+    created() {
+      this.socket.on('join', (data) => {
+        console.log('JOIN', data); // TODO: remove
+        if (data.user.id == this.user.id)
+          this.currentIdCR = data.room.id;
+        this.$emit('fetchCR');
+      });
+      this.socket.on('leave', (data) => {
+        console.log('LEAVE', data); // TODO: remove
+        this.$emit('fetchCR');
+      });
     },
     watch: {
       searchCR() {
