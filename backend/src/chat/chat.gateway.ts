@@ -71,9 +71,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: user.id, username: user.username },
         ...data,
       });
-    } catch {
-      return;
-    }
+    } catch {}
   }
 
   @SubscribeMessage('join')
@@ -86,9 +84,7 @@ export class ChatGateway implements OnGatewayConnection {
         'join',
         { room, user: client.data.user },
       );
-    } catch {
-      return;
-    }
+    } catch {}
   }
 
   @SubscribeMessage('leave')
@@ -105,9 +101,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       const room = await this.chatService.getRoom(data.roomId, ['users']);
       this.emitRoom(room, 'leave', { room, user: client.data.user });
-    } catch {
-      return;
-    }
+    } catch {}
   }
 
   @SubscribeMessage('admin')
@@ -125,9 +119,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         is_admin: is_admin,
       });
-    } catch {
-      return;
-    }
+    } catch {}
   }
 
   @SubscribeMessage('mute')
@@ -152,9 +144,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         is_muted: is_muted,
       });
-    } catch {
-      return;
-    }
+    } catch {}
   }
 
   @SubscribeMessage('ban')
@@ -181,8 +171,6 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         is_banned: is_banned,
       });
-    } catch {
-      return;
-    }
+    } catch {}
   }
 }
