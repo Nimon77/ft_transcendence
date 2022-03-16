@@ -2,13 +2,12 @@
   <v-container fluid class="mt-10">
     <v-row align="center" justify="center">
     <v-col cols="7">
-      <p class="text-center white--text"> {{player[0].name}} VS {{player[1].name}} </p>
       <v-card flat color="green" height="220">
         <v-card-text class="white--text">
         <v-row class="mt-9" align="center" justify="center">
           <v-col cols="12">
           <p class="text-center">
-            CHOOSE MAP
+            VOTE FOR MAP
           </p>
           </v-col>
           <v-btn-toggle mandatory tile group>
@@ -23,7 +22,7 @@
         <v-row align="center" justify="center" class="mt-1">
           <v-col cols="12">
           <p class="text-center">
-            CHOOSE POWER-UP
+            VOTE FOR POWER-UP
           </p>
           </v-col>
           <v-btn-toggle v-model="toggle_exclusive" multiple borderless rounded background-color="green">
@@ -68,13 +67,14 @@ export default Vue.extend({
     readyStat() {
       console.log("PLAYER READY");
       this.loader = !this.loader;
-      this.color = 'red';
+      this.color = 'green';
       this.$store.state.gameSock.emit('ready', { plan: 0, mode: 0 });
       this.$store.state.gameSock.on('start', (options, users) => {
         console.log('Game started!', options);
-          this.$store.commit('setGameOptions', options);
-          this.$store.commit('setUsersInGame', users);
+        this.$store.commit('setGameOptions', options);
+        this.$store.commit('setUsersInGame', users);
         this.$router.push('/game');
+        // setTimeout(this.launchGame, 3000);
       });
     },
     launchGame() {
