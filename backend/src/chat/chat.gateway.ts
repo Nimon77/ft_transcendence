@@ -104,7 +104,7 @@ export class ChatGateway implements OnGatewayConnection {
       );
 
       const room = await this.chatService.getRoom(data.roomId, ['users']);
-      this.emitRoom(room, 'join', { room, user: client.data.user });
+      this.emitRoom(room, 'leave', { room, user: client.data.user });
     } catch {
       return;
     }
