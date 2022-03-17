@@ -1,17 +1,18 @@
 <template>
   <v-container fluid>
-    <v-row justify="center">
+    <!-- <v-row justify="center"> -->
     <v-card class="mt-10" min-width="50%">
       <v-sheet color="green" dark min-height="100" width="100%" class="text-center">
         <v-divider class="pt-7"></v-divider>
         <span class="span">COMPLETE YOUR PROFILE</span>
       </v-sheet>
-      <v-form @submit.prevent="validate()">
+      <v-form v-model="valid" @submit.prevent="validate()">
       <v-card-text>
         <v-container>
           <v-row>
             <v-col align="center" cols="12" class="mt-11">
               <v-text-field
+                :rules="rules"
                 v-model="username"
                 label="Username"
                 filled
@@ -35,7 +36,7 @@
                 <v-icon>mdi-upload</v-icon> Upload Avatar
                 <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
               </v-btn>
-              <v-btn @click="validate()">
+              <v-btn :disabled="!valid" @click="validate()">
                 <v-icon>mdi-check</v-icon>  Validate
               </v-btn>
             </v-col>
@@ -44,7 +45,6 @@
       </v-card-text>
       </v-form>
     </v-card>
-    </v-row>
   </v-container>
 </template>
 
@@ -98,6 +98,8 @@ export default Vue.extend({
         type: '',
       },
       username: '',
+      valid: true,
+      users: [],
     };
   },
   methods: {
@@ -152,6 +154,32 @@ export default Vue.extend({
         reader.readAsArrayBuffer(files[0]);
       }
     },
+  },
+  async beforeCreate() {
+    await this.$http.get('/user').then(response => {
+      this.users = response.data;
+    });
+      console.log('USERS : ', this.users);
+  },
+  computed: {
+    rules() {
+      const rules = [];
+      let existingName: string = null;
+      let i = 0;
+      if (this.users.length == 0)
+        return rules;
+      existingName = this.users[i].username;
+      while (this.username != existingName && i < this.users.length) {
+        existingName = this.users[i++].username;
+      }
+      if (this.username === existingName) {
+        const rule = `username already exist`;
+        rules.push(rule);
+      }
+      let rule2 = v => (v.length <= 8) || 'must be less than 8 characters';
+      rules.push(rule2);
+      return rules;
+    }
   },
 });
 </script>

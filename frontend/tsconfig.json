@@ -35,7 +35,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-  ],
+, "src/pong/pong.ts"  ],
   "exclude": [
     "node_modules"
   ]

@@ -106,10 +106,10 @@ function _arrayBufferToBase64( buffer ) {
 }
 
 router.beforeEach((to, from, next) => {
-  console.log('to', to) // TODO: remove
+  // console.log('to', to) // TODO: remove
 
   checkJWT().then(Status => {
-    console.log('Status', Status) // TODO: remove
+    // console.log('Status', Status) // TODO: remove
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
@@ -152,20 +152,31 @@ router.beforeEach((to, from, next) => {
 
     // mmaj
     // prevent user to get manually to pregame and game
-    // console.log("check gameROOM", store.state.gameRoom.length); // TODO: remove
-    if (to.name === 'preGame' && !store.state.gameRoom.length) {
-      console.log("to PREGAME"); // TODO: remove
+    if ((to.name === 'preGame' || to.name === 'game') && !store.state.gameRoom.length) {
       return next({ name: 'Main'});
     }
     if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
       alert("you are leaving the room!");
-      store.getters.getGameSock.on('disconnect', ()=>{
-        console.log("disconnected"); // TODO: remove
-        store.commit('setGameRoom', '');
-        store.getters.getGameSock.disconnect();
-        store.getters.getGameSock.close();});
-        store.getters.getGameSock.disconnect(true);
+      store.state.gameSock.on('disconnect', ()=>{
+          console.log("disconnected");
+          store.commit('setGameRoom', '');
+          store.state.gameSock.disconnect();
+          store.state.gameSock.close();
+        });
+        store.state.gameSock.disconnect(true);
       }
+    if (from.name === 'game' && store.state.gameRoom.length) {
+      alert("you are gonna leave the game!");
+      store.state.gameSock.on('disconnect', ()=>{
+          console.log("disconnected");
+          store.commit('setGameRoom', '');
+          store.state.gameSock.disconnect();
+          store.state.gameSock.close();
+        });
+        store.state.gameSock.disconnect(true);
+        if (to.name === 'preGame')
+          return next({ name: 'Main'});
+      }  
     next();
   });
 })
