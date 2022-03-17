@@ -29,7 +29,7 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import {Pong} from '@/pong/pong.ts'
+import {Pong} from '@/plugins/pong.ts'
 
 export default Vue.extend({
     name: 'Game',

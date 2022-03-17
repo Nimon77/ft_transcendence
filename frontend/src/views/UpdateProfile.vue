@@ -49,7 +49,7 @@
 </template>
 
 <script lang="ts">
-import Vue from 'vue'
+import Vue from 'vue';
 import { Cropper } from 'vue-advanced-cropper';
 import 'vue-advanced-cropper/dist/style.css';
 
@@ -102,8 +102,28 @@ export default Vue.extend({
       users: [],
     };
   },
+  computed: {
+    rules() {
+      const rules = [];
+      let existingName: string = null;
+      let i = 0;
+      if (this.users.length == 0)
+        return rules;
+      existingName = this.users[i].username;
+      while (this.username != existingName && i < this.users.length) {
+        existingName = this.users[i++].username;
+      }
+      if (this.username === existingName) {
+        const rule = `username already exist`;
+        rules.push(rule);
+      }
+      let rule2 = v => (v.length <= 8) || 'must be less than 8 characters';
+      rules.push(rule2);
+      return rules;
+    }
+  },
   methods: {
-    validate() {
+    validate(): void {
       if (this.image.src) {
         const { canvas } = this.$refs.cropper.getResult();
         if (canvas) {
@@ -130,13 +150,13 @@ export default Vue.extend({
         });
       }
     },
-    reset() {
+    reset(): void {
       this.image = {
         src: null,
         type: null
       }
     },
-    loadImage(event) {
+    loadImage(event): void {
       const { files } = event.target;
       if (files && files[0]) {
         if (this.image.src) {
@@ -155,32 +175,12 @@ export default Vue.extend({
       }
     },
   },
-  async beforeCreate() {
+  async created() {
     await this.$http.get('/user').then(response => {
       this.users = response.data;
     });
       console.log('USERS : ', this.users);
-  },
-  computed: {
-    rules() {
-      const rules = [];
-      let existingName: string = null;
-      let i = 0;
-      if (this.users.length == 0)
-        return rules;
-      existingName = this.users[i].username;
-      while (this.username != existingName && i < this.users.length) {
-        existingName = this.users[i++].username;
-      }
-      if (this.username === existingName) {
-        const rule = `username already exist`;
-        rules.push(rule);
-      }
-      let rule2 = v => (v.length <= 8) || 'must be less than 8 characters';
-      rules.push(rule2);
-      return rules;
-    }
-  },
+  }
 });
 </script>
 
