@@ -1,6 +1,10 @@
 export class Pong {
   stop = false;
   ball = { x: 0, y: 0 };
+  context: any;
+  options: any;
+  players: any;
+  me: any;
 
   constructor(canvas, options, me, players) {
     canvas.width = options.display.width;
