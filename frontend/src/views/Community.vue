@@ -179,5 +179,3 @@ export default Vue.extend({
 }
 
 </style>
-
-// le socket marche pour un seul chat :o
