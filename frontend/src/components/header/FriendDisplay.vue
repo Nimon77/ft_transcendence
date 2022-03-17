@@ -22,7 +22,7 @@
             <v-list-item-title>Invite to Game</v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title>Spectate</v-list-item-title>
+            <v-list-item-title @click="spectate">Spectate</v-list-item-title>
           </v-list-item>
           <v-list-item>
             <v-list-item-title>Chat</v-list-item-title>
@@ -51,24 +51,39 @@ export default Vue.extend({
     data(): unknown {
       return {
         user: [],
-        friendOptions: [
-        { title: 'Profil Player' },
-        { title: 'Invite to Game' },
-        { title: 'Spectate' },
-        { title: 'Chat' },
-        { title: 'Remove Player' },
-        ],
         status: 'grey',
       }
     },
     methods: {
+      spectate() {
+        console.log("spectate");
+        // vérifier que le user n'est pas deja in game
+        if (this.status != 'orange') {
+          this.socket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
+              transportOptions: {
+              polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+              },
+          });
+          this.$store.commit('setGameSock', this.socket);
+          this.$store.state.gameSock.on('info', (data) => {
+              console.log('Connected', data); // TODO: remove
+              this.socket.emit('room'); // RAJOUTER LE CODE DE LA ROOM
+          });
+          this.socket.on('room', (code) => {
+              this.dialog = false;
+              console.log(`room ${code} created`); // TODO: remove
+              this.$store.commit('setGameRoom', code);
+              this.$router.push('/pregame');
+          });
+          return;
+        }
+      },
+
       toProfile() {
-        console.log(this.$route.path, '/profile/' + this.user.id); // TODO: remove
         this.$emit("closedialog");
         if (this.$route.path !== '/profile/' + this.user.id)
-          this.$router.push('/profile/' + this.user.id); // supprimer le dialog avec des events
+          this.$router.push('/profile/' + this.user.id);
       },
-      
       removeFriend() {
         this.$emit("rmFriend", this.user.id);
       },
@@ -89,7 +104,7 @@ export default Vue.extend({
           this.user = response.data;
           this.status = this.getStatusColor(this.user.status);
           console.log('STATUS', this.status); // TODO: remove
-        }).catch(console.log('Ressource waiting..'))) // TODO: remove
+        }))
       },
 
       invite() {
