@@ -5,10 +5,12 @@ import {
   JoinColumn,
   OneToOne,
   ManyToMany,
+  OneToMany,
 } from 'typeorm';
 import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { Status } from './status.enum';
+import { Match } from 'src/pong/entity/match.entity';
 
 @Entity()
 export class User {
@@ -47,4 +49,10 @@ export class User {
 
   @Column({ default: Status.OFFLINE })
   public status: Status;
+
+  @OneToMany(() => Match, match => match.loser)
+  loser: User;
+
+  @OneToMany(() => Match, match => match.winner)
+  winner: User;
 }
