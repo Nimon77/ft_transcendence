@@ -83,7 +83,7 @@ export default Vue.extend({
         this.options.tray.width = 30;
       }
       console.log("GAME OPTIONS", this.options);
-      this.pong = new Pong(this.canvas, this.options, this.me.id, this.$store.state.usersInGame);
+      this.pong = new Pong(this.canvas, this.options, this.me.id, this.$store.getters.getUsersInGame);
       document.addEventListener('mousemove', this.handleMouseMove);
       this.gameSock.on('ball', (ball) => this.pong.updateBall(ball.x, ball.y));
       this.gameSock.on('score', (scores) => this.pong.updateScore(scores));
