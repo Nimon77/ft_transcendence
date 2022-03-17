@@ -8,7 +8,7 @@
           <div class="text-h2 pa-12"> {{winner}} has won! </div>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn text @click="leaveRoom">Leave Room</v-btn>
+          <v-btn color="blue" dark @click="leaveRoom">Leave Room</v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -20,7 +20,7 @@
         <span class="white--text"> VS </span>
         {{this.$store.state.usersInGame[1].username}}
       </div>
-      <canvas class="mx-5 my-5" id="pong"></canvas>
+      <canvas :style="{'background-color': mapColor}" class="mx-5 my-5" id="pong"></canvas>
     </v-card>
   </v-row>
 </v-container>
@@ -29,7 +29,7 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import {Pong} from '@/pong/pong.js'
+import {Pong} from '@/pong/pong.ts'
 
 export default Vue.extend({
     name: 'Game',
@@ -41,6 +41,9 @@ export default Vue.extend({
             pong: null,
             endDialog: false,
             winner: '',
+            input: [],
+            mapColor: '#121212',
+            options: [],
         }
     },
     methods: {
@@ -60,8 +63,27 @@ export default Vue.extend({
     },
     mounted() {
       this.canvas = document.getElementById('pong');
-      console.log("GAME SOCK", this.gameSock);
-      this.pong = new Pong(this.canvas, this.$store.state.gameOptions, this.me.id, this.$store.state.usersInGame);
+      this.options = this.$store.state.gameOptions;
+      this.input = this.options.input;
+      if (this.input.plan == 0)
+        this.mapColor = '#121212';
+      if (this.input.plan == 1)
+        this.mapColor = '#040a80';
+      if (this.input.plan == 2)
+        this.mapColor = '#db9c14';
+      
+      if (this.input.mode == 1)
+      {
+        this.options.ball.speed = 100;
+        this.options.ball.radius = 35;
+      }
+      if (this.input.mode == 2)
+      {
+        this.options.tray.height = 100;
+        this.options.tray.width = 30;
+      }
+      console.log("GAME OPTIONS", this.options);
+      this.pong = new Pong(this.canvas, this.options, this.me.id, this.$store.state.usersInGame);
       document.addEventListener('mousemove', this.handleMouseMove);
       this.gameSock.on('ball', (ball) => this.pong.updateBall(ball.x, ball.y));
       this.gameSock.on('score', (scores) => this.pong.updateScore(scores));
@@ -101,7 +123,6 @@ canvas {
   width: 80vw;
   display: flex;
   justify-content: center;
-  background-color: #121212;
 
   border: solid white;
   /* border-top: 0; */

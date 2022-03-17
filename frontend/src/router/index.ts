@@ -97,10 +97,10 @@ async function checkJWT() {
 }
 
 router.beforeEach((to, from, next) => {
-  console.log('to', to) // TODO: remove
+  // console.log('to', to) // TODO: remove
 
   checkJWT().then(Status => {
-    console.log('Status', Status) // TODO: remove
+    // console.log('Status', Status) // TODO: remove
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
@@ -137,9 +137,7 @@ router.beforeEach((to, from, next) => {
 
     // mmaj
     // prevent user to get manually to pregame and game
-    // console.log("check gameROOM", store.state.gameRoom.length);
     if ((to.name === 'preGame' || to.name === 'game') && !store.state.gameRoom.length) {
-      console.log("to PREGAME");
       return next({ name: 'Main'});
     }
     if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
