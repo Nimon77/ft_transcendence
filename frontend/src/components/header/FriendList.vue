@@ -19,7 +19,7 @@
 
           <v-list v-if="searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
                 <v-list-item-group>
-                  <v-list-item v-for="(friend) in me.friends" v-bind:key="friend"> <!-- à changer pr afficher la friendList complete ss filter -->
+                  <v-list-item v-for="(friend) in me.friends" v-bind:key="friend">
                   <v-list-item-content>
                     <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog"/>
                     <v-divider class="mt-2"></v-divider>
@@ -28,7 +28,7 @@
                 </v-list-item-group>
           </v-list>
 
-          <v-list v-if="searchInput != ''"> <!-- "si je cherche un truc, j'affiche les tout le monde sauf les amis" -->
+          <v-list v-if="searchInput != ''"> <!-- "si je cherche un truc, j'affiche tout le monde sauf les amis" -->
             <v-list-item v-for="user in filteredUsers" v-bind:key="user.id">
               <v-list-item-content>
                 <UserDisplay :user="user"/>
@@ -76,13 +76,10 @@ export default Vue.extend({
         this.searchInput = '';
       },
     },
-    // fetch all users + la friendlist
-    async created() { // retirer les amis des users !!
+    async created() {
       await this.$http.get('/user').then(response => {
         this.users = response.data;
-        // console.log("USR IN FL", this.users); // TODO: remove
       });
-      // console.log(this.me); // TODO: remove
     },
     computed: {
       me: {
@@ -103,6 +100,8 @@ export default Vue.extend({
             return false;
         });
         cleanUsers = cleanUsers.filter((user) => {
+          if (user.username == null)
+            return false;
           return user.username.match(this.searchInput);
         })
         return cleanUsers;
