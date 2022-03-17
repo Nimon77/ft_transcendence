@@ -95,6 +95,16 @@ async function checkJWT() {
   return status;
 }
 
+function _arrayBufferToBase64( buffer ) {
+  let binary = '';
+  const bytes = new Uint8Array( buffer );
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode( bytes[ i ] );
+  }
+  return window.btoa( binary );
+}
+
 router.beforeEach((to, from, next) => {
   console.log('to', to) // TODO: remove
 
@@ -128,6 +138,9 @@ router.beforeEach((to, from, next) => {
     if (store.state.user.id === null && Status.JWTvalide) {
       axios.get("/user/me").then(res => {
         store.commit('setUser', res.data);
+      });
+      axios.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
+        store.commit('setAvatar', _arrayBufferToBase64(res.data));
       });
     }
     if (store.state.ready === false && Status.JWTvalide && Status.ProfileCompleted && to.name !== 'Login') {
