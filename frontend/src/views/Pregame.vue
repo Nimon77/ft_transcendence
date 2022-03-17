@@ -10,7 +10,7 @@
             VOTE FOR MAP
           </p>
           </v-col>
-          <v-btn-toggle mandatory tile group>
+          <v-btn-toggle v-model="gameMap" mandatory tile group>
           <v-btn > Requiem </v-btn> <v-btn> Classic </v-btn> <v-btn> Electro </v-btn>
           </v-btn-toggle>
         </v-row>
@@ -25,7 +25,7 @@
             VOTE FOR POWER-UP
           </p>
           </v-col>
-          <v-btn-toggle v-model="toggle_exclusive" multiple borderless rounded background-color="green">
+          <v-btn-toggle v-model="gameMode" borderless mandatory rounded background-color="green">
           <v-btn>
             <v-icon>mdi-account-child-circle</v-icon>
           </v-btn>
@@ -54,7 +54,8 @@ export default Vue.extend({
   name: 'Pregame',
   data() {
     return {
-      toggle_exclusive: undefined,
+      gameMode: [],
+      gameMap: [],
       player: [
         {name: "DUDE"},
         {name: "CHEVRE"},
@@ -66,9 +67,11 @@ export default Vue.extend({
   methods:{
     readyStat() {
       console.log("PLAYER READY");
+      console.log("MAP: ", this.gameMap);
+      console.log("MOD: ", this.gameMode);
       this.loader = !this.loader;
       this.color = 'green';
-      this.$store.state.gameSock.emit('ready', { plan: 0, mode: 0 });
+      this.$store.state.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
       this.$store.state.gameSock.on('start', (options, users) => {
         console.log('Game started!', options);
         this.$store.commit('setGameOptions', options);

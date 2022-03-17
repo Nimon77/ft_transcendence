@@ -5,13 +5,16 @@
     </h1>
     <v-row>
       <v-col align="center" cols="12" class="mt-11">
+        <v-form v-model="valid">
         <v-text-field
           v-model="username"
+          :rules="rules"
           label="Username"
           filled
           class="mt-2"
           color="white"
         ></v-text-field>
+        </v-form>
         <v-card class="mt-6" v-if="image.src">
           <cropper
             :src="image.src"
@@ -29,7 +32,7 @@
           <v-icon>mdi-upload</v-icon> Upload Avatar
           <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
         </v-btn>
-        <v-btn @click="validate()">
+        <v-btn :disabled="!valid" @click="validate()">
           <v-icon>mdi-check</v-icon>  Validate
         </v-btn>
       </v-col>
@@ -77,6 +80,8 @@ export default Vue.extend({
         type: '',
       },
       username: '',
+      valid: true,
+      users: [],
     };
   },
   methods: {
@@ -127,6 +132,32 @@ export default Vue.extend({
         reader.readAsArrayBuffer(files[0]);
       }
     },
+  },
+  async beforeCreate() {
+    await this.$http.get('/user').then(response => {
+      this.users = response.data;
+    });
+      console.log('USERS : ', this.users);
+  },
+  computed: {
+    rules() {
+      const rules = [];
+      let existingName: string = null;
+      let i = 0;
+      if (this.users.length == 0)
+        return rules;
+      existingName = this.users[i].username;
+      while (this.username != existingName && i < this.users.length) {
+        existingName = this.users[i++].username;
+      }
+      if (this.username === existingName) {
+        const rule = `username already exist`;
+        rules.push(rule);
+      }
+      let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
+      rules.push(rule2);
+      return rules;
+    }
   },
 });
 </script>
