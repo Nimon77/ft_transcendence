@@ -18,10 +18,10 @@ export class MatchService {
       return matches;
   }
 
-  async createMatch(user: User, opponent: User)
+  async createMatch(user: User, opponent: User, score: String)
   {
      const chatroom = await this.matchRepo.create({
-        score : "",
+        score : score,
         date : new Date(),
         winner : user,
         loser: opponent,

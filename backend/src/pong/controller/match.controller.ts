@@ -13,7 +13,8 @@ import { Match } from '../entity/match.entity';
 import { UserService } from 'src/user/user.service';
 import { MatchService } from '../services/match.service';
 import { User } from 'src/user/user.entity';
-
+import { MatchI } from '../interfaces/match.interface';
+import { match } from 'assert';
   @Controller('match')
 export class matchController {
   constructor(
@@ -33,9 +34,9 @@ export class matchController {
   }
 
   @Post()
-  async createMatch(@Request() req, @Body() opponent: User) {
+  async createMatch(@Request() req, @Body() match: MatchI) {
       const user = await this.userService.getUserById(req.user.userId);
-      const other = await this.userService.getUserById(opponent.id)
-      return await this.matchService.createMatch(user, other);
+      const other = await this.userService.getUserById(match.user.id)
+      return await this.matchService.createMatch(user, other, match.score);
   }
 }
