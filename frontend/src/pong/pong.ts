@@ -30,7 +30,7 @@ export class Pong {
   }
 
   updateTray(player, percent) {
-    const player1 = this.players.find((player1) => player1.id == player.id);
+    const player1 = this.players.find((player1) => player1.id == player);
     if (!player1) return;
 
     let tray = percent * this.options.display.height;

@@ -66,7 +66,7 @@ export class RoomService {
       state: State.WAITING,
       players: [],
       options: RoomService.options,
-      ball: { x: 0, y: 0, velocity: { x: 0, y: 0 } },
+      ball: { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } },
     };
     this.rooms.set(code, room);
     return room;
@@ -88,7 +88,7 @@ export class RoomService {
       room.spectators.push(socket);
       this.emit(
         room,
-        'start',
+        'ready',
         room.options,
         room.players.map((player) => player.socket.data.user),
       );
@@ -129,9 +129,22 @@ export class RoomService {
 
     this.emit(
       room,
-      'start',
+      'ready',
       room.options,
       room.players.map((player) => player.socket.data.user),
+    );
+
+    room.state = State.COUNTDOWN;
+  }
+
+  startCalc(room: Room) {
+    if (room.state != State.COUNTDOWN) return;
+
+    room.ball.position.x = room.options.display.width / 2;
+    room.ball.position.y = room.options.display.height / 2;
+    room.ball.velocity = PongService.velocity(
+      room.options.ball.speed,
+      Math.random() * Math.PI * 2,
     );
 
     room.state = State.INGAME;

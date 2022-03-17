@@ -2,20 +2,20 @@ import { Player } from './player.interface';
 import { Socket } from 'socket.io';
 import { Option } from './option.interface';
 
-interface Velocity {
+interface Position {
   x: number;
   y: number;
 }
 
 interface Ball {
-  x: number;
-  y: number;
-  velocity: Velocity;
+  position: Position;
+  velocity: Position;
 }
 
 export enum State {
   WAITING,
   STARTING,
+  COUNTDOWN,
   INGAME,
   END,
 }
