@@ -3,6 +3,7 @@ import Vuex from 'vuex';
 import { POSITION } from 'vue-toastification';
 
 import InvitePlayer from '@/components/InvitePlayer.vue';
+import { Socket } from 'socket.io-client';
 
 Vue.use(Vuex)
 
@@ -14,6 +15,7 @@ export default new Vuex.Store({
       avatar: null,
       friends: []
     },
+    avatar: null,
     ready: false,
 
     message: {
@@ -30,7 +32,7 @@ export default new Vuex.Store({
       playersCR: {},
     },
 
-    gameSock: [],
+    gameSock: Socket,
     gameRoom: '',
     gameOptions: [],
     usersInGame: [],
@@ -38,6 +40,7 @@ export default new Vuex.Store({
   getters: {
     getReady: state => state.ready,
     getUser: state => state.user,
+    getAvatar: state => state.avatar,
     getMessage: state => state.message,
     getIdCR: state => state.chat.idCR,
     getCRs: state => state.chat.CRs,
@@ -51,6 +54,9 @@ export default new Vuex.Store({
   mutations: {
     setUser(state, user) {
       state.user = user;
+    },
+    setAvatar(state, avatar) {
+      state.avatar = avatar;
     },
     setReady(state, ready) {
       state.ready = ready;

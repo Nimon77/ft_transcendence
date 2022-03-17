@@ -20,7 +20,7 @@
             <v-row>
               <v-col cols="12" >
                 <v-form ref="form" v-model="valid" @submit.prevent="newChannel" >
-                  <v-text-field v-model="name" :rules="rules" label="name of channel"></v-text-field>
+                  <v-text-field v-model="name" :rules="rules" label="name of channel" autofocus></v-text-field>
                 </v-form>
               </v-col>
               <v-col cols="12">
@@ -209,7 +209,7 @@ export default Vue.extend({
         console.log("leave ROOM ", idCR); // TODO: remove
         this.socket.emit('leave', { roomId: idCR })
         // await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp)) // TODO: remove
-        if (this.currentIdCR != 0)
+        if (this.currentIdCR == idCR)
           this.currentIdCR = 0;
         this.$emit('fetchCR');
       },
@@ -248,6 +248,8 @@ export default Vue.extend({
       });
       this.socket.on('leave', (data) => {
         console.log('LEAVE', data); // TODO: remove
+        if (this.currentIdCR == data.room.id && data.user.id == this.user.id)
+          this.currentIdCR = 0;
         this.$emit('fetchCR');
       });
     },
@@ -260,7 +262,7 @@ export default Vue.extend({
           }, 1000);
           this.awaitingSearch = true;
         }
-      }
+      },
     }
 })
 </script>

@@ -13,7 +13,7 @@
                 <v-col align="center" cols="12" class="mt-11" >
                   
                   <!-- <v-form ref="form" v-model="valid"> -->
-                  <v-text-field v-model="username" :rules="rules" label="new username" solo></v-text-field>
+                  <v-text-field v-model="username" :rules="rules" label="new username"></v-text-field>
                   <!-- </v-form> -->
                 
                 </v-col>
@@ -84,6 +84,16 @@ function getMimeType(file, fallback = null) {
   }
 }
 
+function _arrayBufferToBase64( buffer ) {
+  let binary = '';
+  const bytes = new Uint8Array( buffer );
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode( bytes[ i ] );
+  }
+  return window.btoa( binary );
+}
+
 export default Vue.extend({
         name: 'ChangeAvatar',
         components: {
@@ -123,6 +133,11 @@ export default Vue.extend({
               await this.$http.get('/user/me').then(response => {
                 this.$store.commit('setUser', response.data);
               });
+              await setTimeout(() => {
+                this.$http.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
+                  this.$store.commit('setAvatar', _arrayBufferToBase64(res.data));
+                });
+              }, 500);
               this.username = '';
               this.$http.get('/user').then(response => {
                 this.users = response.data;

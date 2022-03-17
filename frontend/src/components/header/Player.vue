@@ -5,7 +5,7 @@
 
         <v-badge bordered bottom left :color="status" offset-x="15" offset-y="15" >
           <v-avatar style="border: solid; border-color: white;" tile size="65" class="mr-2 border">
-            <img v-auth-image="'/user/me/avatar'" alt="Profile Picture"/>
+            <img :src="'data:image/png;base64,' + avatar" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
         <v-btn router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
@@ -66,7 +66,10 @@ export default Vue.extend({
     },
     computed: {
       user() {
-        return this.$store.state.user
+        return this.$store.getters.getUser;
+      },
+      avatar() {
+        return this.$store.getters.getAvatar;
       },
       status() {
         if (this.user.status == 1)

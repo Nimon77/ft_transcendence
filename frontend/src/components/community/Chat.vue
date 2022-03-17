@@ -77,16 +77,16 @@ export default Vue.extend({
       async sendMsg() {
         if (this.input == '' || this.idCR == 0)
           return;
-        try {
-          await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp); // TODO: remove
-          });
-        } catch (error) {
-          if (error.message.match("403"))
-            alert("You've been MUTED in this channel");
-          else
-            alert("You cannot do anything in here");
-          return;
-        }
+        // try {
+        //   await this.$http.put('/channel/'+ this.idCR +'/log', {message: this.input}).then((resp)=>{console.log('PUT LOG', resp); // TODO: remove
+        //   });
+        // } catch (error) {
+        //   if (error.message.match("403"))
+        //     alert("You've been MUTED in this channel");
+        //   else
+        //     alert("You cannot do anything in here");
+        //   return;
+        // }
         this.socket.emit('text', {
           id: this.idCR,
           user: this.user,

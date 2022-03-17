@@ -16,6 +16,7 @@
                 label="Username"
                 filled
                 class="mt-2"
+                autofocus
               ></v-text-field>
               <v-card class="mt-6" v-if="image.src">
                 <cropper

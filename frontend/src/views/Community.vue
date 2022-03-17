@@ -146,6 +146,10 @@ export default Vue.extend({
       this.$watch(() => this.fetchCR, () => {this.fetchInfos()},{ immediate: true })
       this.$watch(() => this.idCR, () => {this.fetchInfos()},{ immediate: true })
     },
+    beforeRouteLeave(to, from, next) {
+      this.socket.disconnect();
+      next();
+    }
 })
 </script>
 

@@ -14,7 +14,7 @@
 
       <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="clearMessage"></v-text-field>
+            <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="clearMessage" autofocus></v-text-field>
           </v-card-title>
 
           <v-list v-if="searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
