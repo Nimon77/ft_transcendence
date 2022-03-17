@@ -5,8 +5,8 @@ import { POSITION } from 'vue-toastification';
 import InvitePlayer from '@/components/InvitePlayer.vue';
 import { Socket } from 'socket.io-client';
 
-import IUser from '@/models/user';
-import IGameOptions from '@/models/pong';
+import IUser from '@/models/IUser';
+import IGameOptions from '@/models/IGameOptions';
 
 Vue.use(Vuex)
 

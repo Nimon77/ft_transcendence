@@ -1,5 +1,5 @@
-import IUser from "@/models/user";
-import IGameOptions from "@/models/pong";
+import IUser from "@/models/IUser";
+import IGameOptions from "@/models/IGameOptions";
 
 export class Pong {
   stop = false;
