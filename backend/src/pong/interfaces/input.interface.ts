@@ -1,10 +1,13 @@
 export enum Plan {
   DEFAULT = 0,
+  BLUE,
+  ORANGE,
 }
 
 export enum Mode {
   NONE = 0,
-  BLIND,
+  SPEED,
+  SMALL,
 }
 
 export interface Input {

@@ -71,17 +71,13 @@ export default Vue.extend({
       console.log("MOD: ", this.gameMode);
       this.loader = !this.loader;
       this.color = 'green';
-      this.$store.state.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
-      this.$store.state.gameSock.on('start', (options, users) => {
-        console.log('Game started!', options);
+      this.$store.state.gameSock.on('ready', (options, users) => {
+        console.log('Game ready!', options);
         this.$store.commit('setGameOptions', options);
         this.$store.commit('setUsersInGame', users);
         this.$router.push('/game');
-        // setTimeout(this.launchGame, 3000);
       });
-    },
-    launchGame() {
-      this.$router.push('/game');
+      this.$store.state.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
     }
   }
 });

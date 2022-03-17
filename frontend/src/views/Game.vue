@@ -105,6 +105,26 @@ export default Vue.extend({
           });
           this.$store.state.gameSock.disconnect(true);
         });
+
+		let count = 3;
+		const intervalID = setInterval(() => {
+			if (count) {
+				this.pong.context.clearRect(
+					0,
+					0,
+					this.options.display.width,
+					this.options.display.height,
+				);
+				this.pong.context.beginPath();
+				this.pong.context.fillStyle = 'white';
+				this.pong.context.font = '48px Impact';
+				this.pong.context.fillText(count, this.options.display.width / 2, this.options.display.height / 2);
+				this.pong.context.closePath();
+				return count--;
+			}
+			clearInterval(intervalID);
+			this.gameSock.emit('start');
+		}, 1000);
     }
 })
 </script>

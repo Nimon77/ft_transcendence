@@ -8,14 +8,14 @@ export class PongService {
     @Inject(forwardRef(() => RoomService)) private roomService: RoomService,
   ) {}
 
-  velocity = (speed, radian) => {
+  static velocity = (speed, radian) => {
     return { x: Math.cos(radian) * speed, y: Math.sin(radian) * speed };
   };
 
   update(room: Room) {
     const next = {
-      x: room.ball.x + room.ball.velocity.x,
-      y: room.ball.y + room.ball.velocity.y,
+      x: room.ball.position.x + room.ball.velocity.x,
+      y: room.ball.position.y + room.ball.velocity.y,
     };
     // sides + score
     if (
@@ -34,8 +34,8 @@ export class PongService {
       for (const player of room.players)
         if (player.score == room.options.score.max)
           return this.roomService.stopGame(room, player);
-        // if (player.score == 1)
-        //   return this.roomService.stopGame(room, player);
+      // if (player.score == 1)
+      //   return this.roomService.stopGame(room, player);
 
       let ajust = 0;
       if (next.x + room.options.ball.radius > room.options.display.width)
@@ -54,8 +54,8 @@ export class PongService {
     )
       if (next.x - room.options.ball.radius < room.options.tray.x)
         return this.updateBall(
-          room.ball.x,
-          room.ball.y,
+          room.ball.position.x,
+          room.ball.position.y,
           (Math.random() * Math.PI) / 2 - Math.PI / 4,
           room,
         );
@@ -69,8 +69,8 @@ export class PongService {
         room.options.display.width - room.options.tray.x
       )
         return this.updateBall(
-          room.ball.x,
-          room.ball.y,
+          room.ball.position.x,
+          room.ball.position.y,
           (Math.random() * Math.PI) / 2 - Math.PI / 4 + Math.PI,
           room,
         );
@@ -81,15 +81,15 @@ export class PongService {
     )
       room.ball.velocity.y *= -1;
     //normal behavior
-    room.ball.x += room.ball.velocity.x;
-    room.ball.y += room.ball.velocity.y;
-    this.roomService.emit(room, 'ball', room.ball);
+    room.ball.position.x += room.ball.velocity.x;
+    room.ball.position.y += room.ball.velocity.y;
+    this.roomService.emit(room, 'ball', room.ball.position);
   }
 
   updateBall(x: number, y: number, radian: number, room: Room) {
-    room.ball.x = x;
-    room.ball.y = y;
-    room.ball.velocity = this.velocity(room.options.ball.speed, radian);
-    this.roomService.emit(room, 'ball', room.ball);
+    room.ball.position.x = x;
+    room.ball.position.y = y;
+    room.ball.velocity = PongService.velocity(room.options.ball.speed, radian);
+    this.roomService.emit(room, 'ball', room.ball.position);
   }
 }
