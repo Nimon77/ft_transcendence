@@ -5,15 +5,23 @@ import { POSITION } from 'vue-toastification';
 import InvitePlayer from '@/components/InvitePlayer.vue';
 import { Socket } from 'socket.io-client';
 
+import IUser from '@/models/user';
+import IGameOptions from '@/models/pong';
+
 Vue.use(Vuex)
 
 export default new Vuex.Store({
   state: {
-    user: {
+    user: <IUser>{
       id: null,
-      username: null,
-      avatar: null,
-      friends: []
+      username: '',
+      avatarId: null,
+      rank: null,
+      status: null,
+      profileCompleted: false,
+      otp: '',
+      blocked: [],
+      friends: [],
     },
     avatar: null,
     ready: false,
@@ -34,8 +42,8 @@ export default new Vuex.Store({
 
     gameSock: Socket,
     gameRoom: '',
-    gameOptions: [],
-    usersInGame: [],
+    gameOptions: <IGameOptions>{},
+    usersInGame: <Array<IUser>>[],
   },
   getters: {
     getReady: state => state.ready,
@@ -80,6 +88,7 @@ export default new Vuex.Store({
       state.gameRoom = gameRoom;
     },
     setGameOptions(state, gameOptions) {
+      console.log('gameOptions', gameOptions);
       state.gameOptions = gameOptions;
     },
     setUsersInGame(state, users) {
