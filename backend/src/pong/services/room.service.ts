@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { Socket } from 'socket.io';
 import { Input, Mode, Plan } from '../interfaces/input.interface';
@@ -76,6 +76,7 @@ export class RoomService {
     if (room.state == State.WAITING) {
       const player: Player = {
         socket,
+        user: socket.data.user,
         room,
         input: null,
         tray: RoomService.options.display.height / 2,
@@ -90,16 +91,16 @@ export class RoomService {
         room,
         'ready',
         room.options,
-        room.players.map((player) => player.socket.data.user),
+        room.players.map((player) => player.user),
       );
     }
-    socket.emit('room', room.code);
+    socket.emit('room', room.code, room.options);
   }
 
   getPlayer(userId: number): Player {
     for (const room of this.rooms.values())
       for (const player of room.players)
-        if (player.socket.data.user.id == userId) return player;
+        if (player.user.id == userId) return player;
     return null;
   }
 
@@ -131,7 +132,7 @@ export class RoomService {
       room,
       'ready',
       room.options,
-      room.players.map((player) => player.socket.data.user),
+      room.players.map((player) => player.user),
     );
 
     room.state = State.COUNTDOWN;
@@ -159,6 +160,16 @@ export class RoomService {
   stopGame(room: Room, player: Player) {
     room.state = State.END;
 
-    this.emit(room, 'stop', player.socket.data.user);
+    this.emit(room, 'stop', player.user);
+  }
+
+  getRoomForUser(userId: number): Room {
+    const rooms = Array.from(this.rooms.values());
+    const room = rooms.find(
+      (room) => !!room.players.find((player) => player.user.id == userId),
+    );
+    if (!room) throw new HttpException('RoomF not found', HttpStatus.NOT_FOUND);
+
+    return room;
   }
 }
