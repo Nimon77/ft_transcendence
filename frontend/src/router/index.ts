@@ -117,6 +117,9 @@ router.beforeEach((to, from, next) => {
         store.commit('setUser', res.data);
         if (res.data.profileCompleted) {
           store.commit('setReady', true);
+          axios.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
+            store.commit('setAvatar', _arrayBufferToBase64(res.data));
+          });
           return next({ name: 'Main' });
         }
         else {
