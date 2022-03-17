@@ -1,12 +1,16 @@
+import IUser from "@/models/user";
+import IGameOptions from "@/models/pong";
+
 export class Pong {
   stop = false;
   ball = { x: 0, y: 0 };
-  context: any;
-  options: any;
-  players: any;
-  me: any;
+  context: CanvasRenderingContext2D;
+  options: IGameOptions;
+  players: Array<IUser>;
+  me: number;
 
-  constructor(canvas, options, me, players) {
+  constructor(canvas: HTMLCanvasElement, options: IGameOptions, me: number, players: Array<IUser>) {
+    console.log('players', players);
     canvas.width = options.display.width;
     canvas.height = options.display.height;
 
@@ -15,21 +19,21 @@ export class Pong {
 
     this.me = me;
     this.players = players.map((player) => {
-      return { tray: options.display.height / 2, score: 0, ...player };
+      return { tray: options.display.height / 2, score: '0', ...player };
     });
   }
 
-  updateBall(x, y) {
+  updateBall(x: number, y: number): void {
     this.ball = { x, y };
     this.draw();
   }
 
-  updateScore(scores) {
+  updateScore(scores: number): void {
     let index = 0;
     this.players.forEach((player) => (player.score = scores[index++]));
   }
 
-  updateTray(player, percent) {
+  updateTray(player: IUser, percent: number): void {
     const player1 = this.players.find((player1) => player1.id == player.id);
     if (!player1) return;
 
@@ -43,7 +47,7 @@ export class Pong {
     player1.tray = tray;
   }
 
-  draw() {
+  draw(): void {
     this.context.clearRect(
       0,
       0,
