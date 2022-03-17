@@ -78,6 +78,16 @@ function getMimeType(file, fallback = null) {
   }
 }
 
+function _arrayBufferToBase64( buffer ) {
+  let binary = '';
+  const bytes = new Uint8Array( buffer );
+  const len = bytes.byteLength;
+  for (let i = 0; i < len; i++) {
+      binary += String.fromCharCode( bytes[ i ] );
+  }
+  return window.btoa( binary );
+}
+
 export default Vue.extend({
   name: 'UpdateProfile',
   data() {
@@ -109,6 +119,10 @@ export default Vue.extend({
           this.$http.get('/user/me').then((res) => {
             this.$store.commit('setUser', res.data);
             this.$store.commit('setReady', true);
+
+            this.$http.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
+              this.$store.commit('setAvatar', _arrayBufferToBase64(res.data));
+            });
             this.$router.push({ name: 'Main' });
           });
         });
