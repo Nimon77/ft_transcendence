@@ -29,45 +29,50 @@
 
 <script lang='ts'>
 import Vue from 'vue';
-import {Pong} from '@/plugins/pong.ts'
+import IGameOptions from '@/models/IGameOptions';
+import {Pong} from '@/plugins/pong.ts';
 
 export default Vue.extend({
     name: 'Game',
     data() {
-        return {
-            canvas: document.getElementById('pong'),
-            me: this.$store.getters.getUser,
-            pong: null,
-            endDialog: false,
-            winner: '',
-            input: [],
-            mapColor: '#121212',
-        }
+      return {
+        canvas: document.getElementById('pong'),
+        pong: null,
+        endDialog: false,
+        winner: '',
+        input: [],
+        mapColor: '#121212',
+      };
     },
     computed: {
+      me: {
+        get() {
+          return this.$store.getters.getUser;
+        },
+      },
       gameSock: {
         get() {
           return this.$store.getters.getGameSock;
         },
-        set(value) {
+        set(value: undefined) {
           this.$store.commit('setGameSock', value);
-        }
+        },
       },
       options: {
         get() {
           return this.$store.getters.getGameOptions;
         },
-        set(value) {
+        set(value: IGameOptions) {
           this.$store.commit('setGameOptions', value);
-        }
+        },
       },
     },
     methods: {
-      leaveRoom() {
+      leaveRoom(): void {
         this.endDialog = false;
         this.$router.push({ name: 'Main'});
       },
-      handleMouseMove(event) {
+      handleMouseMove(event): void {
         if (!this.pong) return;
         const y = event.pageY;
         if (y < window.pageYOffset + this.canvas.getBoundingClientRect().top) return;
@@ -111,35 +116,35 @@ export default Vue.extend({
         delete this.pong;
         this.pong = null;
         this.endDialog = true;
-        
-        this.gameSock.on('disconnect', ()=>{
-            console.log("disconnected");
-            this.$store.commit('setGameRoom', '');
-            this.gameSock.disconnect();
-            this.gameSock.close();
-          });
-          this.gameSock.disconnect(true);
-        });
+        this.gameSock.disconnect();
+      });
 
-		let count = 3;
-		const intervalID = setInterval(() => {
-			if (count) {
-				this.pong.context.clearRect(
-					0,
-					0,
-					this.options.display.width,
-					this.options.display.height,
-				);
-				this.pong.context.beginPath();
-				this.pong.context.fillStyle = 'white';
-				this.pong.context.font = '48px Impact';
-				this.pong.context.fillText(count, this.options.display.width / 2, this.options.display.height / 2);
-				this.pong.context.closePath();
-				return count--;
-			}
-			clearInterval(intervalID);
-			this.gameSock.emit('start');
-		}, 1000);
+      this.gameSock.on('disconnect', ()=>{
+          console.log("disconnected");
+          this.$store.commit('setGameRoom', '');
+          this.gameSock.disconnect();
+          this.gameSock.close();
+      });
+
+      let count = 3;
+      const intervalID = setInterval(() => {
+        if (count) {
+          this.pong.context.clearRect(
+            0,
+            0,
+            this.options.display.width,
+            this.options.display.height,
+          );
+          this.pong.context.beginPath();
+          this.pong.context.fillStyle = 'white';
+          this.pong.context.font = '48px Impact';
+          this.pong.context.fillText(count, this.options.display.width / 2, this.options.display.height / 2);
+          this.pong.context.closePath();
+          return count--;
+        }
+        clearInterval(intervalID);
+        this.gameSock.emit('start');
+      }, 1000);
     }
 })
 </script>

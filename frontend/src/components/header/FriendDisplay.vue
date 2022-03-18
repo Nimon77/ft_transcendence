@@ -49,14 +49,24 @@ export default Vue.extend({
       },
       me: []
     },
-    data(): unknown {
+    data() {
       return {
         user: [],
         status: 'grey',
       }
     },
+    computed: {
+      socket: {
+        get() {
+          return this.$store.getters.getGameSock;
+        },
+        set(value: undefined) {
+          this.$store.commit('setGameSock', value);
+        },
+      },
+    },
     methods: {
-      spectate() {
+      spectate(): void {
         console.log("spectate");
         // vérifier que le user n'est pas deja in game
         if (this.status != 'orange') {
@@ -65,16 +75,22 @@ export default Vue.extend({
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
               },
           });
-          this.$store.commit('setGameSock', this.socket);
-          this.$store.getters.getGameSock.on('info', (data) => {
-              console.log('Connected', data); // TODO: remove
-              this.socket.emit('room'); // RAJOUTER LE CODE DE LA ROOM
+          this.socket.on('info', (data) => {
+            console.log('Connected', data); // TODO: remove
+            this.$http.get('/pong/' + this.user.id).then(response => {
+              console.log(response);
+              this.socket.emit('room', response.data); // RAJOUTER LE CODE DE LA ROOM
+            });
           });
-          this.socket.on('room', (code) => {
+          this.socket.on('ready', (options, players) => {
+            console.log(options, players);
+            this.$store.commit('setGameOptions', options);
+            this.$store.commit('setUsersInGame', players);
+          });
+          this.socket.on('room', (code, options) => {
               this.dialog = false;
-              console.log(`room ${code} created`); // TODO: remove
               this.$store.commit('setGameRoom', code);
-              this.$router.push('/pregame');
+              this.$router.push({ name: 'game' });
           });
           return;
         }
