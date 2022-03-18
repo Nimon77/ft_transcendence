@@ -27,7 +27,14 @@ export default Vue.extend({
   },
   methods: {
     clicked() {
-      alert("Clicked!");
+      // const payload = {
+      //   id: store.getters.getNotify.sender,
+      //   sender: store.getters.getUser.id,
+      //   message: store.getters.getUser.username + " has invited you to play",
+      //   roomCode: store.getters.getNotify.roomCode
+      // };
+      // this.$socket.emit('notify', payload);
+      alert(store.getters.getNotify.roomCode);
     }
   }
 });
