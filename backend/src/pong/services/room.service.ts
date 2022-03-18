@@ -67,6 +67,7 @@ export class RoomService {
       players: [],
       options: RoomService.options,
       ball: { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } },
+      speed: 0,
     };
     this.rooms.set(code, room);
     return room;
@@ -141,13 +142,7 @@ export class RoomService {
   startCalc(room: Room) {
     if (room.state != State.COUNTDOWN) return;
 
-    room.ball.position.x = room.options.display.width / 2;
-    room.ball.position.y = room.options.display.height / 2;
-    room.ball.velocity = PongService.velocity(
-      room.options.ball.speed,
-      Math.random() * Math.PI * 2,
-    );
-
+    this.pong.resetBall(room);
     room.state = State.INGAME;
   }
 
