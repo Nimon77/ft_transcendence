@@ -3,7 +3,7 @@
     <v-row class="fill-height" align="start" justify="center">
       <Channel :socket="socket" :CRs="CRs" :userCR="userCR" v-on:fetchCR="fetchCR=!fetchCR"/>
       <Chat :socket="socket" v-bind:idCR="idCR" />
-      <PlayerChannel :userCR="userCR" :playersCR="playersCR" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
+      <PlayerChannel :socket="socket" :playersCR="playersCR" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
     </v-row>
   </v-container>
 </template>
@@ -11,6 +11,7 @@
 <script lang="ts">
 import Vue from 'vue';
 import io from "socket.io-client";
+import { POSITION } from "vue-toastification";
 
 import Chat from '@/components/community/Chat.vue'
 import Channel from '@/components/community/Channel.vue'
@@ -140,6 +141,49 @@ export default Vue.extend({
       this.fetchSocket();
       this.$watch(() => this.fetchCR, () => {this.fetchInfos()},{ immediate: true })
       this.$watch(() => this.idCR, () => {this.fetchInfos()},{ immediate: true })
+
+      this.socket.on('mute', data => {
+        console.log("MUTE", data);
+        if (data.muted_user.id == this.user.id) {
+          this.$toast.warning("You have been muted by " + data.user.username, {
+            position: POSITION.TOP_RIGHT,
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+        }
+        this.fetchInfos();
+      });
+      this.socket.on('ban', data => {
+        if (data.banned_user.id == this.user.id) {
+          this.$toast.error("You have been banned by " + data.user.username, {
+            position: "top-right",
+            timeout: 5000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: true,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+        }
+        this.fetchInfos();
+      });
+      this.socket.on("admin", data => {
+        this.fetchInfos();
+      });
     },
     beforeRouteLeave(to, from, next) {
       this.socket.disconnect();
