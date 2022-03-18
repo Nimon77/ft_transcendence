@@ -128,7 +128,13 @@ export class RoomService {
       room.players[Math.round(Math.random())].input.plan;
     room.options.input.mode =
       room.players[Math.round(Math.random())].input.mode;
-
+    if (room.options.input.mode == 1)
+    {
+      room.options.ball.radius = 25;
+      room.options.ball.speed = 30;
+    }
+    else if (room.options.input.mode == 2)
+      room.options.tray.height = 100;
     this.emit(
       room,
       'ready',
