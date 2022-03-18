@@ -6,6 +6,7 @@ import { Avatar } from './avatar/avatar.entity';
 import { ChatService } from 'src/chat/chat.service';
 import { Status } from './enums/status.enum';
 import { User } from './entities/user.entity';
+import { Match } from './entities/match.entity';
 
 @Injectable()
 export class UserService {
@@ -114,5 +115,13 @@ export class UserService {
     await this.repo.update(user.id, {
       blocked: user.blocked,
     });
+  }
+
+  async getMatches(userId: number) : Promise<Match[]>{
+    const user = await this.repo.findOne(userId, { relations: ['matches']});
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    if (!user.matches)
+      return [];
+    return user.matches;
   }
 }

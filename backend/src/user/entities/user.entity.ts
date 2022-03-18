@@ -52,5 +52,5 @@ export class User {
 
   @ManyToOne(() => Match, (match) => match.id)
   @JoinColumn()
-  public matchs: Match[];
+  public matches: Match[];
 }
