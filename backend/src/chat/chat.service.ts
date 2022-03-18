@@ -299,10 +299,7 @@ export class ChatService {
       throw new HttpException('User isnt in room', HttpStatus.NOT_FOUND);
 
     if (!currentroom.adminId.find((adminId) => adminId == admin.id))
-      throw new HttpException(
-        'User isnt admin in room',
-        HttpStatus.FORBIDDEN,
-      );
+      throw new HttpException('User isnt admin in room', HttpStatus.FORBIDDEN);
 
     if (currentroom.muted.find((user1) => user1.userId == user.id))
       throw new HttpException('User is already muted', HttpStatus.FORBIDDEN);
@@ -333,16 +330,10 @@ export class ChatService {
       throw new HttpException('User isnt in room', HttpStatus.NOT_FOUND);
 
     if (!currentroom.adminId.find((adminId) => adminId == admin.id))
-      throw new HttpException(
-        'User isnt admin in room',
-        HttpStatus.FORBIDDEN,
-      );
+      throw new HttpException('User isnt admin in room', HttpStatus.FORBIDDEN);
 
     if (currentroom.banned.find((user1) => user1.userId == user.id))
-      throw new HttpException(
-        'User is already banned',
-        HttpStatus.FORBIDDEN,
-      );
+      throw new HttpException('User is already banned', HttpStatus.FORBIDDEN);
 
     const time = new Date(Date.now() + temporary);
     const banned = this.bannedRepo.create({
