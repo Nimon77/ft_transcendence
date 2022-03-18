@@ -12,7 +12,21 @@ export class PongService {
     return { x: Math.cos(radian) * speed, y: Math.sin(radian) * speed };
   };
 
-  update(room: Room) {
+  resetBall(room: Room, left?: boolean): void {
+    let radian = (Math.random() * Math.PI) / 2 - Math.PI / 4;
+    if (left) radian += Math.PI;
+
+    room.speed = room.options.ball.speed;
+
+    this.updateBall(
+      room.options.display.width / 2,
+      room.options.display.height / 2,
+      radian,
+      room,
+    );
+  }
+
+  update(room: Room): void {
     const next = {
       x: room.ball.position.x + room.ball.velocity.x,
       y: room.ball.position.y + room.ball.velocity.y,
@@ -34,17 +48,10 @@ export class PongService {
       for (const player of room.players)
         if (player.score == room.options.score.max)
           return this.roomService.stopGame(room, player);
-      // if (player.score == 1)
-      //   return this.roomService.stopGame(room, player);
 
-      let ajust = 0;
-      if (next.x + room.options.ball.radius > room.options.display.width)
-        ajust = Math.PI;
-      return this.updateBall(
-        room.options.display.width / 2,
-        room.options.display.height / 2,
-        (Math.random() * Math.PI) / 2 - Math.PI / 4 + ajust,
+      this.resetBall(
         room,
+        next.x + room.options.ball.radius > room.options.display.width,
       );
     }
     // player 1
@@ -86,10 +93,10 @@ export class PongService {
     this.roomService.emit(room, 'ball', room.ball.position);
   }
 
-  updateBall(x: number, y: number, radian: number, room: Room) {
+  updateBall(x: number, y: number, radian: number, room: Room): void {
     room.ball.position.x = x;
     room.ball.position.y = y;
-    room.ball.velocity = PongService.velocity(room.options.ball.speed, radian);
+    room.ball.velocity = PongService.velocity((room.speed *= 1.01), radian);
     this.roomService.emit(room, 'ball', room.ball.position);
   }
 }

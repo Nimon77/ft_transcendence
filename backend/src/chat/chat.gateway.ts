@@ -43,7 +43,7 @@ export class ChatGateway implements OnGatewayConnection {
     });
   }
 
-  emitRoom(room: ChatRoom, event: string, ...args) {
+  emitRoom(room: ChatRoom, event: string, ...args): Promise<void> {
     if (!room.users) return;
 
     const sockets: any[] = Array.from(this.server.sockets.values());
@@ -54,7 +54,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('channel')
-  async getChannel(client: Socket, id: number) {
+  async getChannel(client: Socket, id: number): Promise<void> {
     const channel = await this.chatService.getRoom(id, ['users', 'logs']);
     client.emit('channel', channel);
   }
@@ -75,7 +75,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('join')
-  async joinChannel(client: Socket, room: ChatRoom) {
+  async joinChannel(client: Socket, room: ChatRoom): Promise<void> {
     try {
       await this.chatService.addUserToRoom(room, client.data.user);
       room = await this.chatService.getRoom(room.id, ['users']);
@@ -84,7 +84,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('leave')
-  async leaveChannel(client: Socket, data: any) {
+  async leaveChannel(client: Socket, data: any): Promise<void> {
     try {
       let user = client.data.user;
       if (data.userId) user = await this.userService.getUserById(data.userId);
@@ -102,7 +102,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('admin')
-  async toggleAdmin(client: Socket, data: any) {
+  async toggleAdmin(client: Socket, data: any): Promise<void> {
     try {
       const room = await this.chatService.getRoom(data.roomId, ['users']);
       const owner = client.data.user;
@@ -120,7 +120,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('mute')
-  async toggleMute(client: Socket, data: any) {
+  async toggleMute(client: Socket, data: any): Promise<void> {
     try {
       const room = await this.chatService.getRoom(data.roomId, [
         'users',
@@ -145,7 +145,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('ban')
-  async toggleBan(client: Socket, data: any) {
+  async toggleBan(client: Socket, data: any): Promise<void> {
     try {
       const room = await this.chatService.getRoom(data.roomId, [
         'users',

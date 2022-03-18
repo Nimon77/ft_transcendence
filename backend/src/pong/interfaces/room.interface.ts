@@ -27,4 +27,5 @@ export interface Room {
   spectators?: Array<Socket>;
   options: Option;
   ball: Ball;
+  speed: number;
 }
