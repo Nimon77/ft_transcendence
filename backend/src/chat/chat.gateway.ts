@@ -138,7 +138,7 @@ export class ChatGateway implements OnGatewayConnection {
         is_muted = true;
       }
       this.emitRoom(room, 'mute', {
-        user: { id: admin.id, username: admin.username },
+        user: { id: curuser.id, username: curuser.username },
         is_muted: is_muted,
       });
     } catch {}
@@ -165,7 +165,7 @@ export class ChatGateway implements OnGatewayConnection {
         is_banned = true;
       }
       this.emitRoom(room, 'ban', {
-        user: { id: admin.id, username: admin.username },
+        user: { id: curuser.id, username: curuser.username },
         is_banned: is_banned,
       });
     } catch {}

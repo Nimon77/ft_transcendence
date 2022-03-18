@@ -76,6 +76,10 @@ export default Vue.extend({
   },
   methods:{
     readyStat() {
+      this.gameSock.on('stop', () => {
+        this.endDialog = true;
+        this.gameSock.disconnect();
+      });
       console.log("PLAYER READY");
       console.log("MAP: ", this.gameMap);
       console.log("MOD: ", this.gameMode);
