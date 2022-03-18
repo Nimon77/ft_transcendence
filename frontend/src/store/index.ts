@@ -38,7 +38,7 @@ export default new Vuex.Store({
       playersCR: {},
     },
 
-    gameSock: Socket,
+    gameSock: <Socket> null,
     gameRoom: '',
     gameOptions: <IGameOptions>{},
     usersInGame: <Array<IUser>>[],
