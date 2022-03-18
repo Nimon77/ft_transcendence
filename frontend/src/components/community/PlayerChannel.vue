@@ -73,13 +73,6 @@ export default Vue.extend({
       admins: [],
       idCR: Number,
     },
-    data() {
-        return {
-          test: true,
-          // muted: [],
-          // banned: [],
-        }    
-    },
     computed: {
       user() {
         return this.$store.getters.getUser;
@@ -88,19 +81,7 @@ export default Vue.extend({
         return this.$store.getters.getUserCR;
       },
     },
-    created() {
-      // this.$watch(() => this.playersCR, () => {return},{ immediate: true })
-      // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true }) // TODO: remove
-      // this.$watch(() => this.idCR, () => { this.fetchChannel() },{ immediate: true })
-      
-    },
     methods: {
-      // async fetchChannel() {
-      //   await this.$http.get('/channel/'+ this.idCR).then((resp) => {
-      //     this.muted = resp.data.muted;
-      //     this.banned = resp.data.banned;
-      //   })
-      // },
       isPlayerMuted(idPlayer) {
         if (this.userCR.find(CR => CR.id == this.idCR).muted.find(muted => muted.userId == idPlayer))
           return 'UNMUTE';
@@ -119,7 +100,7 @@ export default Vue.extend({
       },
 
       mutePlayer(idPlayer) {
-        this.socket.emit('mute', {userId: idPlayer, idCroomIdR: this.idCR})
+        this.socket.emit('mute', {userId: idPlayer, roomId: this.idCR})
       },
       banPlayer (idPlayer) {
         this.socket.emit('ban', {userId: idPlayer, roomId: this.idCR});
