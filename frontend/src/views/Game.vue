@@ -16,9 +16,9 @@
   <v-row justify="center" align="center" >
     <v-card color="green" tile>
       <div class="text-center font-weight-bold text-h3 mt-6">
-        {{this.$store.state.usersInGame[0].username}}
+        {{this.$store.getters.getUsersInGame[0].username}}
         <span class="white--text"> VS </span>
-        {{this.$store.state.usersInGame[1].username}}
+        {{this.$store.getters.getUsersInGame[1].username}}
       </div>
       <canvas :style="{'background-color': mapColor}" class="mx-5 my-5" id="pong"></canvas>
     </v-card>
@@ -35,16 +35,32 @@ export default Vue.extend({
     name: 'Game',
     data() {
         return {
-            gameSock: this.$store.state.gameSock,
             canvas: document.getElementById('pong'),
-            me: this.$store.state.user,
+            me: this.$store.getters.getUser,
             pong: null,
             endDialog: false,
             winner: '',
             input: [],
             mapColor: '#121212',
-            options: [],
         }
+    },
+    computed: {
+      gameSock: {
+        get() {
+          return this.$store.getters.getGameSock;
+        },
+        set(value) {
+          this.$store.commit('setGameSock', value);
+        }
+      },
+      options: {
+        get() {
+          return this.$store.getters.getGameOptions;
+        },
+        set(value) {
+          this.$store.commit('setGameOptions', value);
+        }
+      },
     },
     methods: {
       leaveRoom() {
@@ -63,7 +79,6 @@ export default Vue.extend({
     },
     mounted() {
       this.canvas = document.getElementById('pong');
-      this.options = this.$store.state.gameOptions;
       this.input = this.options.input;
       if (this.input.plan == 0)
         this.mapColor = '#121212';
@@ -100,10 +115,10 @@ export default Vue.extend({
         this.gameSock.on('disconnect', ()=>{
             console.log("disconnected");
             this.$store.commit('setGameRoom', '');
-            this.$store.state.gameSock.disconnect();
-            this.$store.state.gameSock.close();
+            this.gameSock.disconnect();
+            this.gameSock.close();
           });
-          this.$store.state.gameSock.disconnect(true);
+          this.gameSock.disconnect(true);
         });
 
 		let count = 3;

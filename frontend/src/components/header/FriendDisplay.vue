@@ -66,7 +66,7 @@ export default Vue.extend({
               },
           });
           this.$store.commit('setGameSock', this.socket);
-          this.$store.state.gameSock.on('info', (data) => {
+          this.$store.getters.getGameSock.on('info', (data) => {
               console.log('Connected', data); // TODO: remove
               this.socket.emit('room'); // RAJOUTER LE CODE DE LA ROOM
           });

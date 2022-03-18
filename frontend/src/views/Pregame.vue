@@ -64,6 +64,16 @@ export default Vue.extend({
       color: 'white',
     }
   },
+  computed: {
+    gameSock: {
+      get() {
+        return this.$store.getters.getGameSock;
+      },
+      set(value) {
+        this.$store.commit('setGameSock', value);
+      }
+    },
+  },
   methods:{
     readyStat() {
       console.log("PLAYER READY");
@@ -71,13 +81,13 @@ export default Vue.extend({
       console.log("MOD: ", this.gameMode);
       this.loader = !this.loader;
       this.color = 'green';
-      this.$store.state.gameSock.on('ready', (options, users) => {
+      this.gameSock.on('ready', (options, users) => {
         console.log('Game ready!', options);
         this.$store.commit('setGameOptions', options);
         this.$store.commit('setUsersInGame', users);
         this.$router.push('/game');
       });
-      this.$store.state.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
+      this.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
     }
   }
 });

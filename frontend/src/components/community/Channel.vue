@@ -151,7 +151,7 @@ export default Vue.extend({
         }
       },
       user() {
-        return this.$store.state.user;
+        return this.$store.getters.getUser;
       },
       filteredCRs(): unknown {
         // console.log('FILTERED CR', this.CRs); // TODO: remove
