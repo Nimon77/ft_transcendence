@@ -220,7 +220,7 @@
           },
           "data": {
             "type": "string",
-            "format": "Uint8Array"
+            "format": "bytea"
           }
         }
       },
