@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { Socket } from 'socket.io';
+import { UserService } from 'src/user/user.service';
 import { Input, Mode, Plan } from '../interfaces/input.interface';
 import { Option } from '../interfaces/option.interface';
 import { Player } from '../interfaces/player.interface';
@@ -9,7 +10,10 @@ import { PongService } from './pong.service';
 
 @Injectable()
 export class RoomService {
-  constructor(private readonly pong: PongService) {}
+  constructor(
+    private readonly pong: PongService,
+    private readonly userService: UserService,
+  ) {}
   static options: Option = {
     display: { width: 1920, height: 1080 },
     ball: { speed: 20, radius: 20 },
@@ -20,6 +24,12 @@ export class RoomService {
 
   queue: Array<Socket> = [];
   rooms: Map<string, Room> = new Map();
+
+  static emit(room: Room, event: string, ...args: any) {
+    for (const player of room.players) player.socket.emit(event, ...args);
+    if (room.spectators)
+      for (const spectator of room.spectators) spectator.emit(event, ...args);
+  }
 
   removeSocket(socket: Socket) {
     if (this.queue.indexOf(socket) != -1)
@@ -52,6 +62,7 @@ export class RoomService {
     while (this.queue.length && room.players.length < 2)
       this.joinRoom(this.queue.shift(), room);
   }
+
   createRoom(code: string = null): Room {
     while (!code) {
       const length = 10;
@@ -89,8 +100,7 @@ export class RoomService {
       if (!room.spectators) room.spectators = [];
       room.spectators.push(socket);
 
-      this.emit(
-        room,
+      socket.emit(
         'ready',
         room.options,
         room.players.map((player) => player.user),
@@ -115,12 +125,6 @@ export class RoomService {
     this.startGame(player.room);
   }
 
-  emit(room: Room, event: string, ...args: any) {
-    for (const player of room.players) player.socket.emit(event, ...args);
-    if (room.spectators)
-      for (const spectator of room.spectators) spectator.emit(event, ...args);
-  }
-
   startGame(room: Room) {
     if (room.state != State.STARTING) return;
     for (const player of room.players) if (!player.input) return;
@@ -136,7 +140,7 @@ export class RoomService {
     } else if (room.options.input.mode == Mode.SMALL)
       room.options.tray.height = 100;
 
-    this.emit(
+    RoomService.emit(
       room,
       'ready',
       room.options,
@@ -160,9 +164,16 @@ export class RoomService {
   }
 
   stopGame(room: Room, player: Player) {
+    if (room.state == State.END) return;
     room.state = State.END;
+    RoomService.emit(room, 'stop', player.user);
 
-    this.emit(room, 'stop', player.user);
+    this.userService.createMatchHistory({
+      score: room.players.map((player) => player.score),
+      winner: player.user,
+      loser: room.players.find((player1) => player1.user.id != player.user.id)
+        .user,
+    });
   }
 
   getRoomForUser(userId: number): Room {

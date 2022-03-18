@@ -12,7 +12,7 @@ export class Match {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ type: 'int' })
+  @Column('int', { array: true, default: [] })
   public score: number[];
 
   @Column({ type: 'timestamptz' })
