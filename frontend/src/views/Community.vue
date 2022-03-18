@@ -145,7 +145,8 @@ export default Vue.extend({
       this.socket.on('mute', data => {
         console.log("MUTE", data);
         if (data.muted_user.id == this.user.id) {
-          this.$toast.warning("You have been muted by " + data.user.username, {
+          const message = data.is_muted ? "You have been muted by " + data.user.username : "You have been unmuted by " + data.user.username;
+          this.$toast.warning(message, {
             position: POSITION.TOP_RIGHT,
             timeout: 5000,
             closeOnClick: true,
@@ -181,7 +182,7 @@ export default Vue.extend({
         }
         this.fetchInfos();
       });
-      this.socket.on("admin", data => {
+      this.socket.on("admin", () => {
         this.fetchInfos();
       });
     },

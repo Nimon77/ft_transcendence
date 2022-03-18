@@ -37,8 +37,8 @@
           </v-list-item>
           <v-list-item dense v-if="isAdmin">
             <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn @click="mutePlayer(player.id)" color="red" tile dark min-width="50%" > MUTE </v-btn>
-              <v-btn @click="banPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" > BAN </v-btn>
+              <v-btn @click="mutePlayer(player.id)" color="red" tile dark min-width="50%" >{{isPlayerMuted(player.id)}}</v-btn>
+              <v-btn @click="banPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" >{{isPlayerBanned(player.id)}}</v-btn>
             </v-list-item-title>
           </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
           <v-list-item dense v-if="isOwner">
@@ -80,6 +80,14 @@ export default Vue.extend({
           // banned: [],
         }    
     },
+    computed: {
+      user() {
+        return this.$store.getters.getUser;
+      },
+      userCR() {
+        return this.$store.getters.getUserCR;
+      },
+    },
     created() {
       // this.$watch(() => this.playersCR, () => {return},{ immediate: true })
       // this.$watch(() => this.isOwner, () => { console.log(this.isOwner, this.isAdmin); },{ immediate: true }) // TODO: remove
@@ -93,19 +101,29 @@ export default Vue.extend({
       //     this.banned = resp.data.banned;
       //   })
       // },
+      isPlayerMuted(idPlayer) {
+        if (this.userCR.find(CR => CR.id == this.idCR).muted.find(muted => muted.userId == idPlayer))
+          return 'UNMUTE';
+        return 'MUTE';
+      },
+      isPlayerBanned(idPlayer) {
+        if (this.userCR.find(CR => CR.id == this.idCR).banned.find(banned => banned.userId == idPlayer))
+          return 'UNBAN';
+        return 'BAN';
+      },
+      isPlayerAdmin(idPlayer) {
+        if (this.admins.indexOf(idPlayer) == -1)
+          return "SET ADMIN";
+        else
+          return "UNSET ADMIN";
+      },
+
       mutePlayer(idPlayer) {
         this.socket.emit('mute', {userId: idPlayer, idCroomIdR: this.idCR})
       },
       banPlayer (idPlayer) {
         this.socket.emit('ban', {userId: idPlayer, roomId: this.idCR});
       },
-      isPlayerAdmin(idPlayer) {
-        if (this.admins.indexOf(idPlayer) == -1)
-          return "SET ADMIN";
-        else
-          return "UNSET ADMIN"
-      },
-
       setAdmin(idPlayer) {
         this.socket.emit('admin', {userId: idPlayer, roomId: this.idCR});
       },
@@ -130,11 +148,6 @@ export default Vue.extend({
         else
           return 'grey';
       }
-    },
-    computed: {
-      user() {
-        return this.$store.getters.getUser;
-      },
     },
 })
 </script>
