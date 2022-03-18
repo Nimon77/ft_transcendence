@@ -16,10 +16,10 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import AvatarService from 'src/user/avatar/avatar.service';
 import { Readable } from 'stream';
 import { User } from '../entities/user.entity';
-import { UserService } from '../user.service';
+import AvatarService from '../services/avatar.service';
+import { UserService } from '../services/user.service';
 
 @Controller('user')
 export class IdController {
@@ -43,8 +43,7 @@ export class IdController {
     @Param('id', ParseIntPipe) id: number,
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
-    const user = await this.userService.getUserById(id);
-    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    const avatar = await this.userService.getAvatar(id);
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
@@ -53,7 +52,7 @@ export class IdController {
     });
     return new StreamableFile(stream);
   }
-  
+
   @Get('/matches/:id')
   async getMatches(@Param('id', ParseIntPipe) id: number) {
     return await this.userService.getMatches(id);
@@ -81,11 +80,10 @@ export class IdController {
 
   @Put(':id/avatar')
   @UseInterceptors(FileInterceptor('file'))
-  async setAvatar(
+  setAvatar(
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
   ) {
-    const user = await this.userService.getUserById(id);
-    this.userService.setAvatar(user, file.originalname, file.buffer);
+    this.userService.setAvatar(id, file.originalname, file.buffer);
   }
 }

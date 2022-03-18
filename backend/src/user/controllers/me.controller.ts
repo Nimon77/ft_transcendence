@@ -15,17 +15,13 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import AvatarService from 'src/user/avatar/avatar.service';
 import { Readable } from 'stream';
 import { User } from '../entities/user.entity';
-import { UserService } from '../user.service';
+import { UserService } from '../services/user.service';
 
 @Controller('user')
 export class MeController {
-  constructor(
-    private readonly userService: UserService,
-    private readonly avatarService: AvatarService,
-  ) {}
+  constructor(private readonly userService: UserService) {}
 
   @Get('/me')
   getUser(@Request() req): Promise<User> {
@@ -37,8 +33,7 @@ export class MeController {
     @Request() req,
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
-    const user = await this.userService.getUserById(req.user.userId);
-    const avatar = await this.avatarService.getAvatarById(user.avatarId);
+    const avatar = await this.userService.getAvatar(req.user.userId);
     const stream = Readable.from(avatar.data);
     stream.pipe(response);
     response.set({
@@ -62,12 +57,12 @@ export class MeController {
 
   @Put('me/avatar')
   @UseInterceptors(FileInterceptor('file'))
-  async updateAvatar(
-    @Request() req,
-    @UploadedFile() file: Express.Multer.File,
-  ) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.userService.setAvatar(user, file.originalname, file.buffer);
+  updateAvatar(@Request() req, @UploadedFile() file: Express.Multer.File) {
+    return this.userService.setAvatar(
+      req.user.userId,
+      file.originalname,
+      file.buffer,
+    );
   }
 
   @Post('/me/follow')

@@ -6,7 +6,7 @@ import {
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/user/entities/user.entity';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/user/services/user.service';
 
 @WebSocketGateway({
   cors: {

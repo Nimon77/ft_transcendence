@@ -1,7 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { Socket } from 'socket.io';
-import { UserService } from 'src/user/user.service';
+import { UserService } from 'src/user/services/user.service';
 import { Input, Mode, Plan } from '../interfaces/input.interface';
 import { Option } from '../interfaces/option.interface';
 import { Player } from '../interfaces/player.interface';

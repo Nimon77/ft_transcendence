@@ -1,8 +1,8 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { UserService } from 'src/user/user.service';
 import * as https from 'https';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/services/user.service';
 
 const download = (url: string): Promise<Buffer> =>
   new Promise((resolve, reject) => {
@@ -24,16 +24,11 @@ export class AuthService {
   ) {}
 
   async login(user: any) {
-    let newUser: User = {
-      id: user.id,
-      ...new User(),
-    };
-
-    await this.userService.getUserById(newUser.id).catch(async () => {
-      newUser = await this.userService.createUser(newUser);
+    await this.userService.getUserById(user.id).catch(async () => {
+      await this.userService.createUser({ id: user.id } as User);
       if (user.photos)
         this.userService.setAvatar(
-          newUser,
+          user.id,
           '42',
           await download(user.photos[0].value),
         );

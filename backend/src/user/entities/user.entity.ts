@@ -7,7 +7,7 @@ import {
   ManyToMany,
   OneToMany,
 } from 'typeorm';
-import { Avatar } from 'src/user/avatar/avatar.entity';
+import { Avatar } from 'src/user/entities/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { Status } from '../enums/status.enum';
 import { Match } from './match.entity';
@@ -38,14 +38,9 @@ export class User {
   @ManyToMany(() => ChatRoom, (room) => room.users)
   public rooms: ChatRoom[];
 
-  @OneToOne(() => Avatar, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
-  @JoinColumn({ name: 'avatarId' })
-  public avatar?: Avatar;
-  @Column({ nullable: true })
-  public avatarId: number;
+  @OneToOne(() => Avatar, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  public avatar: Avatar;
 
   @Column({ default: Status.OFFLINE })
   public status: Status;

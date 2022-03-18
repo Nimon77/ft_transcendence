@@ -5,12 +5,12 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
-import { UserService } from 'src/user/user.service';
 import { Input } from './interfaces/input.interface';
 import { RoomService } from './services/room.service';
 import { Player } from './interfaces/player.interface';
 import { Room } from './interfaces/room.interface';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/services/user.service';
 
 @WebSocketGateway({
   cors: {
