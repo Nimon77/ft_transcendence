@@ -18,11 +18,11 @@ export class Match {
   @Column({ type: 'timestamptz' })
   public date: Date;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE', eager: true })
   @JoinColumn()
   winner: User;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE', eager: true })
   @JoinColumn()
   loser: User;
 }

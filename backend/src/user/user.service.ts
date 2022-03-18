@@ -92,6 +92,34 @@ export class UserService {
     return this.userRepository.update(userId, { status });
   }
 
+  async createMatchHistory(data: any): Promise<void> {
+    const match: Match = this.matchRepository.create({
+      date: new Date(),
+      ...data,
+    } as Match);
+
+    try {
+      await this.matchRepository.save(match);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getMatches(userId: number): Promise<Match[]> {
+    const user = await this.userRepository.findOne(userId, {
+      relations: ['won', 'lost'],
+    });
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    let matches = [];
+    if (user.won) matches = matches.concat(user.won);
+    if (user.lost) matches = matches.concat(user.lost);
+
+    console.log(matches);
+
+    return matches;
+  }
+
   async updateFollow(user: User, followed_user: User) {
     if (followed_user.id == user.id) return;
     const userFollow = await this.userRepository.find({
@@ -120,28 +148,5 @@ export class UserService {
     await this.userRepository.update(user.id, {
       blocked: user.blocked,
     });
-  }
-
-  async createMatchHistory(data: any) {
-    const match: Match = this.matchRepository.create({
-      date: new Date(),
-      ...data,
-    } as Match);
-
-    try {
-      await this.matchRepository.save(match);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
-  async getMatches(userId: number): Promise<Match[]> {
-    const user = await this.userRepository.findOne(userId, {
-      relations: ['matches'],
-    });
-    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-    console.log(user.matches);
-    if (!user.matches) return [];
-    return user.matches;
   }
 }

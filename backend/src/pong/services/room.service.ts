@@ -31,7 +31,7 @@ export class RoomService {
       for (const spectator of room.spectators) spectator.emit(event, ...args);
   }
 
-  removeSocket(socket: Socket) {
+  async removeSocket(socket: Socket) {
     if (this.queue.indexOf(socket) != -1)
       return this.queue.splice(this.queue.indexOf(socket), 1);
 
@@ -41,9 +41,13 @@ export class RoomService {
 
       for (const player of room.players)
         if (player.socket.id == socket.id) {
+          if (
+            room.state == State.INGAME ||
+            room.state == State.STARTING ||
+            room.state == State.COUNTDOWN
+          )
+            await this.stopGame(room, room.players[0]);
           room.players.splice(room.players.indexOf(player), 1);
-          if (room.state == State.INGAME || room.state == State.STARTING || room.state == State.COUNTDOWN)
-              this.stopGame(room, room.players[0]);
           break;
         }
       if (!room.players.length) return this.rooms.delete(room.code);
@@ -163,17 +167,17 @@ export class RoomService {
       if (room.state == State.INGAME) this.pong.update(room);
   }
 
-  stopGame(room: Room, player: Player) {
+  stopGame(room: Room, player: Player): Promise<void> {
     if (room.state == State.END) return;
     room.state = State.END;
     RoomService.emit(room, 'stop', player.user);
 
-    /*this.userService.createMatchHistory({
+    return this.userService.createMatchHistory({
       score: room.players.map((player) => player.score),
       winner: player.user,
       loser: room.players.find((player1) => player1.user.id != player.user.id)
         .user,
-    });*/
+    });
   }
 
   getRoomForUser(userId: number): Room {

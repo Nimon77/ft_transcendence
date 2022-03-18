@@ -50,6 +50,9 @@ export class User {
   @Column({ default: Status.OFFLINE })
   public status: Status;
 
-  @OneToMany(() => Match, (match) => match.winner || match.loser)
-  public matches: Match[];
+  @OneToMany(() => Match, (match) => match.winner)
+  public won: Match[];
+
+  @OneToMany(() => Match, (match) => match.loser)
+  public lost: Match[];
 }
