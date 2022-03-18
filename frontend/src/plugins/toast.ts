@@ -9,5 +9,4 @@ const options = {
 	newestOnTop: true
 };
 
-
 Vue.use(Toast, options);

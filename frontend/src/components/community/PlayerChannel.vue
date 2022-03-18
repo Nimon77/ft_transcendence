@@ -4,7 +4,7 @@
       <v-divider class="pt-7"></v-divider>
       <span class="span"> PLAYERS </span>
       </v-sheet>
-      <v-list>
+      <v-list v-if="idCR != 0">
         <div class="d-flex justify-left">
         <v-list-item-content  class="mt-n4 ml-4 yellow--text text-h6">
           <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{user.username}} </v-list-item-title>
@@ -52,6 +52,8 @@
         <v-divider></v-divider>
       </div>
       </v-list>
+      <v-sheet v-else color="grey" height="100%" dark width="100%" class="text-center">
+      </v-sheet>
     </v-card>
 
 </template>
@@ -64,6 +66,7 @@ import Vue from 'vue';
 export default Vue.extend({
     name: 'PlayerChannel',
     props: {
+      socket: {},
       playersCR: [],
       isOwner: Boolean,
       isAdmin: Boolean,
@@ -90,24 +93,11 @@ export default Vue.extend({
       //     this.banned = resp.data.banned;
       //   })
       // },
-      async mutePlayer(idPlayer) {
-        try {
-          await this.$http.put('/channel/' + this.idCR + '/mute/', {id: idPlayer}).then((resp)=>{
-            console.log('MUTE PLAYER', resp); // TODO: remove
-          })
-        } catch (error) {
-          alert('You have no rights to MUTE this user');
-        } 
+      mutePlayer(idPlayer) {
+        this.socket.emit('mute', {userId: idPlayer, idCroomIdR: this.idCR})
       },
-      async banPlayer (idPlayer) {
-        
-        try {
-          await this.$http.put('/channel/' + this.idCR + '/ban/', {id: idPlayer}).then((resp)=>{
-            console.log('BAN PLAYER', resp); // TODO: remove
-          })
-        } catch (error) {
-          alert('You have no rights to BAN this user');
-        } 
+      banPlayer (idPlayer) {
+        this.socket.emit('ban', {userId: idPlayer, roomId: this.idCR});
       },
       isPlayerAdmin(idPlayer) {
         if (this.admins.indexOf(idPlayer) == -1)
@@ -116,15 +106,8 @@ export default Vue.extend({
           return "UNSET ADMIN"
       },
 
-      async setAdmin(idPlayer) {
-        await this.$http.put('channel/' + this.idCR + '/admin', {id: idPlayer}).then((resp)=>{
-          console.log(resp); // TODO: remove
-        });
-        if (document.getElementById('admin').innerHTML == "UNSET ADMIN")
-          document.getElementById('admin').innerHTML = "SET ADMIN";
-        else
-          document.getElementById('admin').innerHTML = "UNSET ADMIN";
-
+      setAdmin(idPlayer) {
+        this.socket.emit('admin', {userId: idPlayer, roomId: this.idCR});
       },
 
       invite(id: number) {

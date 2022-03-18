@@ -130,7 +130,11 @@ export default Vue.extend({
           canvas.toBlob((blob) => {
             const form = new FormData();
             form.append('file', blob, this.image.name);
-            this.$http.put('/user/me/avatar', form);
+            this.$http.put('/user/me/avatar', form).then(() => {
+              this.$http.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
+                this.$store.commit('setAvatar', _arrayBufferToBase64(res.data));
+              });
+            });
           }, this.image.type);
         }
       }
@@ -141,10 +145,6 @@ export default Vue.extend({
           this.$http.get('/user/me').then((res) => {
             this.$store.commit('setUser', res.data);
             this.$store.commit('setReady', true);
-
-            this.$http.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
-              this.$store.commit('setAvatar', _arrayBufferToBase64(res.data));
-            });
             this.$router.push({ name: 'Main' });
           });
         });

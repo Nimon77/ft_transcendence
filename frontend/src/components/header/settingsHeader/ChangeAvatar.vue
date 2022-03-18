@@ -178,18 +178,18 @@ export default Vue.extend({
             let existingName: string = null;
             let i = 0;
 
-            existingName = this.users[i].username;
-            while (this.username != existingName && i < this.users.length) {
-              existingName = this.users[i++].username;
+            if (this.username.length > 0) {
+              existingName = this.users[i].username;
+              while (this.username != existingName && i < this.users.length) {
+                existingName = this.users[i++].username;
+              }
+              if (this.username === existingName) {
+                const rule = `username already exist`;
+                rules.push(rule);
+              }
+              let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
+              rules.push(rule2);
             }
-            if (this.username === existingName) {
-              const rule = `username already exist`;
-              rules.push(rule);
-            }
-            let rule = v => !!v;
-            rules.push(rule);
-            let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
-            rules.push(rule2);
             return rules;
           }
         }
