@@ -1,13 +1,13 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { User } from 'src/user/user.entity';
 import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { MutedUser } from 'src/chat/entity/mute.entity';
 import { BannedUser } from 'src/chat/entity/banned.entity';
 import { Log } from 'src/chat/entity/log.entity';
-import { Match } from 'src/pong/entity/match.entity';
+import { User } from 'src/user/entities/user.entity';
+import { Match } from 'src/user/entities/match.entity';
 
 @Module({
   imports: [
@@ -20,7 +20,7 @@ import { Match } from 'src/pong/entity/match.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User, Avatar, ChatRoom, MutedUser, BannedUser, Log, Match],
+        entities: [User, Avatar, Match, ChatRoom, MutedUser, BannedUser, Log],
         synchronize: true, //false for production, else destroy/recreate data in the db
       }),
     }),

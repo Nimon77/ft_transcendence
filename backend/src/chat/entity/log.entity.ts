@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import {
   Column,
   Entity,
@@ -6,7 +7,6 @@ import {
   ManyToOne,
 } from 'typeorm';
 import { ChatRoom } from './chat.entity';
-import { User } from 'src/user/user.entity';
 
 @Entity()
 export class Log {

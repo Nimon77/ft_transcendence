@@ -5,12 +5,12 @@ import {
   JoinColumn,
   OneToOne,
   ManyToMany,
-  OneToMany,
+  ManyToOne,
 } from 'typeorm';
 import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
-import { Status } from './status.enum';
-import { Match } from 'src/pong/entity/match.entity';
+import { Status } from '../enums/status.enum';
+import { Match } from './match.entity';
 
 @Entity()
 export class User {
@@ -36,13 +36,13 @@ export class User {
   public profileCompleted: boolean;
 
   @ManyToMany(() => ChatRoom, (room) => room.users)
-  rooms: ChatRoom[];
+  public rooms: ChatRoom[];
 
-  @JoinColumn({ name: 'avatarId' })
   @OneToOne(() => Avatar, {
     nullable: true,
     onDelete: 'CASCADE',
   })
+  @JoinColumn({ name: 'avatarId' })
   public avatar?: Avatar;
   @Column({ nullable: true })
   public avatarId: number;
@@ -50,9 +50,7 @@ export class User {
   @Column({ default: Status.OFFLINE })
   public status: Status;
 
-  @OneToMany(() => Match, match => match.loser)
-  loser: User;
-
-  @OneToMany(() => Match, match => match.winner)
-  winner: User;
+  @ManyToOne(() => Match, (match) => match.id)
+  @JoinColumn()
+  public matchs: Match[];
 }

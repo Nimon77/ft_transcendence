@@ -8,12 +8,12 @@ import {
   Post,
   Request,
 } from '@nestjs/common';
-import { User } from 'src/user/user.entity';
 import { UserService } from 'src/user/user.service';
 import { ChatRoom } from '../entity/chat.entity';
 import { ChatService } from '../chat.service';
 import { PasswordI } from '../interfaces/password.interface';
 import { MessageI } from '../interfaces/message.interface';
+import { User } from 'src/user/entities/user.entity';
 
 @Controller('channel')
 export class MeController {

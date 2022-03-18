@@ -1,7 +1,7 @@
 import { Room } from './room.interface';
 import { Input } from './input.interface';
 import { Socket } from 'socket.io';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entities/user.entity';
 
 export interface Player {
   socket: Socket;
