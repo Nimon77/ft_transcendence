@@ -29,7 +29,12 @@ export class IdController {
 
   @Get('/:id') //get full room info including baned muted and users
   async getRoom(@Param('id', ParseIntPipe) id: number) {
-    return await this.chatService.getRoom(id, ['users', 'muted', 'banned', 'logs']);
+    return await this.chatService.getRoom(id, [
+      'users',
+      'muted',
+      'banned',
+      'logs',
+    ]);
   }
 
   @Post('/:id') //create channel for specific user
