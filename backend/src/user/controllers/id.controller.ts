@@ -53,7 +53,11 @@ export class IdController {
     });
     return new StreamableFile(stream);
   }
-
+  
+  @Get('/matches/:id')
+  async getMatches(@Param('id', ParseIntPipe) id: number) {
+    return await this.userService.getMatches(id);
+  }
   //for testing
 
   @Post()
