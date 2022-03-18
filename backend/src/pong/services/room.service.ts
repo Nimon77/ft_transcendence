@@ -168,7 +168,7 @@ export class RoomService {
     const room = rooms.find(
       (room) => !!room.players.find((player) => player.user.id == userId),
     );
-    if (!room) throw new HttpException('RoomF not found', HttpStatus.NOT_FOUND);
+    if (!room) throw new HttpException('Room not found', HttpStatus.NOT_FOUND);
 
     return room;
   }

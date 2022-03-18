@@ -94,7 +94,7 @@ export class ChatService {
       if (room.adminId.indexOf(adminId) == -1)
         throw new HttpException(
           'User isnt admin in room',
-          HttpStatus.UNAUTHORIZED,
+          HttpStatus.FORBIDDEN,
         );
 
       {
@@ -301,11 +301,11 @@ export class ChatService {
     if (!currentroom.adminId.find((adminId) => adminId == admin.id))
       throw new HttpException(
         'User isnt admin in room',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.FORBIDDEN,
       );
 
     if (currentroom.muted.find((user1) => user1.userId == user.id))
-      throw new HttpException('User is already muted', HttpStatus.UNAUTHORIZED);
+      throw new HttpException('User is already muted', HttpStatus.FORBIDDEN);
 
     const time = new Date(Date.now() + temporary);
     const muted = this.mutedRepo.create({
@@ -335,13 +335,13 @@ export class ChatService {
     if (!currentroom.adminId.find((adminId) => adminId == admin.id))
       throw new HttpException(
         'User isnt admin in room',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.FORBIDDEN,
       );
 
     if (currentroom.banned.find((user1) => user1.userId == user.id))
       throw new HttpException(
         'User is already banned',
-        HttpStatus.UNAUTHORIZED,
+        HttpStatus.FORBIDDEN,
       );
 
     const time = new Date(Date.now() + temporary);

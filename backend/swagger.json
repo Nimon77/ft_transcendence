@@ -14,6 +14,10 @@
       "description": "Everything about authentification"
     },
     {
+      "name": "pong",
+      "description": "Everything for the pong game"
+    },
+    {
       "name": "channel me",
       "description": "Everything about the channels for the current user"
     },
@@ -235,6 +239,9 @@
           },
           "room": {
             "$ref": "#/components/schemas/Channel"
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
           }
         }
       },
@@ -248,6 +255,29 @@
           "newPassword": {
             "type": "string",
             "example": "newpass"
+          }
+        }
+      },
+      "Match": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "score": {
+            "type": "string",
+            "example": "5-4"
+          },
+          "time": {
+            "type": "string",
+            "example": "2022-06-29"
+          },
+          "winner": {
+            "$ref": "#/components/schemas/User"
+          },
+          "loser": {
+            "$ref": "#/components/schemas/User"
           }
         }
       }
@@ -275,7 +305,16 @@
         "description": "One value that was requiered was not specified"
       },
       "WrongPass": {
-        "description": "oldPassword is incorect"
+        "description": "Password is incorect or didn't get saved"
+      },
+      "GameroomNotExist": {
+        "description": "Gameroom does not exist"
+      },
+      "DatabaseError": {
+        "description": "There was an error in the database"
+      },
+      "AlreadyExist": {
+        "description": "Entity already exists in the object"
       }
     }
   },
@@ -342,6 +381,42 @@
         }
       }
     },
+    "/pong/{id}": {
+      "get": {
+        "tags": [
+          "pong"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Returns the Gameroom the user is in (specified by id)",
+        "operationId": "MeController_getRoomForUser",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the user",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/GameroomNotExist"
+          }
+        }
+      }
+    },
     "/channel/": {
       "post": {
         "tags": [
@@ -389,6 +464,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/UserNotExist"
           }
         }
       }
@@ -412,6 +490,9 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/ChannelNotExist"
           }
         }
       }
@@ -457,8 +538,11 @@
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -514,8 +598,11 @@
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -571,7 +658,7 @@
             "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -619,6 +706,9 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -677,7 +767,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -726,6 +816,9 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
@@ -765,11 +858,17 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -805,7 +904,7 @@
             "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       },
@@ -852,6 +951,9 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
@@ -859,7 +961,7 @@
             "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -900,8 +1002,14 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
             "$ref": "#/components/responses/NotExist"
@@ -1115,8 +1223,14 @@
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
           "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
+            "$ref": "#/components/responses/NotExist"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExist"
           }
         }
       }
@@ -1226,6 +1340,9 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
