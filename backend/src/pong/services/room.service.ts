@@ -18,7 +18,7 @@ export class RoomService {
     display: { width: 1920, height: 1080 },
     ball: { speed: 20, radius: 20 },
     tray: { width: 20, height: 200, x: 50 },
-    score: { y: 15, max: 5 },
+    score: { y: 15, max: 10 },
     input: { plan: Plan.DEFAULT, mode: Mode.NONE },
   };
 
