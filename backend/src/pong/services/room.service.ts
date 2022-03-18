@@ -42,8 +42,8 @@ export class RoomService {
       for (const player of room.players)
         if (player.socket.id == socket.id) {
           room.players.splice(room.players.indexOf(player), 1);
-
-          if (room.state == State.INGAME) this.stopGame(room, room.players[0]);
+          if (room.state == State.INGAME || room.state == State.STARTING || room.state == State.COUNTDOWN)
+              this.stopGame(room, room.players[0]);
           break;
         }
       if (!room.players.length) return this.rooms.delete(room.code);
@@ -168,12 +168,12 @@ export class RoomService {
     room.state = State.END;
     RoomService.emit(room, 'stop', player.user);
 
-    this.userService.createMatchHistory({
+    /*this.userService.createMatchHistory({
       score: room.players.map((player) => player.score),
       winner: player.user,
       loser: room.players.find((player1) => player1.user.id != player.user.id)
         .user,
-    });
+    });*/
   }
 
   getRoomForUser(userId: number): Room {
