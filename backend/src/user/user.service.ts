@@ -134,4 +134,14 @@ export class UserService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
+
+  async getMatches(userId: number): Promise<Match[]> {
+    const user = await this.userRepository.findOne(userId, {
+      relations: ['matches'],
+    });
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    console.log(user.matches);
+    if (!user.matches) return [];
+    return user.matches;
+  }
 }

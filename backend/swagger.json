@@ -99,6 +99,12 @@
             "items": {
               "$ref": "#/components/schemas/Channel"
             }
+          },
+          "matches": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Match"
+            }
           }
         }
       },
@@ -1706,6 +1712,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -1813,6 +1820,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -1848,6 +1856,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -1922,6 +1931,38 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/UserNotExist"
+          }
+        }
+      }
+    },
+    "/user/matches/{id}": {
+      "get": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Returns the user's matches (specified by id)",
+        "operationId": "IdController_getMatches",
+        "parameters": [
+          {
+            "name": "id",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },

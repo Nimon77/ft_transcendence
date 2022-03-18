@@ -49,19 +49,4 @@ export class NotifyGateway {
       socket.emit('notify', data);
     }
   }
-
-  @SubscribeMessage('direct')
-  handleMessageDirect(client: Socket, data: any) {
-    const user = client.data.user;
-    if (!user) return;
-
-    const socket: any = Array.from(this.server.sockets.values()).find(
-      (socket: Socket) => socket.data.user.id == data.id,
-    );
-    if (!socket) client.emit('error', 'User not found');
-    else {
-      data.id = user.id;
-      socket.emit('direct', data);
-    }
-  }
 }
