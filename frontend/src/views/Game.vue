@@ -86,7 +86,7 @@ export default Vue.extend({
         this.mapColor = '#040a80';
       if (this.input.plan == 2)
         this.mapColor = '#db9c14';
-      
+
       if (this.input.mode == 1)
       {
         this.options.ball.speed = 100;

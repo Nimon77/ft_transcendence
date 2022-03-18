@@ -111,9 +111,7 @@ export default Vue.extend({
       invite() {
         const payload = {
           id: this.user.id,
-          data: {
-            message: this.me.username + " has invited you to play",
-          }
+          message: this.me.username + " has invited you to play",
         };
         this.$socket.emit('notify', payload);
       },
