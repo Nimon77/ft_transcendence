@@ -3,11 +3,11 @@ import { ChatRoom } from './entity/chat.entity';
 import { MutedUser } from './entity/mute.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { User } from 'src/user/user.entity';
 import { PasswordI } from './interfaces/password.interface';
 import { BannedUser } from './entity/banned.entity';
 import { Log } from './entity/log.entity';
 import * as bcrypt from 'bcrypt';
+import { User } from 'src/user/entities/user.entity';
 
 const temporary = 30 * 60 * 1000;
 

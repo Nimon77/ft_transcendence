@@ -88,6 +88,7 @@ export class RoomService {
     } else {
       if (!room.spectators) room.spectators = [];
       room.spectators.push(socket);
+
       this.emit(
         room,
         'ready',
@@ -95,7 +96,7 @@ export class RoomService {
         room.players.map((player) => player.user),
       );
     }
-    socket.emit('room', room.code, room.options);
+    socket.emit('room', room.code);
   }
 
   getPlayer(userId: number): Player {
@@ -128,13 +129,13 @@ export class RoomService {
       room.players[Math.round(Math.random())].input.plan;
     room.options.input.mode =
       room.players[Math.round(Math.random())].input.mode;
-    if (room.options.input.mode == 1)
-    {
+
+    if (room.options.input.mode == Mode.SPEED) {
       room.options.ball.radius = 25;
       room.options.ball.speed = 30;
-    }
-    else if (room.options.input.mode == 2)
+    } else if (room.options.input.mode == Mode.SMALL)
       room.options.tray.height = 100;
+
     this.emit(
       room,
       'ready',

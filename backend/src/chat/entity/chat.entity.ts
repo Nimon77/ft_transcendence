@@ -1,4 +1,3 @@
-import { User } from '../../user/user.entity';
 import { MutedUser } from './mute.entity';
 import {
   Column,
@@ -10,6 +9,7 @@ import {
 } from 'typeorm';
 import { BannedUser } from './banned.entity';
 import { Log } from './log.entity';
+import { User } from 'src/user/entities/user.entity';
 
 @Entity()
 export class ChatRoom {

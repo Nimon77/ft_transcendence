@@ -18,7 +18,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import AvatarService from 'src/user/avatar/avatar.service';
 import { Readable } from 'stream';
-import { User } from '../user.entity';
+import { User } from '../entities/user.entity';
 import { UserService } from '../user.service';
 
 @Controller('user')

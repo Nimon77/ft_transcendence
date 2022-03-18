@@ -1,0 +1,28 @@
+import {
+  Column,
+  Entity,
+  PrimaryGeneratedColumn,
+  ManyToOne,
+  JoinColumn,
+} from 'typeorm';
+import { User } from './user.entity';
+
+@Entity()
+export class Match {
+  @PrimaryGeneratedColumn()
+  id: number;
+
+  @Column({ type: 'int' })
+  public score: number[];
+
+  @Column({ type: 'timestamptz' })
+  public date: Date;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  winner: User;
+
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  loser: User;
+}

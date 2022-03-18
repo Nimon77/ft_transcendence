@@ -5,7 +5,7 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/user/user.entity';
+import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/user.service';
 
 @WebSocketGateway({
