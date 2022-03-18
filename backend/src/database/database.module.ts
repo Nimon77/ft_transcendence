@@ -1,7 +1,7 @@
 import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
-import { Avatar } from 'src/user/avatar/avatar.entity';
+import { Avatar } from 'src/user/entities/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { MutedUser } from 'src/chat/entity/mute.entity';
 import { BannedUser } from 'src/chat/entity/banned.entity';

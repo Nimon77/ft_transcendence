@@ -1,12 +1,12 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { In, Repository } from 'typeorm';
-import { AvatarService } from './avatar/avatar.service';
-import { Avatar } from './avatar/avatar.entity';
+import { AvatarService } from './avatar.service';
 import { ChatService } from 'src/chat/chat.service';
-import { Status } from './enums/status.enum';
-import { User } from './entities/user.entity';
-import { Match } from './entities/match.entity';
+import { User } from '../entities/user.entity';
+import { Match } from '../entities/match.entity';
+import { Status } from '../enums/status.enum';
+import { Avatar } from '../entities/avatar.entity';
 
 @Injectable()
 export class UserService {
@@ -64,28 +64,46 @@ export class UserService {
     return user;
   }
 
-  async deleteUser(id: number) {
+  async deleteUser(id: number): Promise<void> {
     const user: User = await this.getUserById(id);
     try {
       const rooms = await this.chatService.getRoomsForUser(id);
       rooms.forEach((room) => {
         this.chatService.removeUserFromRoom(user, room.id, room.adminId[0]);
       });
-      await this.userRepository.remove({ id, ...new User() });
-      if (user.avatarId) await this.avatarService.deleteAvatar(user.avatarId);
+      await this.userRepository.delete(id);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async setAvatar(user: User, filename: string, buffer: Buffer) {
-    let avatar: Avatar;
-    if (!user.avatarId)
-      avatar = await this.avatarService.createAvatar(user.id, filename, buffer);
-    else avatar = await this.avatarService.setAvatar(user.id, filename, buffer);
+  async setAvatar(
+    userId: number,
+    filename: string,
+    data: Buffer,
+  ): Promise<void> {
+    const user: User = await this.userRepository.findOne(userId, {
+      relations: ['avatar'],
+    });
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
-    if (user.avatarId != avatar.id)
-      this.userRepository.update(user.id, { avatarId: avatar.id });
+    const avatar = await this.avatarService.createAvatar(filename, data);
+
+    try {
+      await this.userRepository.update(user.id, { avatar });
+      if (user.avatar) await this.avatarService.deleteAvatar(user.avatar.id);
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async getAvatar(userId: number): Promise<Avatar> {
+    const user: User = await this.userRepository.findOne(userId, {
+      relations: ['avatar'],
+    });
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    return user.avatar;
   }
 
   setStatus(userId: number, status: Status) {

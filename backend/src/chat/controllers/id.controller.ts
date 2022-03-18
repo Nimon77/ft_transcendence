@@ -10,8 +10,8 @@ import {
 } from '@nestjs/common';
 import { ChatRoom } from '../entity/chat.entity';
 import { ChatService } from '../chat.service';
-import { UserService } from 'src/user/user.service';
 import { MessageI } from '../interfaces/message.interface';
+import { UserService } from 'src/user/services/user.service';
 
 @Controller('channel')
 export class IdController {
