@@ -5,7 +5,7 @@ import {
   JoinColumn,
   OneToOne,
   ManyToMany,
-  ManyToOne,
+  OneToMany,
 } from 'typeorm';
 import { Avatar } from 'src/user/avatar/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
@@ -50,7 +50,6 @@ export class User {
   @Column({ default: Status.OFFLINE })
   public status: Status;
 
-  @ManyToOne(() => Match, (match) => match.id)
-  @JoinColumn()
-  public matchs: Match[];
+  @OneToMany(() => Match, (match) => match.winner || match.loser)
+  public matches: Match[];
 }

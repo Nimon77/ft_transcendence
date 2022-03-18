@@ -90,6 +90,6 @@ export class PongGateway {
     if (!player) return;
 
     player.tray = tray * player.room.options.display.height;
-    this.roomService.emit(player.room, 'tray', player.socket.data.user.id, tray);
+    RoomService.emit(player.room, 'tray', player.socket.data.user.id, tray);
   }
 }

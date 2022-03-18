@@ -39,7 +39,7 @@ export class PongService {
       if (next.x > room.options.ball.radius) ++room.players[0].score;
       else ++room.players[1].score;
 
-      this.roomService.emit(
+      RoomService.emit(
         room,
         'score',
         room.players.map((player) => player.score),
@@ -90,13 +90,13 @@ export class PongService {
     //normal behavior
     room.ball.position.x += room.ball.velocity.x;
     room.ball.position.y += room.ball.velocity.y;
-    this.roomService.emit(room, 'ball', room.ball.position);
+    RoomService.emit(room, 'ball', room.ball.position);
   }
 
   updateBall(x: number, y: number, radian: number, room: Room): void {
     room.ball.position.x = x;
     room.ball.position.y = y;
     room.ball.velocity = PongService.velocity((room.speed *= 1.01), radian);
-    this.roomService.emit(room, 'ball', room.ball.position);
+    RoomService.emit(room, 'ball', room.ball.position);
   }
 }
