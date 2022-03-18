@@ -20,13 +20,9 @@ import store from '@/store';
 
 export default Vue.extend({
   name: 'InvitePlayer',
-  data(): unknown {
-    return {
-    }
-  },
   computed: {
     message() {
-      return store.state.message.data.message;
+      return store.getters.getNotify.message;
     },
   },
   methods: {

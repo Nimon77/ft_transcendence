@@ -26,11 +26,9 @@ export default new Vuex.Store({
     avatar: null,
     ready: false,
 
-    message: {
+    notify: {
       id: Number,
-      data: {
-        message: String,
-      }
+      message: String,
     },
 
     chat: {
@@ -49,7 +47,7 @@ export default new Vuex.Store({
     getReady: state => state.ready,
     getUser: state => state.user,
     getAvatar: state => state.avatar,
-    getMessage: state => state.message,
+    getNotify: state => state.notify,
     getIdCR: state => state.chat.idCR,
     getCRs: state => state.chat.CRs,
     getUserCR: state => state.chat.userCR,
@@ -95,8 +93,8 @@ export default new Vuex.Store({
       state.usersInGame = users;
     },
     'NOTIFY_notify': (state, payload) => {
-      state.message = payload;
-      console.log(state.message); // TODO: remove
+      state.notify = payload;
+      console.log(state.notify); // TODO: remove
       Vue.$toast(InvitePlayer, {
         position: POSITION.TOP_LEFT,
         timeout: false,
