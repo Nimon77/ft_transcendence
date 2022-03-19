@@ -1,5 +1,11 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
+import {
+  HttpException,
+  HttpStatus,
+  Injectable,
+  StreamableFile,
+} from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
+import { Readable } from 'stream';
 import { Repository } from 'typeorm';
 import { Avatar } from '../entities/avatar.entity';
 
@@ -27,6 +33,10 @@ export class AvatarService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+  }
+
+  toStreamableFile(data: Buffer): StreamableFile {
+    return new StreamableFile(Readable.from(data));
   }
 }
 

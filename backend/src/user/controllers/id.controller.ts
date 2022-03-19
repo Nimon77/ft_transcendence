@@ -44,13 +44,12 @@ export class IdController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const avatar = await this.userService.getAvatar(id);
-    const stream = Readable.from(avatar.data);
-    stream.pipe(response);
+
     response.set({
       'Content-Disposition': `inline; filename="${avatar.filename}"`,
       'Content-Type': 'image/*',
     });
-    return new StreamableFile(stream);
+    return this.avatarService.toStreamableFile(avatar.data);
   }
 
   @Get('/matches/:id')
@@ -61,15 +60,13 @@ export class IdController {
 
   @Post()
   createUser(@Body() user: User) {
-    if (!user) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
-
+    if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
     return this.userService.createUser(user);
   }
 
   @Put(':id')
   updateUser(@Param('id') id: number, @Body() user: User) {
-    if (!user) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
-
+    if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
     return this.userService.updateUser(id, user);
   }
 
