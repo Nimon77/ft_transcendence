@@ -65,8 +65,8 @@ export default Vue.extend({
       },
       async rmFriend(rmId: number) {
         console.log("rmId = ", rmId); // TODO: remove
-        await this.$http.post('/user/me/follow', {id: rmId,}).then(response => {
-          console.log('POST REQUEST', response); // TODO: remove
+        await this.$http.put(`/user/me/follow/${rmId}`).then(response => {
+          console.log('PUT REQUEST', response); // TODO: remove
           });
         await this.$http.get('/user/me').then(response => {
           this.me = response.data;

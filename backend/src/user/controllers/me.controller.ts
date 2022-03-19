@@ -5,6 +5,7 @@ import {
   Get,
   HttpException,
   HttpStatus,
+  Param,
   Post,
   Put,
   Request,
@@ -65,21 +66,19 @@ export class MeController {
     );
   }
 
-  @Post('/me/follow')
-  async followUser(@Request() req, @Body() friend: User) {
-    if (!friend) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
-
-    const user = await this.userService.getUserById(req.user.userId);
-    const frienduser = await this.userService.getUserById(friend.id);
-    this.userService.updateFollow(user, frienduser);
+  @Put('/me/follow/:id')
+  toggleUserFollowed(
+    @Request() req,
+    @Param('id') id: number,
+  ): Promise<number[]> {
+    return this.userService.toggleFollow(req.user.userId, id);
   }
 
-  @Post('/me/block')
-  async blockUser(@Request() req, @Body() blocked: User) {
-    if (!blocked) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
-
-    const user = await this.userService.getUserById(req.user.userId);
-    const blockeduser = await this.userService.getUserById(blocked.id);
-    this.userService.updateBlock(user, blockeduser);
+  @Put('/me/block/:id')
+  toggleUserBlocked(
+    @Request() req,
+    @Param('id') id: number,
+  ): Promise<number[]> {
+    return this.userService.toggleBlock(req.user.userId, id);
   }
 }
