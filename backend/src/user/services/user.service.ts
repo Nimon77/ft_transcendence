@@ -1,6 +1,6 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
-import { In, Repository } from 'typeorm';
+import { Repository } from 'typeorm';
 import { AvatarService } from './avatar.service';
 import { ChatService } from 'src/chat/chat.service';
 import { User } from '../entities/user.entity';
