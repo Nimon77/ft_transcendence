@@ -133,8 +133,6 @@ export class UserService {
     if (user.won) matches = matches.concat(user.won);
     if (user.lost) matches = matches.concat(user.lost);
 
-    console.log(matches);
-
     return matches;
   }
 
