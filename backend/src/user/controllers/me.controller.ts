@@ -6,7 +6,6 @@ import {
   HttpException,
   HttpStatus,
   Param,
-  Post,
   Put,
   Request,
   Res,
@@ -18,11 +17,15 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Readable } from 'stream';
 import { User } from '../entities/user.entity';
+import AvatarService from '../services/avatar.service';
 import { UserService } from '../services/user.service';
 
 @Controller('user')
 export class MeController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly avatarService: AvatarService,
+  ) {}
 
   @Get('/me')
   getUser(@Request() req): Promise<User> {
@@ -35,13 +38,12 @@ export class MeController {
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const avatar = await this.userService.getAvatar(req.user.userId);
-    const stream = Readable.from(avatar.data);
-    stream.pipe(response);
+
     response.set({
       'Content-Disposition': `inline; filename="${avatar.filename}"`,
       'Content-Type': 'image/*',
     });
-    return new StreamableFile(stream);
+    return this.avatarService.toStreamableFile(avatar.data);
   }
 
   @Put('/me')
