@@ -15,7 +15,8 @@
     "allowJs": true,
     "baseUrl": ".",
     "types": [
-      "webpack-env"
+      "webpack-env",
+      "node"
     ],
     "paths": {
       "@/*": [
@@ -35,7 +36,7 @@
     "src/**/*.vue",
     "tests/**/*.ts",
     "tests/**/*.tsx"
-, "src/pong/pong.ts"  ],
+, "src/plugins/pong.ts"  ],
   "exclude": [
     "node_modules"
   ]
