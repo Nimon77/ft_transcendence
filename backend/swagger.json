@@ -1544,7 +1544,7 @@
       }
     },
     "/user/me/block": {
-      "post": {
+      "put": {
         "tags": [
           "user me"
         ],
@@ -1587,7 +1587,7 @@
       }
     },
     "/user/me/follow": {
-      "post": {
+      "put": {
         "tags": [
           "user me"
         ],

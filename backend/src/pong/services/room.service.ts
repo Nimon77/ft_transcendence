@@ -1,6 +1,7 @@
 import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { Interval } from '@nestjs/schedule';
 import { Socket } from 'socket.io';
+import { Match } from 'src/user/entities/match.entity';
 import { UserService } from 'src/user/services/user.service';
 import { Input, Mode, Plan } from '../interfaces/input.interface';
 import { Option } from '../interfaces/option.interface';
@@ -177,7 +178,7 @@ export class RoomService {
       winner: player.user,
       loser: room.players.find((player1) => player1.user.id != player.user.id)
         .user,
-    });
+    } as Match);
   }
 
   getRoomForUser(userId: number): Room {

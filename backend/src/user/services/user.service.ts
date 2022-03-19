@@ -106,11 +106,11 @@ export class UserService {
     return user.avatar;
   }
 
-  setStatus(userId: number, status: Status) {
-    return this.userRepository.update(userId, { status });
+  async setStatus(userId: number, status: Status): Promise<void> {
+    await this.userRepository.update(userId, { status });
   }
 
-  async createMatchHistory(data: any): Promise<void> {
+  async createMatchHistory(data: Match): Promise<void> {
     const match: Match = this.matchRepository.create({
       date: new Date(),
       ...data,
@@ -138,33 +138,43 @@ export class UserService {
     return matches;
   }
 
-  async updateFollow(user: User, followed_user: User) {
-    if (followed_user.id == user.id) return;
-    const userFollow = await this.userRepository.find({
-      where: { id: In(user.friends) },
-    });
-    const found = userFollow.find((element) => element.id == followed_user.id);
-    if (found) {
-      const index = user.friends.indexOf(found.id);
-      if (index !== -1) user.friends.splice(index, 1);
-    } else user.friends.push(followed_user.id);
-    await this.userRepository.update(user.id, {
-      friends: user.friends,
-    });
+  async toggleFollow(userId: number, targetId: number): Promise<number[]> {
+    if (userId == targetId) return;
+
+    const user = await this.getUserById(userId);
+    const target = await this.getUserById(targetId);
+
+    const index = user.friends.findIndex((userId) => userId == target.id);
+    if (index == -1) user.friends.push(target.id);
+    else user.friends.splice(index, 1);
+
+    try {
+      await this.userRepository.update(user.id, {
+        friends: user.friends,
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+    return user.friends;
   }
 
-  async updateBlock(user: User, blocked_user: User) {
-    if (user.id == blocked_user.id) return;
-    const userBlock = await this.userRepository.find({
-      where: { id: In(user.blocked) },
-    });
-    const found = userBlock.find((element) => element.id == blocked_user.id);
-    if (found) {
-      const index = user.blocked.indexOf(found.id);
-      if (index !== -1) user.blocked.splice(index, 1);
-    } else user.blocked.push(blocked_user.id);
-    await this.userRepository.update(user.id, {
-      blocked: user.blocked,
-    });
+  async toggleBlock(userId: number, targetId: number): Promise<number[]> {
+    if (userId == targetId) return;
+
+    const user = await this.getUserById(userId);
+    const target = await this.getUserById(targetId);
+
+    const index = user.blocked.findIndex((userId) => userId == target.id);
+    if (index == -1) user.blocked.push(target.id);
+    else user.blocked.splice(index, 1);
+
+    try {
+      await this.userRepository.update(user.id, {
+        blocked: user.blocked,
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+    return user.blocked;
   }
 }
