@@ -2,8 +2,8 @@ import IUser from './IUser';
 
 interface IMatch {
   id: number,
-  score: string,
-  time: string,
+  score: Array<number>,
+  date: Date,
   winner: IUser,
   loser: IUser,
 }
