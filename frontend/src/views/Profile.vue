@@ -29,7 +29,6 @@
             <v-list-item-content class="text-center">
               <div class="mt-3 mb-7 text-h5 font-weight-bold"> MATCH HISTORY </div>
               <div v-for="ph in playerHistory" v-bind:key="ph.date" class="text-h mb-3">
-                <!-- <span > {{user.username | upCase}} </span> -->
                 <div v-if="ph.winner.id == user.id">
                   <span class="text-center font-weight-bold green--text"> ({{ph.score[1]}} | {{ph.score[0]}}) - </span>
                   <span class="text-center font-weight-bold green--text"> WON AGAINST</span>
