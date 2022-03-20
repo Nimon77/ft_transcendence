@@ -1,6 +1,7 @@
 
 <template>
   <v-app>
+    <img v-for="n in 15" :key="n" src="@/assets/banane-resize.png" class="bananane" style=""/>
     <Header v-if="isReady"/>
     <v-main class="yellow">
       <transition name="bounce" mode="out-in">
@@ -25,13 +26,28 @@
       isReady(): boolean {
         return this.$store.getters.getReady;
       }
+    },
+    mounted() {
+      const bananes = document.querySelectorAll<HTMLElement>('.bananane');
+      bananes.forEach((banane) => {
+        var posXAl = Math.random() * (window.innerWidth - 150);
+        posXAl = Math.floor(posXAl);
+        banane.style.left = posXAl + "px";
+        const width = Math.floor(Math.random() * (300 - 100 + 1) + 100)
+        banane.style.width = width + "px";
+        banane.style.animationDelay = Math.floor(Math.random() * 10) + "s";
+        banane.style.animationDuration = Math.floor(Math.random() * (7 - 3 + 1) + 3) + "s";
+        banane.style.filter = "blur(" + Math.pow(width / 125, 2) + "px)";
+        banane.style.animationTimingFunction = "linear";
+        banane.style.animationIterationCount = "infinite";
+      });
     }
   };
 </script>
 
 <style scoped>
-  /* html { overflow-y: auto } */
-/* .app {
+/* html { overflow-y: hidden; }
+  .app {
   overflow: hidden;
 } */
 
@@ -64,6 +80,31 @@
 .twbtn {
   margin-top: 200px;
   /* margin-left: -45px; */
+}
+
+
+.bananane {
+  position: absolute;
+  top: -300px;
+  /* width: 200px; */
+  height: auto;
+  overflow: hidden;
+  animation: chute 4s infinite linear;
+}
+
+@keyframes chute {
+  0% {
+    transform: translateY(0);
+    /* opacity: 1; */
+  }
+  75% {
+    transform: translateY(calc(75vh + 150px));
+    /* opacity: 1; */
+  }
+  100% {
+    transform: translateY(calc(100vh + 200px));
+    /* opacity: 0.5; */
+  }
 }
 
 </style>
