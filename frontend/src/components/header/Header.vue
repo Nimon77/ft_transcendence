@@ -1,6 +1,6 @@
 <template>
   <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right>
-    <v-btn router to="/" class="titl" x-large depressed text width="385" height="60">
+    <v-btn router to="/" class="titl" x-large plain text width="385" height="60">
       BananaPong
     </v-btn>
     <v-spacer></v-spacer>
@@ -26,6 +26,10 @@ export default Vue.extend({
 
 <style>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
+
+.v-btn--plain:not(.v-btn--active):not(.v-btn--loading):not(:focus):not(:hover) .v-btn__content {
+    opacity: 1 !important;
+}
 
 .titl {
   font-family: "lemon_milkmedium";
