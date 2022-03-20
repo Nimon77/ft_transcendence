@@ -14,10 +14,10 @@
 
       <v-card>
           <v-card-title class="text-h5 grey lighten-2">
-            <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="clearMessage" autofocus></v-text-field>
+            <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="searchInput = null" autofocus></v-text-field>
           </v-card-title>
 
-          <v-list v-if="searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
+          <v-list v-if="searchInput == null || searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
                 <v-list-item-group>
                   <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
                   <v-list-item-content>
@@ -28,7 +28,7 @@
                 </v-list-item-group>
           </v-list>
 
-          <v-list v-if="searchInput != ''"> <!-- "si je cherche un truc, j'affiche tout le monde sauf les amis" -->
+          <v-list v-else> <!-- "si je cherche un truc, j'affiche tout le monde sauf les amis" -->
             <v-list-item v-for="user in filteredUsers" v-bind:key="user.id">
               <v-list-item-content>
                 <UserDisplay :user="user"/>
@@ -53,7 +53,7 @@ Vue.component('UserDisplay', UserDisplay);
 export default Vue.extend({
     data () {
       return {
-        searchInput: '',
+        searchInput: null,
         dialog: false,
         users: [],
         added: false,
@@ -71,9 +71,6 @@ export default Vue.extend({
         await this.$http.get('/user/me').then(response => {
           this.me = response.data;
         });
-      },
-      clearMessage() {
-        this.searchInput = '';
       },
     },
     async created() {
