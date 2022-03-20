@@ -11,41 +11,44 @@ import { Avatar } from 'src/user/entities/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { Status } from '../enums/status.enum';
 import { Match } from './match.entity';
+import { Room } from 'src/pong/interfaces/room.interface';
 
 @Entity()
 export class User {
   @PrimaryColumn()
-  public id: number;
+  id: number;
 
-  @Column({ nullable: true, unique: true })
-  public username: string;
+  @OneToOne(() => Avatar)
+  @JoinColumn()
+  avatar: Avatar;
 
-  @Column({ default: 100 })
-  public rank: number;
+  @Column({ unique: true, nullable: true })
+  username: string;
 
   @Column({ nullable: true })
-  public otp: string;
-
-  @Column('int', { array: true, default: [] })
-  public friends: number[];
-
-  @Column('int', { array: true, default: [] })
-  public blocked: number[];
+  otp: string;
 
   @Column('boolean', { default: false })
-  public profileCompleted: boolean;
+  profileCompleted: boolean;
 
-  @ManyToMany(() => ChatRoom, (room) => room.users)
-  @OneToOne(() => Avatar, { onDelete: 'CASCADE' })
-  @JoinColumn()
-  public avatar: Avatar;
+  @Column({ default: 100 })
+  rank: number;
+
+  @Column('int', { array: true, default: [] })
+  followed: number[];
+
+  @Column('int', { array: true, default: [] })
+  blocked: number[];
+
+  @ManyToMany(() => ChatRoom)
+  rooms: Room[];
 
   @Column({ default: Status.OFFLINE })
-  public status: Status;
+  status: Status;
 
   @OneToMany(() => Match, (match) => match.winner)
-  public won: Match[];
+  won: Match[];
 
   @OneToMany(() => Match, (match) => match.loser)
-  public lost: Match[];
+  lost: Match[];
 }

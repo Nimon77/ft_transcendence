@@ -63,7 +63,7 @@
             "type": "number",
             "example": 100
           },
-          "friends": {
+          "followed": {
             "type": "array",
             "items": {
               "type": "number"
@@ -1420,7 +1420,7 @@
                     "type": "string",
                     "example": "dimitri"
                   },
-                  "friends": {
+                  "followed": {
                     "type": "array",
                     "items": {
                       "type": "number"
@@ -1639,7 +1639,7 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Modifies the current user's object (more specifically the friends array)",
+        "summary": "Modifies the current user's object (more specifically the followed array)",
         "operationId": "MeController_followUser",
         "parameters": [
           {
@@ -1825,7 +1825,7 @@
                     "type": "string",
                     "example": "dimitri"
                   },
-                  "friends": {
+                  "followed": {
                     "type": "array",
                     "items": {
                       "type": "number"

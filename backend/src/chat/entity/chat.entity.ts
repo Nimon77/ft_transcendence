@@ -19,40 +19,31 @@ export class ChatRoom {
   @Column()
   name: string;
 
-  @Column('int', { array: true, default: [] })
-  public adminId: number[];
-
-  @Column()
-  ownerId: number;
+  @Column({ default: true })
+  public: boolean;
 
   @Column({ nullable: true })
   password: string;
 
-  @Column({ default: true })
-  public: boolean;
+  @Column()
+  ownerId: number;
 
-  @ManyToMany(() => User, { cascade: true, onUpdate: 'CASCADE' })
+  @Column('int', { array: true, default: [] })
+  adminId: number[];
+
+  @ManyToMany(() => User)
   @JoinTable()
   users: User[];
 
-  @OneToMany(() => MutedUser, (MutedUser) => MutedUser.room, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => MutedUser, (MutedUser) => MutedUser.room)
   @JoinTable()
   muted: MutedUser[];
 
-  @OneToMany(() => BannedUser, (BannedUser) => BannedUser.room, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => BannedUser, (BannedUser) => BannedUser.room)
   @JoinTable()
   banned: BannedUser[];
 
-  @OneToMany(() => Log, (Log) => Log.room, {
-    nullable: true,
-    onDelete: 'CASCADE',
-  })
+  @OneToMany(() => Log, (Log) => Log.room)
   @JoinTable()
   logs: Log[];
 }
