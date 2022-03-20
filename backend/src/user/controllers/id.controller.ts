@@ -53,8 +53,13 @@ export class IdController {
   }
 
   @Get('/matches/:id')
-  async getMatches(@Param('id', ParseIntPipe) id: number) {
-    return await this.userService.getMatches(id);
+  async getMatches(@Param('id', ParseIntPipe) userid: number) {
+    return await this.userService.getMatches(userid);
+  }
+
+  @Get('/rank/:id')
+  async getRank(@Param('id', ParseIntPipe) userid: number) {
+    return await this.userService.getRank(userid);
   }
   //for testing
 

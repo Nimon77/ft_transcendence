@@ -2023,6 +2023,7 @@
         "parameters": [
           {
             "name": "id",
+            "description": "Id of the user",
             "required": true,
             "in": "path",
             "schema": {
@@ -2031,6 +2032,45 @@
           }
         ],
         "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "404": {
+            "$ref": "#/components/responses/UserNotExist"
+          }
+        }
+      }
+    },
+    "/user/rank/{id}": {
+      "get": {
+        "tags": [
+          "user id"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Returns the user's rank (specified by id)",
+        "operationId": "IdController_getRank",
+        "parameters": [
+          {
+            "name": "id",
+            "description": "Id of the user",
+            "required": true,
+            "in": "path",
+            "schema": {
+              "type": "number"
+            }
+          }
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },

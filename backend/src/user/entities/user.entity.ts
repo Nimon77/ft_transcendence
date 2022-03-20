@@ -20,7 +20,7 @@ export class User {
   @Column({ nullable: true, unique: true })
   public username: string;
 
-  @Column({ default: 0 })
+  @Column({ default: 100 })
   public rank: number;
 
   @Column({ nullable: true })
