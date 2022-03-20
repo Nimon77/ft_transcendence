@@ -36,6 +36,7 @@ export class NotifyGateway {
   }
 
   @SubscribeMessage('notify')
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   handleMessage(client: Socket, data: any): void {
     const user = client.data.user;
     if (!user) return;

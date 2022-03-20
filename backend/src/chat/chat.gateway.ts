@@ -1,3 +1,4 @@
+/* eslint-disable @typescript-eslint/explicit-module-boundary-types */
 import {
   OnGatewayConnection,
   SubscribeMessage,
@@ -43,7 +44,7 @@ export class ChatGateway implements OnGatewayConnection {
     });
   }
 
-  emitRoom(room: ChatRoom, event: string, ...args): void {
+  emitRoom(room: ChatRoom, event: string, ...args: any): void {
     if (!room.users) return;
 
     const sockets: any[] = Array.from(this.server.sockets.values());

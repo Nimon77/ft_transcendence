@@ -8,7 +8,7 @@ export class PongService {
     @Inject(forwardRef(() => RoomService)) private roomService: RoomService,
   ) {}
 
-  static velocity = (speed, radian): Position => {
+  static velocity = (speed: number, radian: number): Position => {
     return { x: Math.cos(radian) * speed, y: Math.sin(radian) * speed };
   };
 
