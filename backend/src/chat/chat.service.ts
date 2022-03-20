@@ -127,7 +127,7 @@ export class ChatService {
 
     if (room.public == true)
     throw new HttpException("Room is public", HttpStatus.FORBIDDEN);
-    if (room.ownerId == user.id && room.public == false)
+    if (room.ownerId != user.id)
       throw new HttpException("User isn't the room's owner", HttpStatus.FORBIDDEN);
     if (!pass.newPassword)
       throw new HttpException(
@@ -325,7 +325,7 @@ export class ChatService {
     const muted = this.mutedRepo.create({
       userId: user.id,
       endOfMute: time,
-      room: currentroom.id,
+      room: currentroom,
     });
 
     try {
@@ -358,7 +358,7 @@ export class ChatService {
     const banned = this.bannedRepo.create({
       userId: user.id,
       endOfBan: time,
-      room: currentroom.id,
+      room: currentroom,
     });
 
     currentroom.users.splice(
@@ -398,8 +398,7 @@ export class ChatService {
 
     const log = this.logRepo.create({
       message: message,
-      time: new Date(),
-      room: currentroom.id,
+      room: currentroom,
       user: user,
     });
 
@@ -415,10 +414,7 @@ export class ChatService {
     const currentroom = await this.getRoom(id, ['logs']);
     const logs = [];
     for (const log of currentroom.logs) {
-      const currelog = await this.logRepo.findOne(log.id, {
-        relations: ['user'],
-      });
-      if (user.blocked.indexOf(currelog.user.id) == -1) logs.push(currelog);
+      if (user.blocked.indexOf(log.user.id) == -1) logs.push(log);
     }
     return logs;
   }

@@ -12,6 +12,6 @@ export class MutedUser {
   @Column({ type: 'timestamptz' })
   public endOfMute: Date;
 
-  @ManyToOne(() => ChatRoom, (room) => room.muted, { nullable: true })
-  room: ChatRoom['id'];
+  @ManyToOne(() => ChatRoom, (room) => room.muted)
+  room: ChatRoom;
 }

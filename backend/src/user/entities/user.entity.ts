@@ -36,7 +36,6 @@ export class User {
   public profileCompleted: boolean;
 
   @ManyToMany(() => ChatRoom, (room) => room.users)
-  public rooms: ChatRoom[];
 
   @OneToOne(() => Avatar, { onDelete: 'CASCADE' })
   @JoinColumn()

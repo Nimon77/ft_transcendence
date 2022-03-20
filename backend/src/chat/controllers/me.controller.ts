@@ -23,22 +23,22 @@ export class MeController {
   ) {}
 
   @Post('/')
-  async createChannel(@Request() req, @Body() room: ChatRoom) {
-    return await this.chatService.createRoom(room, req.user.userId);
+  createChannel(@Request() req, @Body() room: ChatRoom) {
+    return this.chatService.createRoom(room, req.user.userId);
   }
 
   @Get('/me')
-  async getAllChannels(@Request() req): Promise<any> {
-    return await this.chatService.getRoomsForUser(req.user.userId);
+  getAllChannels(@Request() req): Promise<any> {
+    return this.chatService.getRoomsForUser(req.user.userId);
   }
 
   @Put('/join')
-  async joinChannel(@Request() req, @Body() room: ChatRoom) {
+  joinChannel(@Request() req, @Body() room: ChatRoom) {
     return this.chatService.addUserToRoom(room, req.user.userId);
   }
 
   @Put('/:id')
-  async updateChannel(
+  updateChannel(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() room: ChatRoom,
@@ -47,7 +47,7 @@ export class MeController {
   }
 
   @Put(':id/admin')
-  async changeUserAdmin(
+  changeUserAdmin(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
@@ -56,7 +56,7 @@ export class MeController {
   }
 
   @Put(':id/ban')
-  async banUserFromRoom(
+  banUserFromRoom(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
@@ -65,7 +65,7 @@ export class MeController {
   }
 
   @Post(':id/change/')
-  async changePass(
+  changePass(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() pass: PasswordI,
@@ -74,7 +74,7 @@ export class MeController {
   }
 
   @Put(':id/mute') //mute user from channel
-  async muteUserFromRoom(
+  muteUserFromRoom(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
@@ -83,12 +83,12 @@ export class MeController {
   }
 
   @Get(':id/log') //get current room logs
-  async getLogsFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number) {
+  getLogsFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number) {
     return this.chatService.getLogsForRoom(id, req.user.userId);
   }
 
   @Put(':id/log') //add log to room
-  async addLogsToRoom(
+  addLogsToRoom(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() message: MessageI,
@@ -99,12 +99,12 @@ export class MeController {
   //for testing
 
   @Put('/:id/leave')
-  async leaveChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
+  leaveChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
     return this.chatService.removeUserFromRoom(req.user.userId, id);
   }
 
   @Put('/:id/kick/:userid') // admin removes user from room
-  async kickUserFromChannel(
+  kickUserFromChannel(
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
