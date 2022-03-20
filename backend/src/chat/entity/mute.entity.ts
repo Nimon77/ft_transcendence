@@ -7,10 +7,10 @@ export class MutedUser {
   id: number;
 
   @Column()
-  public userId: number;
+  userId: number;
 
   @Column({ type: 'timestamptz' })
-  public endOfMute: Date;
+  endOfMute: Date;
 
   @ManyToOne(() => ChatRoom, (room) => room.muted)
   room: ChatRoom;

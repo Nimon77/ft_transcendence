@@ -7,10 +7,10 @@ export class BannedUser {
   id: number;
 
   @Column()
-  public userId: number;
+  userId: number;
 
   @Column({ type: 'timestamptz' })
-  public endOfBan: Date;
+  endOfBan: Date;
 
   @ManyToOne(() => ChatRoom, (room) => room.banned)
   room: ChatRoom;

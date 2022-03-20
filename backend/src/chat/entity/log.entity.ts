@@ -14,12 +14,12 @@ export class Log {
   id: number;
 
   @Column()
-  public message: string;
+  message: string;
 
   @ManyToOne(() => ChatRoom, (room) => room.logs)
   room: ChatRoom;
 
-  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { eager: true })
   @JoinColumn()
   user: User;
 }

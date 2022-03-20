@@ -19,7 +19,7 @@
 
           <v-list v-if="searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
                 <v-list-item-group>
-                  <v-list-item v-for="(friend) in me.friends" v-bind:key="friend">
+                  <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
                   <v-list-item-content>
                     <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog"/>
                     <v-divider class="mt-2"></v-divider>
@@ -94,7 +94,7 @@ export default Vue.extend({
       filteredUsers(): unknown {
         let cleanUsers;
         cleanUsers = this.users.filter((user) => {
-          if (this.me.friends.indexOf(user.id) == -1 && user.id != this.me.id)
+          if (this.me.followed.indexOf(user.id) == -1 && user.id != this.me.id)
             return true;
           else
             return false;

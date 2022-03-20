@@ -8,7 +8,7 @@ interface IUser {
   username: string,
   profileCompleted: boolean,
   rank: number,
-  friends: Array<number>,
+  followed: Array<number>,
   blocked: Array<number>,
   otp: string,
   avatarId: number,

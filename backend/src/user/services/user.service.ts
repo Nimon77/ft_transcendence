@@ -46,7 +46,7 @@ export class UserService {
     if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
     await this.getUserById(id);
 
-    const can: Array<string> = ['username', 'friends', 'blocked'];
+    const can: Array<string> = ['username', 'followed', 'blocked'];
 
     for (const key of Object.keys(user))
       if (can.indexOf(key) == -1)
@@ -166,18 +166,18 @@ export class UserService {
     const user = await this.getUserById(userId);
     const target = await this.getUserById(targetId);
 
-    const index = user.friends.findIndex((userId) => userId == target.id);
-    if (index == -1) user.friends.push(target.id);
-    else user.friends.splice(index, 1);
+    const index = user.followed.findIndex((userId) => userId == target.id);
+    if (index == -1) user.followed.push(target.id);
+    else user.followed.splice(index, 1);
 
     try {
       await this.userRepository.update(user.id, {
-        friends: user.friends,
+        followed: user.followed,
       });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-    return user.friends;
+    return user.followed;
   }
 
   async toggleBlock(userId: number, targetId: number): Promise<number[]> {

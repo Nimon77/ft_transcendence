@@ -7,11 +7,11 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Response } from 'express';
-import { Request } from 'src/user/interfaces/request.interface';
+import { Request, Response } from 'express';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { FortyTwoAuthGuard } from './guards/42-auth.guard';
+import { FortyTwoUser } from './interfaces/42user.interface';
 
 @Controller('auth')
 export class AuthController {
@@ -21,7 +21,7 @@ export class AuthController {
   @UseGuards(FortyTwoAuthGuard)
   @Get('42/callback')
   async login(@Req() req: Request, @Res() response: Response): Promise<void> {
-    const data = await this.authService.login(req.user);
+    const data = await this.authService.login(req.user as FortyTwoUser);
 
     const url = new URL(`${req.protocol}:${req.hostname}`);
     url.port = process.env.FRONT_PORT;
@@ -42,6 +42,6 @@ export class AuthController {
   @Public()
   @Get('generate/:id')
   generateJWT(@Param('id', ParseIntPipe) id: number): Promise<any> {
-    return this.authService.login({ id });
+    return this.authService.login({ id } as FortyTwoUser);
   }
 }

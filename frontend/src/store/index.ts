@@ -21,7 +21,7 @@ export default new Vuex.Store({
       profileCompleted: false,
       otp: '',
       blocked: [],
-      friends: [],
+      followed: [],
     },
     avatar: null,
     ready: false,

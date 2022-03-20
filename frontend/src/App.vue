@@ -75,7 +75,7 @@ channels
   -click sur channel root sur url type /community/:idChannel=2
   -je sais quel channel est selectionné et peut donc accéder aux infos
 
--trier la liste de user (pas de me + friends)
+-trier la liste de user (pas de me + followed)
 -ajouter option dialog sur channel items + faire ressortir les dots
 
 -TWO F AUTHENTICATION
