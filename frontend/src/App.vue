@@ -27,7 +27,7 @@
         return this.$store.getters.getReady;
       }
     },
-    mounted() {
+    mounted(): void {
       const bananes = document.querySelectorAll<HTMLElement>('.bananane');
       bananes.forEach((banane) => {
         var posXAl = Math.random() * (window.innerWidth - 150);
