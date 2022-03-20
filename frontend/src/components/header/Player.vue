@@ -12,7 +12,7 @@
 
         <v-menu offset-y>
         <template v-slot:activator="{ on, attrse }">
-          <v-btn color="white" v-bind="attrse" v-on="on" small tile width="40" icon class="ml-2">
+          <v-btn color="white" plain v-bind="attrse" v-on="on" small tile width="40" icon class="ml-2">
           <v-icon color="white" small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
