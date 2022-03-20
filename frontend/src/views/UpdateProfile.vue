@@ -170,11 +170,11 @@ export default Vue.extend({
       }
     },
   },
-  async created() {
-    await this.$http.get('/user').then(response => {
+  created() {
+    this.$http.get('/user').then(response => {
       this.users = response.data;
-    });
       console.log('USERS : ', this.users);
+    });
   }
 });
 </script>
@@ -188,4 +188,5 @@ export default Vue.extend({
   letter-spacing: 0.1em;
   /* margin-left: 60px; */
 }
+
 </style>
