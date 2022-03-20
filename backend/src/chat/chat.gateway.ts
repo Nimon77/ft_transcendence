@@ -109,7 +109,7 @@ export class ChatGateway implements OnGatewayConnection {
       const admin = await this.userService.getUserById(data.userId);
       let is_admin = false;
 
-      await this.chatService.toggleAdminRole(owner, admin, room.id);
+      await this.chatService.toggleAdminRole(owner, admin.id, room.id);
 
       if (room.adminId.indexOf(admin.id) != -1) is_admin = true;
       this.emitRoom(room, 'admin', {
@@ -134,7 +134,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       if (muted) await this.chatService.unMuteUserInRoom(muted, room);
       else {
-        await this.chatService.muteUserInRoom(curuser, room.id, admin);
+        await this.chatService.muteUserInRoom(curuser.id, room.id, admin);
         is_muted = true;
       }
       this.emitRoom(room, 'mute', {
@@ -162,7 +162,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       if (banned) await this.chatService.unBanUserInRoom(banned, room);
       else {
-        await this.chatService.banUserInRoom(curuser, room.id, admin);
+        await this.chatService.banUserInRoom(curuser.id, room.id, admin);
         is_banned = true;
       }
       this.emitRoom(room, 'ban', {

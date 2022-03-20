@@ -39,11 +39,10 @@ export class IdController {
 
   @Post('/:id') //create channel for specific user
   async createChannelForUser(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) userid: number,
     @Body() room: ChatRoom,
   ) {
-    const user = await this.userService.getUserById(id);
-    return await this.chatService.createRoom(room, user);
+    return await this.chatService.createRoom(room, userid);
   }
 
   @Delete('/:id')
@@ -53,11 +52,10 @@ export class IdController {
 
   @Put('/:id/add') //add any user to any channel
   async addUserToRoom(
-    @Param('id', ParseIntPipe) id: number,
+    @Param('id', ParseIntPipe) userid: number,
     @Body() room: ChatRoom,
   ) {
-    const useradd = await this.userService.getUserById(id);
-    return this.chatService.addUserToRoom(room, useradd);
+    return this.chatService.addUserToRoom(room, userid);
   }
 
   @Put(':id/check') //check if password is correct
@@ -74,7 +72,6 @@ export class IdController {
     @Param('userid', ParseIntPipe) userid: number,
     @Body() message: MessageI,
   ) {
-    const user = await this.userService.getUserById(userid);
-    return this.chatService.addLogForRoom(id, message.message, user);
+    return this.chatService.addLogForRoom(id, message.message, userid);
   }
 }

@@ -48,8 +48,6 @@ export class MeController {
 
   @Put('/me')
   updateUser(@Request() req, @Body() user: User) {
-    if (!user) throw new HttpException('Body null', HttpStatus.BAD_REQUEST);
-
     return this.userService.updateUser(req.user.userId, user);
   }
 

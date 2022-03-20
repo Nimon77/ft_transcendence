@@ -7,7 +7,6 @@ export class PongController {
 
   @Get('/:id')
   async getRoomForUser(@Param('id', ParseIntPipe) id: number) {
-    const room = await this.roomservice.getRoomForUser(id);
-    return room.code;
+    return await this.roomservice.getRoomForUser(id).code;
   }
 }
