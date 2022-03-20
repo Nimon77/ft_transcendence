@@ -2,7 +2,7 @@ import { Player } from './player.interface';
 import { Socket } from 'socket.io';
 import { Option } from './option.interface';
 
-interface Position {
+export interface Position {
   x: number;
   y: number;
 }

@@ -22,7 +22,7 @@ export class NotifyGateway {
   @WebSocketServer()
   server: any;
 
-  async handleConnection(client: Socket) {
+  async handleConnection(client: Socket): Promise<any> {
     if (!client.handshake.headers.authorization) return client.disconnect();
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
@@ -36,7 +36,7 @@ export class NotifyGateway {
   }
 
   @SubscribeMessage('notify')
-  handleMessage(client: Socket, data: any) {
+  handleMessage(client: Socket, data: any): void {
     const user = client.data.user;
     if (!user) return;
 

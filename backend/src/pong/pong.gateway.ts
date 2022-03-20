@@ -27,7 +27,7 @@ export class PongGateway {
   @WebSocketServer()
   server: any;
 
-  async handleConnection(client: Socket) {
+  async handleConnection(client: Socket): Promise<any> {
     if (!client.handshake.headers.authorization) return client.disconnect();
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
@@ -41,19 +41,19 @@ export class PongGateway {
     client.emit('info', { user });
   }
 
-  handleDisconnect(client: Socket) {
+  handleDisconnect(client: Socket): any {
     if (!client.data.user) return;
-    this.roomService.removeSocket(client);
+    return this.roomService.removeSocket(client);
   }
 
   @SubscribeMessage('queue')
-  joinQueue(client: Socket) {
+  joinQueue(client: Socket): void {
     if (!client.data.user) return;
     this.roomService.addQueue(client);
   }
 
   @SubscribeMessage('room')
-  joinRoom(client: Socket, code?: string) {
+  joinRoom(client: Socket, code?: string): void {
     if (!client.data.user) return;
 
     let room: Room = this.roomService.getRoom(code);
@@ -63,7 +63,7 @@ export class PongGateway {
   }
 
   @SubscribeMessage('ready')
-  onReady(client: Socket, input: Input) {
+  onReady(client: Socket, input: Input): void {
     if (!client.data.user) return;
 
     const player: Player = this.roomService.getPlayer(client.data.user.id);
@@ -73,7 +73,7 @@ export class PongGateway {
   }
 
   @SubscribeMessage('start')
-  onStart(client: Socket) {
+  onStart(client: Socket): void {
     if (!client.data.user) return;
 
     const player: Player = this.roomService.getPlayer(client.data.user.id);
@@ -83,7 +83,7 @@ export class PongGateway {
   }
 
   @SubscribeMessage('tray')
-  updateTray(client: Socket, tray: number) {
+  updateTray(client: Socket, tray: number): void {
     if (!client.data.user) return;
 
     const player: Player = this.roomService.getPlayer(client.data.user.id);

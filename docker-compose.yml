@@ -22,6 +22,8 @@ services:
       - ./docker/pgadmin.env
     environment:
       TZ: "Europe/Paris"
+    logging:
+      driver: none
     volumes:
       - ./docker/pgadmin_servers.json:/pgadmin4/servers.json
     ports:

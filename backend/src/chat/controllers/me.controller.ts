@@ -14,6 +14,7 @@ import { PasswordI } from '../interfaces/password.interface';
 import { MessageI } from '../interfaces/message.interface';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
+import { Log } from '../entity/log.entity';
 
 @Controller('channel')
 export class MeController {
@@ -23,17 +24,17 @@ export class MeController {
   ) {}
 
   @Post('/')
-  createChannel(@Request() req, @Body() room: ChatRoom) {
+  createChannel(@Request() req, @Body() room: ChatRoom): Promise<ChatRoom> {
     return this.chatService.createRoom(room, req.user.userId);
   }
 
   @Get('/me')
-  getAllChannels(@Request() req): Promise<any> {
+  getAllChannels(@Request() req): Promise<ChatRoom[]> {
     return this.chatService.getRoomsForUser(req.user.userId);
   }
 
   @Put('/join')
-  joinChannel(@Request() req, @Body() room: ChatRoom) {
+  joinChannel(@Request() req, @Body() room: ChatRoom): Promise<void> {
     return this.chatService.addUserToRoom(room, req.user.userId);
   }
 
@@ -42,7 +43,7 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() room: ChatRoom,
-  ) {
+  ): Promise<void> {
     return this.chatService.updateRoom(id, room, req.user.userId);
   }
 
@@ -51,7 +52,7 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
-  ) {
+  ): Promise<void> {
     return this.chatService.toggleAdminRole(req.user.userId, user.id, id);
   }
 
@@ -60,7 +61,7 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
-  ) {
+  ): Promise<void> {
     return this.chatService.banUserInRoom(user.id, id, req.user.userId);
   }
 
@@ -69,8 +70,8 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() pass: PasswordI,
-  ) {
-      return this.chatService.changePassword(pass, id, req.user.userId);
+  ): Promise<void> {
+    return this.chatService.changePassword(pass, id, req.user.userId);
   }
 
   @Put(':id/mute') //mute user from channel
@@ -78,12 +79,15 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
-  ) {
+  ): Promise<void> {
     return this.chatService.muteUserInRoom(user.id, id, req.user.userId);
   }
 
   @Get(':id/log') //get current room logs
-  getLogsFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number) {
+  getLogsFromRoom(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<Log[]> {
     return this.chatService.getLogsForRoom(id, req.user.userId);
   }
 
@@ -92,14 +96,17 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Body() message: MessageI,
-  ) {
+  ): Promise<void> {
     return this.chatService.addLogForRoom(id, message.message, req.user.userId);
   }
 
   //for testing
 
   @Put('/:id/leave')
-  leaveChannel(@Request() req, @Param('id', ParseIntPipe) id: number) {
+  leaveChannel(
+    @Request() req,
+    @Param('id', ParseIntPipe) id: number,
+  ): Promise<void> {
     return this.chatService.removeUserFromRoom(req.user.userId, id);
   }
 
@@ -108,7 +115,7 @@ export class MeController {
     @Request() req,
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
-  ) {
+  ): Promise<void> {
     return this.chatService.removeUserFromRoom(userid, id, req.user.userId);
   }
 }

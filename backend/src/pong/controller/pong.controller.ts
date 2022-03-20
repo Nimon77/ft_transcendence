@@ -6,7 +6,7 @@ export class PongController {
   constructor(private readonly roomservice: RoomService) {}
 
   @Get('/:id')
-  getRoomForUser(@Param('id', ParseIntPipe) id: number) {
+  getRoomForUser(@Param('id', ParseIntPipe) id: number): string {
     return this.roomservice.getRoomForUser(id).code;
   }
 }

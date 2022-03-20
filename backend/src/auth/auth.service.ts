@@ -23,11 +23,11 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async login(user: any) {
+  async login(user: any): Promise<any> {
     await this.userService.getUserById(user.id).catch(async () => {
       await this.userService.createUser({ id: user.id } as User);
       if (user.photos)
-        this.userService.setAvatar(
+        await this.userService.setAvatar(
           user.id,
           '42',
           await download(user.photos[0].value),

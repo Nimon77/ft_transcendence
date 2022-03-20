@@ -26,13 +26,13 @@ export class RoomService {
   queue: Array<Socket> = [];
   rooms: Map<string, Room> = new Map();
 
-  static emit(room: Room, event: string, ...args: any) {
+  static emit(room: Room, event: string, ...args: any): void {
     for (const player of room.players) player.socket.emit(event, ...args);
     if (room.spectators)
       for (const spectator of room.spectators) spectator.emit(event, ...args);
   }
 
-  async removeSocket(socket: Socket) {
+  async removeSocket(socket: Socket): Promise<any> {
     if (this.queue.indexOf(socket) != -1)
       return this.queue.splice(this.queue.indexOf(socket), 1);
 
@@ -55,7 +55,7 @@ export class RoomService {
     }
   }
 
-  addQueue(socket: Socket) {
+  addQueue(socket: Socket): void {
     for (const socket1 of this.queue)
       if (socket1.data.user.id == socket.data.user.id) return;
     if (this.getPlayer(socket.data.user.id)) return;
@@ -89,7 +89,7 @@ export class RoomService {
     return room;
   }
 
-  joinRoom(socket: Socket, room: Room) {
+  joinRoom(socket: Socket, room: Room): void {
     if (room.state == State.WAITING) {
       const player: Player = {
         socket,
@@ -125,12 +125,12 @@ export class RoomService {
     return this.rooms.get(code);
   }
 
-  ready(player: Player, input: Input) {
+  ready(player: Player, input: Input): void {
     player.input = input;
     this.startGame(player.room);
   }
 
-  startGame(room: Room) {
+  startGame(room: Room): void {
     if (room.state != State.STARTING) return;
     for (const player of room.players) if (!player.input) return;
 
@@ -155,7 +155,7 @@ export class RoomService {
     room.state = State.COUNTDOWN;
   }
 
-  startCalc(room: Room) {
+  startCalc(room: Room): void {
     if (room.state != State.COUNTDOWN) return;
 
     this.pong.resetBall(room);
@@ -163,7 +163,7 @@ export class RoomService {
   }
 
   @Interval(1000 / 60)
-  loop() {
+  loop(): void {
     for (const room of this.rooms.values())
       if (room.state == State.INGAME) this.pong.update(room);
   }
@@ -173,7 +173,9 @@ export class RoomService {
     room.state = State.END;
     RoomService.emit(room, 'stop', player.user);
 
-    const loser = room.players.find((player1) => player1.user.id != player.user.id).user;
+    const loser = room.players.find(
+      (player1) => player1.user.id != player.user.id,
+    ).user;
     const winner = player.user;
 
     await this.userService.updateRank(winner, loser);
