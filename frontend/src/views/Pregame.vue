@@ -11,7 +11,7 @@
           </p>
           </v-col>
           <v-btn-toggle v-model="gameMap" mandatory tile group>
-          <v-btn > Requiem </v-btn> <v-btn> Classic </v-btn> <v-btn> Electro </v-btn>
+          <v-btn > Banana </v-btn> <v-btn> Orange </v-btn> <v-btn> Blueberry </v-btn>
           </v-btn-toggle>
         </v-row>
         </v-card-text>
@@ -27,13 +27,13 @@
           </v-col>
           <v-btn-toggle v-model="gameMode" borderless mandatory rounded background-color="green">
           <v-btn>
-            <v-icon>mdi-account-child-circle</v-icon>
+            <v-icon>mdi-close-octagon</v-icon>
           </v-btn>
           <v-btn class="mx-1">
-            <v-icon>mdi-album</v-icon>
+            <v-icon>mdi-skip-forward</v-icon>
           </v-btn>
           <v-btn>
-            <v-icon>mdi-cricket</v-icon>
+            <v-icon>mdi-magnify-minus</v-icon>
           </v-btn>
           </v-btn-toggle>
         </v-row>
