@@ -16,11 +16,8 @@ export class Log {
   @Column()
   public message: string;
 
-  @Column({ type: 'timestamptz', nullable: true })
-  public time: Date;
-
-  @ManyToOne(() => ChatRoom, (room) => room.logs, { nullable: true })
-  room: ChatRoom['id'];
+  @ManyToOne(() => ChatRoom, (room) => room.logs)
+  room: ChatRoom;
 
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()

@@ -109,13 +109,21 @@ export class UserService {
   }
 
   async setStatus(userId: number, status: Status): Promise<void> {
-    await this.userRepository.update(userId, { status });
+    try {
+      await this.userRepository.update(userId, { status });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   }
 
   async updateRank(winner : User, loser : User) : Promise<void> {
-    await this.userRepository.update(winner.id, { rank : winner.rank + 1 });
-    if (loser.rank > 0)
-      await this.userRepository.update(loser.id, { rank : loser.rank - 1});
+    try {
+      await this.userRepository.update(winner.id, { rank : winner.rank + 1 });
+      if (loser.rank > 0)
+        await this.userRepository.update(loser.id, { rank : loser.rank - 1});
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
   } 
 
   async getRank(userId: number): Promise<number> {

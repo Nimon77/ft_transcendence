@@ -12,6 +12,6 @@ export class BannedUser {
   @Column({ type: 'timestamptz' })
   public endOfBan: Date;
 
-  @ManyToOne(() => ChatRoom, (room) => room.banned, { nullable: true })
-  room: ChatRoom['id'];
+  @ManyToOne(() => ChatRoom, (room) => room.banned)
+  room: ChatRoom;
 }

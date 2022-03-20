@@ -21,15 +21,15 @@ export class IdController {
   ) {}
 
   @Get('/')
-  async getAllChannels(): Promise<ChatRoom[]> {
-    return await this.chatService.getAllRooms();
+  getAllChannels(): Promise<ChatRoom[]> {
+    return this.chatService.getAllRooms();
   }
 
   // for testing purposes
 
   @Get('/:id') //get full room info including baned muted and users
-  async getRoom(@Param('id', ParseIntPipe) id: number) {
-    return await this.chatService.getRoom(id, [
+  getRoom(@Param('id', ParseIntPipe) id: number) {
+    return this.chatService.getRoom(id, [
       'users',
       'muted',
       'banned',
@@ -38,11 +38,11 @@ export class IdController {
   }
 
   @Post('/:id') //create channel for specific user
-  async createChannelForUser(
+  createChannelForUser(
     @Param('id', ParseIntPipe) userid: number,
     @Body() room: ChatRoom,
   ) {
-    return await this.chatService.createRoom(room, userid);
+    return this.chatService.createRoom(room, userid);
   }
 
   @Delete('/:id')
@@ -51,7 +51,7 @@ export class IdController {
   }
 
   @Put('/:id/add') //add any user to any channel
-  async addUserToRoom(
+  addUserToRoom(
     @Param('id', ParseIntPipe) userid: number,
     @Body() room: ChatRoom,
   ) {
@@ -59,7 +59,7 @@ export class IdController {
   }
 
   @Put(':id/check') //check if password is correct
-  async checkPass(
+  checkPass(
     @Param('id', ParseIntPipe) id: number,
     @Body() room: ChatRoom,
   ) {
@@ -67,7 +67,7 @@ export class IdController {
   }
 
   @Put(':id/:userid/log') //add log to room based on userid
-  async addLogToRoom(
+  addLogToRoom(
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
     @Body() message: MessageI,
