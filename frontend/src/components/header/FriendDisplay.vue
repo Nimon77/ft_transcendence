@@ -1,5 +1,5 @@
 <template>
-  <v-container >
+  <v-container>
     <v-row align="center">
       <v-avatar class="mr-n2" tile size="65">
         <img v-if="user.id !== undefined" v-auth-image="'/user/'+ user.id +'/avatar'"/>
@@ -10,7 +10,7 @@
       </v-badge>
       <v-spacer></v-spacer>
 
-      <v-menu offset-y>
+      <v-menu dark offset-y>
         <template v-slot:activator="{on}">
           <v-btn class="mt-3" color="primary" dark v-on="on"> OPTIONS </v-btn>
         </template>

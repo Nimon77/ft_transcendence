@@ -5,7 +5,7 @@
       <v-btn v-bind="attrs" v-on="on" color="red" dark max-width="160"> Delete Account </v-btn>
     </template>
     <template v-slot:default="dialog">
-      <v-card>
+      <v-card dark>
         <v-toolbar color="primary" elevation="0" class="text-h5 pl-5" dark>DELETE YOUR ACCOUNT</v-toolbar>
         <v-card-text>
           <v-container fluid>

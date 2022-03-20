@@ -1,15 +1,15 @@
 <template>
-<v-menu offset-x>
+<v-menu dark offset-x>
     <template v-slot:activator="{ on, attrs }">
     <v-btn @click.prevent v-on="on" v-bind="attrs" icon> <v-icon >mdi-dots-vertical</v-icon> </v-btn>
     </template>
     <v-list>
     
-        <v-btn dark class="ma-1" color="green" tile @click="leaveRoom">
     <v-list-item>
+        <v-btn dark class="ma-1" color="green" tile @click="leaveRoom">
             <v-list-item-title class="text-center">Leave Channel</v-list-item-title>
-    </v-list-item>
         </v-btn>
+    </v-list-item>
 
     <v-list-item v-if="isOwner && CR.public == false">
     <v-dialog v-model="dialog" max-width="600px" >

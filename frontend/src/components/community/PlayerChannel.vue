@@ -1,5 +1,5 @@
 <template>
-    <v-card flat tile min-width="18%" class="d-flex flex-column" height="80%">
+    <v-card dark flat tile min-width="18%" class="d-flex flex-column" height="80%">
       <v-sheet color="green" min-height="100" dark width="100%" class="text-center">
       <v-divider class="pt-7"></v-divider>
       <span class="span"> PLAYERS </span>
@@ -52,7 +52,7 @@
         <v-divider></v-divider>
       </div>
       </v-list>
-      <v-sheet v-else color="grey" height="100%" dark width="100%" class="text-center">
+      <v-sheet v-else color="rgb(79,85,89)" height="100%" dark width="100%" class="text-center">
       </v-sheet>
     </v-card>
 

@@ -2,12 +2,12 @@
   <v-dialog width="500" max-height="500" v-model="dialog" persistent>
     <template v-slot:activator="{ on, attrs }">
     <v-btn elevation="1" v-on:click="searchPlayer" v-bind="attrs" v-on="on" slot="activator"
-    class="btn" style="font-size: 60px !important;" color="yellow--text" tile x-large depressed
+    class="btn" style="font-size: 60px !important;" color="yellow--text" dark tile x-large depressed
     width="395" height="170">
     PLAY
     </v-btn>
     </template>
-    <v-card>
+    <v-card dark>
     <v-card-title>
       <div style="margin-left: 120px">
       <h3 class="headline">Searching for player...</h3>
