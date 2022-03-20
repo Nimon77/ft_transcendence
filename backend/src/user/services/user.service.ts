@@ -71,7 +71,11 @@ export class UserService {
     try {
       const rooms = await this.chatService.getRoomsForUser(id);
       rooms.forEach((room) => {
-        this.chatService.removeUserFromRoom(user.id, room.id, room.adminId[0]);
+        return this.chatService.removeUserFromRoom(
+          user.id,
+          room.id,
+          room.adminId[0],
+        );
       });
       await this.userRepository.delete(id);
     } catch (error) {
@@ -116,15 +120,15 @@ export class UserService {
     }
   }
 
-  async updateRank(winner : User, loser : User) : Promise<void> {
+  async updateRank(winner: User, loser: User): Promise<void> {
     try {
-      await this.userRepository.update(winner.id, { rank : winner.rank + 1 });
+      await this.userRepository.update(winner.id, { rank: winner.rank + 1 });
       if (loser.rank > 0)
-        await this.userRepository.update(loser.id, { rank : loser.rank - 1});
+        await this.userRepository.update(loser.id, { rank: loser.rank - 1 });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-  } 
+  }
 
   async getRank(userId: number): Promise<number> {
     return (await this.getUserById(userId)).rank;

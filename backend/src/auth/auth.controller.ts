@@ -20,7 +20,7 @@ export class AuthController {
   @Public()
   @UseGuards(FortyTwoAuthGuard)
   @Get('42/callback')
-  async login(@Req() request: any, @Res() response: Response) {
+  async login(@Req() request: any, @Res() response: Response): Promise<void> {
     const data = await this.authService.login(request.user);
 
     const url = new URL(`${request.protocol}:${request.hostname}`);
@@ -33,7 +33,7 @@ export class AuthController {
 
   @Public()
   @Get('jwt')
-  jwt(@Headers() headers) {
+  jwt(@Headers() headers): boolean {
     if (!headers.authorization) return false;
     const token = headers.authorization.split(' ')[1];
     return !!this.authService.verify(token).sub;
@@ -41,7 +41,7 @@ export class AuthController {
 
   @Public()
   @Get('generate/:id')
-  generateJWT(@Param('id', ParseIntPipe) id: number) {
+  generateJWT(@Param('id', ParseIntPipe) id: number): Promise<any> {
     return this.authService.login({ id });
   }
 }

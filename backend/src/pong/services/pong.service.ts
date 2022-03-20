@@ -1,5 +1,5 @@
 import { forwardRef, Inject, Injectable } from '@nestjs/common';
-import { Room } from '../interfaces/room.interface';
+import { Position, Room } from '../interfaces/room.interface';
 import { RoomService } from './room.service';
 
 @Injectable()
@@ -8,7 +8,7 @@ export class PongService {
     @Inject(forwardRef(() => RoomService)) private roomService: RoomService,
   ) {}
 
-  static velocity = (speed, radian) => {
+  static velocity = (speed, radian): Position => {
     return { x: Math.cos(radian) * speed, y: Math.sin(radian) * speed };
   };
 

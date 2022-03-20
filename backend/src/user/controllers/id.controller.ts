@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   ParseIntPipe,
   Post,
@@ -16,7 +14,7 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { Readable } from 'stream';
+import { Match } from '../entities/match.entity';
 import { User } from '../entities/user.entity';
 import AvatarService from '../services/avatar.service';
 import { UserService } from '../services/user.service';
@@ -53,28 +51,28 @@ export class IdController {
   }
 
   @Get('/matches/:id')
-  getMatches(@Param('id', ParseIntPipe) userid: number) {
+  getMatches(@Param('id', ParseIntPipe) userid: number): Promise<Match[]> {
     return this.userService.getMatches(userid);
   }
 
   @Get('/rank/:id')
-  getRank(@Param('id', ParseIntPipe) userid: number) {
+  getRank(@Param('id', ParseIntPipe) userid: number): Promise<number> {
     return this.userService.getRank(userid);
   }
   //for testing
 
   @Post()
-  createUser(@Body() user: User) {
+  createUser(@Body() user: User): Promise<User> {
     return this.userService.createUser(user);
   }
 
   @Put(':id')
-  updateUser(@Param('id') id: number, @Body() user: User) {
+  updateUser(@Param('id') id: number, @Body() user: User): Promise<User> {
     return this.userService.updateUser(id, user);
   }
 
   @Delete(':id')
-  deleteUser(@Param('id') id: number) {
+  deleteUser(@Param('id') id: number): Promise<void> {
     return this.userService.deleteUser(id);
   }
 
@@ -83,7 +81,7 @@ export class IdController {
   setAvatar(
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
-  ) {
-    this.userService.setAvatar(id, file.originalname, file.buffer);
+  ): Promise<void> {
+    return this.userService.setAvatar(id, file.originalname, file.buffer);
   }
 }

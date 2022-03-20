@@ -18,7 +18,7 @@ then
 	docker-compose down && \
 	docker volume prune -f && \
 	docker network prune -f && \
-	rm -rf */node_modules */*lock*
+	rm -rf */node_modules */*lock* */dist
 	if [ $? -eq 0 ]; then
 		echo -e "${GREEN}Cleanup success${NC}"
 	else

@@ -13,7 +13,7 @@ export class FortyTwoStrategy extends PassportStrategy(Strategy) {
     });
   }
 
-  async validate(
+  validate(
     accessToken: string,
     refreshToken: string,
     profile: any,

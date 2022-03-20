@@ -1,4 +1,10 @@
-import { Injectable, HttpException, HttpStatus, forwardRef, Inject } from '@nestjs/common';
+import {
+  Injectable,
+  HttpException,
+  HttpStatus,
+  forwardRef,
+  Inject,
+} from '@nestjs/common';
 import { ChatRoom } from './entity/chat.entity';
 import { MutedUser } from './entity/mute.entity';
 import { Repository } from 'typeorm';
@@ -7,7 +13,6 @@ import { PasswordI } from './interfaces/password.interface';
 import { BannedUser } from './entity/banned.entity';
 import { Log } from './entity/log.entity';
 import * as bcrypt from 'bcrypt';
-import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 
 const temporary = 30 * 60 * 1000;
@@ -15,7 +20,8 @@ const temporary = 30 * 60 * 1000;
 @Injectable()
 export class ChatService {
   constructor(
-    @Inject(forwardRef(() => UserService)) private readonly userService: UserService,
+    @Inject(forwardRef(() => UserService))
+    private readonly userService: UserService,
     @InjectRepository(ChatRoom)
     private readonly chatRepo: Repository<ChatRoom>,
     @InjectRepository(MutedUser)
@@ -121,14 +127,21 @@ export class ChatService {
     }
   }
 
-  async changePassword(pass: PasswordI, roomId: number, userId: number): Promise<void> {
+  async changePassword(
+    pass: PasswordI,
+    roomId: number,
+    userId: number,
+  ): Promise<void> {
     const user = await this.userService.getUserById(userId);
     const room = await this.getRoom(roomId, []);
 
     if (room.public == true)
-    throw new HttpException("Room is public", HttpStatus.FORBIDDEN);
+      throw new HttpException('Room is public', HttpStatus.FORBIDDEN);
     if (room.ownerId != user.id)
-      throw new HttpException("User isn't the room's owner", HttpStatus.FORBIDDEN);
+      throw new HttpException(
+        "User isn't the room's owner",
+        HttpStatus.FORBIDDEN,
+      );
     if (!pass.newPassword)
       throw new HttpException(
         'New password cannot be empty',
@@ -143,7 +156,7 @@ export class ChatService {
 
     try {
       const password = await bcrypt.hash(pass.newPassword, 10);
-      this.chatRepo.update(room.id, { password });
+      await this.chatRepo.update(room.id, { password });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -189,7 +202,7 @@ export class ChatService {
     }
 
     try {
-      this.chatRepo.update(room.id, partial);
+      await this.chatRepo.update(room.id, partial);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -225,7 +238,7 @@ export class ChatService {
       )
         throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
 
-    curroom.banned.forEach((banned) => {
+    curroom.banned.forEach(async (banned) => {
       if (banned.userId == user.id) {
         const time = new Date();
         if (banned.endOfBan > time)
@@ -233,7 +246,7 @@ export class ChatService {
             'User is banned from Room',
             HttpStatus.FORBIDDEN,
           );
-        this.unBanUserInRoom(banned, curroom);
+        await this.unBanUserInRoom(banned, curroom);
       }
     });
 
@@ -288,21 +301,25 @@ export class ChatService {
     }
   }
 
-  unBanUserInRoom(user: BannedUser, room: ChatRoom): Promise<void> {
+  async unBanUserInRoom(user: BannedUser, room: ChatRoom): Promise<void> {
     const index = room.banned.findIndex((user1) => user1.id == user.id);
     if (index == -1) return;
 
-    this.bannedRepo.delete(user.id);
+    await this.bannedRepo.delete(user.id);
   }
 
-  unMuteUserInRoom(user: MutedUser, room: ChatRoom): Promise<void> {
+  async unMuteUserInRoom(user: MutedUser, room: ChatRoom): Promise<void> {
     const index = room.muted.findIndex((user1) => user1.id == user.id);
     if (index == -1) return;
 
-    this.mutedRepo.delete(user.id);
+    await this.mutedRepo.delete(user.id);
   }
 
-  async muteUserInRoom(userId: number, roomid: number, adminId: number): Promise<void> {
+  async muteUserInRoom(
+    userId: number,
+    roomid: number,
+    adminId: number,
+  ): Promise<void> {
     const user = await this.userService.getUserById(userId);
     const admin = await this.userService.getUserById(adminId);
     const currentroom = await this.getRoom(roomid, ['users', 'muted']);
@@ -329,13 +346,17 @@ export class ChatService {
     });
 
     try {
-      this.mutedRepo.save(muted);
+      await this.mutedRepo.save(muted);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async banUserInRoom(userId: number, roomid: number, adminId: number): Promise<void> {
+  async banUserInRoom(
+    userId: number,
+    roomid: number,
+    adminId: number,
+  ): Promise<void> {
     const admin = await this.userService.getUserById(adminId);
     const user = await this.userService.getUserById(userId);
     const currentroom = await this.getRoom(roomid, ['users', 'banned']);
@@ -367,14 +388,18 @@ export class ChatService {
     );
 
     try {
-      this.bannedRepo.save(banned);
-      this.chatRepo.save(currentroom);
+      await this.bannedRepo.save(banned);
+      await this.chatRepo.save(currentroom);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
-  async addLogForRoom(id: number, message: string, userId : number): Promise<void> {
+  async addLogForRoom(
+    id: number,
+    message: string,
+    userId: number,
+  ): Promise<void> {
     const user = await this.userService.getUserById(userId);
     const currentroom = await this.getRoom(id, ['users', 'logs', 'muted']);
     if (!currentroom.users.find((user1) => user1.id == user.id))
@@ -389,12 +414,12 @@ export class ChatService {
             'User is muted from Room',
             HttpStatus.FORBIDDEN,
           );
-        this.unMuteUserInRoom(muted, currentroom);
+        await this.unMuteUserInRoom(muted, currentroom);
       }
     }
 
     if (currentroom.logs.length >= 100)
-      this.logRepo.delete(currentroom.logs[0]);
+      await this.logRepo.delete(currentroom.logs[0]);
 
     const log = this.logRepo.create({
       message: message,
@@ -403,7 +428,7 @@ export class ChatService {
     });
 
     try {
-      this.logRepo.save(log);
+      await this.logRepo.save(log);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

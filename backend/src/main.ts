@@ -4,7 +4,7 @@ import { AppModule } from './app.module';
 import { ConfigService } from '@nestjs/config';
 import { readFileSync } from 'fs';
 
-async function bootstrap() {
+async function bootstrap(): Promise<void> {
   const app = await NestFactory.create(AppModule);
 
   const configService: ConfigService = app.get(ConfigService);
@@ -20,4 +20,4 @@ async function bootstrap() {
 
   await app.listen(configService.get('PORT', 3000));
 }
-bootstrap();
+bootstrap().catch(console.error);

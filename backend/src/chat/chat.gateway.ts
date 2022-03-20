@@ -26,7 +26,7 @@ export class ChatGateway implements OnGatewayConnection {
   @WebSocketServer()
   server: any;
 
-  async handleConnection(client: Socket) {
+  async handleConnection(client: Socket): Promise<any> {
     if (!client.handshake.headers.authorization) return client.disconnect();
     const payload = this.authService.verify(
       client.handshake.headers.authorization.split(' ')[1],
@@ -43,7 +43,7 @@ export class ChatGateway implements OnGatewayConnection {
     });
   }
 
-  emitRoom(room: ChatRoom, event: string, ...args): Promise<void> {
+  emitRoom(room: ChatRoom, event: string, ...args): void {
     if (!room.users) return;
 
     const sockets: any[] = Array.from(this.server.sockets.values());
@@ -60,7 +60,7 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('text')
-  async handleMessage(client: Socket, data: any) {
+  async handleMessage(client: Socket, data: any): Promise<void> {
     try {
       const room = await this.chatService.getRoom(data.id, ['users']);
 

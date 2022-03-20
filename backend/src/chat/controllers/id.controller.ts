@@ -28,33 +28,28 @@ export class IdController {
   // for testing purposes
 
   @Get('/:id') //get full room info including baned muted and users
-  getRoom(@Param('id', ParseIntPipe) id: number) {
-    return this.chatService.getRoom(id, [
-      'users',
-      'muted',
-      'banned',
-      'logs',
-    ]);
+  getRoom(@Param('id', ParseIntPipe) id: number): Promise<ChatRoom> {
+    return this.chatService.getRoom(id, ['users', 'muted', 'banned', 'logs']);
   }
 
   @Post('/:id') //create channel for specific user
   createChannelForUser(
     @Param('id', ParseIntPipe) userid: number,
     @Body() room: ChatRoom,
-  ) {
+  ): Promise<ChatRoom> {
     return this.chatService.createRoom(room, userid);
   }
 
   @Delete('/:id')
-  deleteChannel(@Param('id', ParseIntPipe) id: number) {
-    this.chatService.deleteRoom(id);
+  deleteChannel(@Param('id', ParseIntPipe) id: number): Promise<void> {
+    return this.chatService.deleteRoom(id);
   }
 
   @Put('/:id/add') //add any user to any channel
   addUserToRoom(
     @Param('id', ParseIntPipe) userid: number,
     @Body() room: ChatRoom,
-  ) {
+  ): Promise<void> {
     return this.chatService.addUserToRoom(room, userid);
   }
 
@@ -62,7 +57,7 @@ export class IdController {
   checkPass(
     @Param('id', ParseIntPipe) id: number,
     @Body() room: ChatRoom,
-  ) {
+  ): Promise<boolean> {
     return this.chatService.checkPassword(id, room.password);
   }
 
@@ -71,7 +66,7 @@ export class IdController {
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
     @Body() message: MessageI,
-  ) {
+  ): Promise<void> {
     return this.chatService.addLogForRoom(id, message.message, userid);
   }
 }

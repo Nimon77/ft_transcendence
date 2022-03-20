@@ -3,8 +3,6 @@ import {
   Controller,
   Delete,
   Get,
-  HttpException,
-  HttpStatus,
   Param,
   Put,
   Request,
@@ -15,7 +13,6 @@ import {
 } from '@nestjs/common';
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
-import { Readable } from 'stream';
 import { User } from '../entities/user.entity';
 import AvatarService from '../services/avatar.service';
 import { UserService } from '../services/user.service';
@@ -47,18 +44,21 @@ export class MeController {
   }
 
   @Put('/me')
-  updateUser(@Request() req, @Body() user: User) {
+  updateUser(@Request() req, @Body() user: User): Promise<User> {
     return this.userService.updateUser(req.user.userId, user);
   }
 
   @Delete('/me')
-  deleteUser(@Request() req) {
+  deleteUser(@Request() req): Promise<void> {
     return this.userService.deleteUser(req.user.userId);
   }
 
   @Put('me/avatar')
   @UseInterceptors(FileInterceptor('file'))
-  updateAvatar(@Request() req, @UploadedFile() file: Express.Multer.File) {
+  updateAvatar(
+    @Request() req,
+    @UploadedFile() file: Express.Multer.File,
+  ): Promise<void> {
     return this.userService.setAvatar(
       req.user.userId,
       file.originalname,
