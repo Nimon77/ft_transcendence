@@ -83,11 +83,13 @@ export class UserService {
     }
   }
 
-  async setAvatar(
-    userId: number,
-    filename: string,
-    data: Buffer,
-  ): Promise<void> {
+  async setAvatar(userId: number, file: Express.Multer.File): Promise<void> {
+    if (!file)
+      throw new HttpException('File required', HttpStatus.NOT_ACCEPTABLE);
+
+    const filename = file.originalname;
+    const data = file.buffer;
+
     const user: User = await this.userRepository.findOne(userId, {
       relations: ['avatar'],
     });
