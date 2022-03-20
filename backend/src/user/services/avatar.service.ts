@@ -8,6 +8,7 @@ import { InjectRepository } from '@nestjs/typeorm';
 import { Readable } from 'stream';
 import { Repository } from 'typeorm';
 import { Avatar } from '../entities/avatar.entity';
+import { User } from '../entities/user.entity';
 
 @Injectable()
 export class AvatarService {
@@ -16,8 +17,12 @@ export class AvatarService {
     private avatarRepository: Repository<Avatar>,
   ) {}
 
-  async createAvatar(filename: string, data: Buffer): Promise<Avatar> {
-    const avatar = this.avatarRepository.create({ filename, data });
+  async createAvatar(
+    filename: string,
+    data: Buffer,
+    user: User,
+  ): Promise<Avatar> {
+    const avatar = this.avatarRepository.create({ filename, data, user });
 
     try {
       await this.avatarRepository.save(avatar);

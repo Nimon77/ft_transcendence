@@ -1,3 +1,4 @@
+import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
 import { ChatRoom } from './chat.entity';
 
@@ -6,8 +7,8 @@ export class BannedUser {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
-  userId: number;
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
+  user: User;
 
   @Column({ type: 'timestamptz' })
   endOfBan: Date;

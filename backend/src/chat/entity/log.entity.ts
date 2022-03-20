@@ -19,7 +19,7 @@ export class Log {
   @ManyToOne(() => ChatRoom, (room) => room.logs)
   room: ChatRoom;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   user: User;
 }

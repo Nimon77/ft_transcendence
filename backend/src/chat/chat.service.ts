@@ -45,7 +45,7 @@ export class ChatService {
   }
 
   async createRoom(room: ChatRoom, userId: number): Promise<ChatRoom> {
-    const admin = await this.userService.getUserById(userId);
+    const admin = await this.userService.getUser(userId, []);
     if (room.name == undefined)
       throw new HttpException(
         'Room name needs to be specified',
@@ -68,7 +68,7 @@ export class ChatService {
       name: room.name,
       adminId: [admin.id],
       public: room.public !== false,
-      ownerId: admin.id,
+      owner: admin,
       users: [admin],
       muted: [],
       password: hashedPassword,
@@ -97,8 +97,8 @@ export class ChatService {
     roomId: number,
     adminId?: number,
   ): Promise<void> {
-    const user = await this.userService.getUserById(userId);
-    const room = await this.getRoom(roomId, ['users']);
+    const user = await this.userService.getUser(userId, []);
+    const room = await this.getRoom(roomId, ['users', 'owner']);
 
     if (adminId && adminId != user.id) {
       if (room.adminId.indexOf(adminId) == -1)
@@ -107,11 +107,9 @@ export class ChatService {
           HttpStatus.FORBIDDEN,
         );
 
-      {
-        const index = room.adminId.indexOf(user.id);
-        if (index != -1) room.adminId.splice(index, 1);
-      }
-    } else if (user.id == room.ownerId) return await this.deleteRoom(room.id);
+      const index = room.adminId.indexOf(user.id);
+      if (index != -1) room.adminId.splice(index, 1);
+    } else if (user.id == room.owner.id) return await this.deleteRoom(room.id);
 
     {
       const index = room.users.findIndex((user1) => user1.id == user.id);
@@ -132,12 +130,12 @@ export class ChatService {
     roomId: number,
     userId: number,
   ): Promise<void> {
-    const user = await this.userService.getUserById(userId);
-    const room = await this.getRoom(roomId, []);
+    const user = await this.userService.getUser(userId, []);
+    const room = await this.getRoom(roomId, ['owner']);
 
     if (room.public == true)
       throw new HttpException('Room is public', HttpStatus.FORBIDDEN);
-    if (room.ownerId != user.id)
+    if (room.owner.id != user.id)
       throw new HttpException(
         "User isn't the room's owner",
         HttpStatus.FORBIDDEN,
@@ -173,9 +171,9 @@ export class ChatService {
 
   async updateRoom(id: number, room: ChatRoom, userId: number): Promise<void> {
     {
-      const user = await this.userService.getUserById(userId);
-      const updatedRoom = await this.getRoom(id, []);
-      if (updatedRoom.ownerId != user.id)
+      const user = await this.userService.getUser(userId, []);
+      const updatedRoom = await this.getRoom(id, ['owner']);
+      if (updatedRoom.owner.id != user.id)
         throw new HttpException(
           'User isnt owner of Room',
           HttpStatus.FORBIDDEN,
@@ -229,7 +227,7 @@ export class ChatService {
   }
 
   async addUserToRoom(room: ChatRoom, userId: number): Promise<void> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUser(userId, []);
     const curroom = await this.getRoom(room.id, ['users', 'banned'], true);
     if (!curroom.public)
       if (
@@ -239,7 +237,7 @@ export class ChatService {
         throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
 
     curroom.banned.forEach(async (banned) => {
-      if (banned.userId == user.id) {
+      if (banned.user.id == user.id) {
         const time = new Date();
         if (banned.endOfBan > time)
           throw new HttpException(
@@ -265,21 +263,22 @@ export class ChatService {
     userId: number,
     roomid: number,
   ): Promise<void> {
-    const owner = await this.userService.getUserById(ownerId);
-    const user = await this.userService.getUserById(userId);
+    const owner = await this.userService.getUser(ownerId, []);
+    const user = await this.userService.getUser(userId, []);
     const room = await this.getRoom(roomid, [
+      'owner',
       'users',
       'muted',
       'banned',
       'logs',
     ]);
-    if (room.ownerId != owner.id)
+    if (room.owner.id != owner.id)
       throw new HttpException(
         "User isn't the room's owner",
         HttpStatus.FORBIDDEN,
       );
 
-    if (user.id == room.ownerId)
+    if (user.id == room.owner.id)
       throw new HttpException('Owner cannot be demoted', HttpStatus.FORBIDDEN);
 
     if (!room.users.find((user1) => user1.id == user.id))
@@ -320,10 +319,10 @@ export class ChatService {
     roomid: number,
     adminId: number,
   ): Promise<void> {
-    const user = await this.userService.getUserById(userId);
-    const admin = await this.userService.getUserById(adminId);
-    const currentroom = await this.getRoom(roomid, ['users', 'muted']);
-    if (currentroom.ownerId == user.id)
+    const user = await this.userService.getUser(userId, []);
+    const admin = await this.userService.getUser(adminId, []);
+    const currentroom = await this.getRoom(roomid, ['owner', 'users', 'muted']);
+    if (currentroom.owner.id == user.id)
       throw new HttpException(
         'User is owner and thus cannot be muted',
         HttpStatus.FORBIDDEN,
@@ -335,12 +334,12 @@ export class ChatService {
     if (!currentroom.adminId.find((adminId) => adminId == admin.id))
       throw new HttpException('User isnt admin in room', HttpStatus.FORBIDDEN);
 
-    if (currentroom.muted.find((user1) => user1.userId == user.id))
+    if (currentroom.muted.find((user1) => user1.user.id == user.id))
       throw new HttpException('User is already muted', HttpStatus.FORBIDDEN);
 
     const time = new Date(Date.now() + temporary);
     const muted = this.mutedRepo.create({
-      userId: user.id,
+      user,
       endOfMute: time,
       room: currentroom,
     });
@@ -357,10 +356,14 @@ export class ChatService {
     roomid: number,
     adminId: number,
   ): Promise<void> {
-    const admin = await this.userService.getUserById(adminId);
-    const user = await this.userService.getUserById(userId);
-    const currentroom = await this.getRoom(roomid, ['users', 'banned']);
-    if (currentroom.ownerId == user.id)
+    const admin = await this.userService.getUser(adminId, []);
+    const user = await this.userService.getUser(userId, []);
+    const currentroom = await this.getRoom(roomid, [
+      'owner',
+      'users',
+      'banned',
+    ]);
+    if (currentroom.owner.id == user.id)
       throw new HttpException(
         'User is owner and thus cannot be banned',
         HttpStatus.FORBIDDEN,
@@ -372,12 +375,12 @@ export class ChatService {
     if (!currentroom.adminId.find((adminId) => adminId == admin.id))
       throw new HttpException('User isnt admin in room', HttpStatus.FORBIDDEN);
 
-    if (currentroom.banned.find((user1) => user1.userId == user.id))
+    if (currentroom.banned.find((user1) => user1.user.id == user.id))
       throw new HttpException('User is already banned', HttpStatus.FORBIDDEN);
 
     const time = new Date(Date.now() + temporary);
     const banned = this.bannedRepo.create({
-      userId: user.id,
+      user,
       endOfBan: time,
       room: currentroom,
     });
@@ -400,13 +403,13 @@ export class ChatService {
     message: string,
     userId: number,
   ): Promise<void> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUser(userId, []);
     const currentroom = await this.getRoom(id, ['users', 'logs', 'muted']);
     if (!currentroom.users.find((user1) => user1.id == user.id))
       throw new HttpException('User isnt in room', HttpStatus.NOT_FOUND);
 
     {
-      const muted = currentroom.muted.find((user1) => user1.userId == user.id);
+      const muted = currentroom.muted.find((user1) => user1.user.id == user.id);
       if (muted) {
         const time = new Date();
         if (muted.endOfMute > time)
@@ -435,7 +438,7 @@ export class ChatService {
   }
 
   async getLogsForRoom(id: number, userId: number): Promise<Log[]> {
-    const user = await this.userService.getUserById(userId);
+    const user = await this.userService.getUser(userId, []);
     const currentroom = await this.getRoom(id, ['logs']);
     const logs = [];
     for (const log of currentroom.logs) {
