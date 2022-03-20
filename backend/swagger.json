@@ -310,9 +310,6 @@
       "ValueNotSpecified": {
         "description": "One value that was requiered was not specified"
       },
-      "WrongPass": {
-        "description": "Password is incorect or didn't get saved"
-      },
       "GameroomNotExist": {
         "description": "Gameroom does not exist"
       },
@@ -466,10 +463,13 @@
             "$ref": "#/components/responses/OK"
           },
           "400": {
-            "$ref": "#/components/responses/ValueNotSpecified"
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
             "$ref": "#/components/responses/UserNotExist"
@@ -600,6 +600,9 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -767,10 +770,13 @@
             "$ref": "#/components/responses/OK"
           },
           "400": {
-            "$ref": "#/components/responses/WrongPass"
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
             "$ref": "#/components/responses/NotExist"
@@ -1133,10 +1139,13 @@
             "$ref": "#/components/responses/OK"
           },
           "400": {
-            "$ref": "#/components/responses/ValueNotSpecified"
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
           },
           "404": {
             "$ref": "#/components/responses/UserNotExist"

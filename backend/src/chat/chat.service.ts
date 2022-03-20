@@ -43,13 +43,13 @@ export class ChatService {
     if (room.name == undefined)
       throw new HttpException(
         'Room name needs to be specified',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.FORBIDDEN,
       );
 
     let hashedPassword = null;
     if (room.public == false) {
       if (!room.password)
-        throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
+        throw new HttpException('Password Required', HttpStatus.FORBIDDEN);
 
       try {
         hashedPassword = await bcrypt.hash(String(room.password), 10);
@@ -121,17 +121,24 @@ export class ChatService {
     }
   }
 
-  async changePassword(pass: PasswordI, room: ChatRoom): Promise<void> {
+  async changePassword(pass: PasswordI, roomId: number, userId: number): Promise<void> {
+    const user = await this.userService.getUserById(userId);
+    const room = await this.getRoom(roomId, []);
+
+    if (room.public == true)
+    throw new HttpException("Room is public", HttpStatus.FORBIDDEN);
+    if (room.ownerId == user.id && room.public == false)
+      throw new HttpException("User isn't the room's owner", HttpStatus.FORBIDDEN);
     if (!pass.newPassword)
       throw new HttpException(
         'New password cannot be empty',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.FORBIDDEN,
       );
 
     if (!(await this.checkPassword(room.id, pass.oldPassword)))
       throw new HttpException(
         'Wrong credentials provided',
-        HttpStatus.BAD_REQUEST,
+        HttpStatus.FORBIDDEN,
       );
 
     try {
@@ -171,7 +178,7 @@ export class ChatService {
       if (partial.public) partial.password = null;
       else {
         if (!room.password)
-          throw new HttpException('Password Required', HttpStatus.BAD_REQUEST);
+          throw new HttpException('Password Required', HttpStatus.FORBIDDEN);
 
         try {
           partial.password = await bcrypt.hash(String(room.password), 10);
