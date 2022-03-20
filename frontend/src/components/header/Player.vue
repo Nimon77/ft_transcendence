@@ -8,7 +8,7 @@
             <img :src="avatar" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
-        <v-btn router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
+        <v-btn plain router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
 
         <v-menu offset-y>
         <template v-slot:activator="{ on, attrse }">
@@ -86,7 +86,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-
 .name {
     font-size: 150%;
     color: white;

@@ -29,7 +29,7 @@
           <v-sheet color="grey" height="50" dark width="100%" class="text-center">
               <v-app-bar bottom color="rgba(0,0,0,0)" flat>
                   <v-text-field class="mt-5" v-model="input" append-outer-icon="mdi-send"
-                  filled label="Message" type="text" v-on:click:append-outer="sendMsg" v-on:keyup.enter="sendMsg"
+                  label="Message" type="text" v-on:click:append-outer="sendMsg" v-on:keyup.enter="sendMsg"
                   ></v-text-field>
               </v-app-bar>
           </v-sheet>
@@ -146,10 +146,6 @@ export default Vue.extend({
 
 <style scoped>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
-
-html {
-  overflow: hidden !important;
-}
 
 .span {
   font-family: "lemon_milkmedium";
