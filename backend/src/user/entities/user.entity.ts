@@ -2,7 +2,6 @@ import {
   Column,
   PrimaryColumn,
   Entity,
-  JoinColumn,
   OneToOne,
   ManyToMany,
   OneToMany,
@@ -11,15 +10,13 @@ import { Avatar } from 'src/user/entities/avatar.entity';
 import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { Status } from '../enums/status.enum';
 import { Match } from './match.entity';
-import { Room } from 'src/pong/interfaces/room.interface';
 
 @Entity()
 export class User {
   @PrimaryColumn()
   id: number;
 
-  @OneToOne(() => Avatar)
-  @JoinColumn()
+  @OneToOne(() => Avatar, (avatar) => avatar.user)
   avatar: Avatar;
 
   @Column({ unique: true, nullable: true })
@@ -40,8 +37,10 @@ export class User {
   @Column('int', { array: true, default: [] })
   blocked: number[];
 
-  @ManyToMany(() => ChatRoom)
-  rooms: Room[];
+  @ManyToMany(() => ChatRoom, (room) => room.users, {
+    onDelete: 'CASCADE',
+  })
+  rooms: ChatRoom[];
 
   @Column({ default: Status.OFFLINE })
   status: Status;

@@ -25,7 +25,7 @@ export class AuthService {
   ) {}
 
   async login(user: FortyTwoUser): Promise<any> {
-    await this.userService.getUserById(user.id).catch(async () => {
+    await this.userService.getUser(user.id, []).catch(async () => {
       await this.userService.createUser({ id: user.id } as User);
       if (user.photos)
         await this.userService.setAvatar(user.id, {

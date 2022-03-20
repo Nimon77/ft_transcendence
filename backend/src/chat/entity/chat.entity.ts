@@ -6,6 +6,8 @@ import {
   JoinTable,
   ManyToMany,
   OneToMany,
+  JoinColumn,
+  OneToOne,
 } from 'typeorm';
 import { BannedUser } from './banned.entity';
 import { Log } from './log.entity';
@@ -25,25 +27,26 @@ export class ChatRoom {
   @Column({ nullable: true })
   password: string;
 
-  @Column()
-  ownerId: number;
+  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @JoinColumn()
+  owner: User;
 
   @Column('int', { array: true, default: [] })
   adminId: number[];
 
-  @ManyToMany(() => User)
+  @ManyToMany(() => User, (user) => user.rooms)
   @JoinTable()
   users: User[];
 
   @OneToMany(() => MutedUser, (MutedUser) => MutedUser.room)
-  @JoinTable()
+  @JoinColumn()
   muted: MutedUser[];
 
   @OneToMany(() => BannedUser, (BannedUser) => BannedUser.room)
-  @JoinTable()
+  @JoinColumn()
   banned: BannedUser[];
 
   @OneToMany(() => Log, (Log) => Log.room)
-  @JoinTable()
+  @JoinColumn()
   logs: Log[];
 }

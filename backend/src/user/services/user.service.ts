@@ -23,8 +23,8 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async getUserById(id: number): Promise<User> {
-    const user: User = await this.userRepository.findOne(id);
+  async getUser(id: number, relations: string[]): Promise<User> {
+    const user: User = await this.userRepository.findOne(id, { relations });
     if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return user;
   }
@@ -44,7 +44,7 @@ export class UserService {
 
   async updateUser(id: number, user: User): Promise<User> {
     if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
-    await this.getUserById(id);
+    await this.getUser(id, []);
 
     const can: Array<string> = ['username', 'followed', 'blocked'];
 
@@ -67,16 +67,8 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<void> {
-    const user: User = await this.getUserById(id);
+    await this.getUser(id, []);
     try {
-      const rooms = await this.chatService.getRoomsForUser(id);
-      rooms.forEach((room) => {
-        return this.chatService.removeUserFromRoom(
-          user.id,
-          room.id,
-          room.adminId[0],
-        );
-      });
       await this.userRepository.delete(id);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
@@ -90,26 +82,16 @@ export class UserService {
     const filename = file.originalname;
     const data = file.buffer;
 
-    const user: User = await this.userRepository.findOne(userId, {
-      relations: ['avatar'],
-    });
-    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user: User = await this.getUser(userId, ['avatar']);
 
-    const avatar = await this.avatarService.createAvatar(filename, data);
-
-    try {
-      await this.userRepository.update(user.id, { avatar });
-      if (user.avatar) await this.avatarService.deleteAvatar(user.avatar.id);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
+    await this.avatarService.createAvatar(filename, data, user);
+    if (user.avatar) await this.avatarService.deleteAvatar(user.avatar.id);
   }
 
   async getAvatar(userId: number): Promise<Avatar> {
-    const user: User = await this.userRepository.findOne(userId, {
-      relations: ['avatar'],
-    });
-    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user: User = await this.getUser(userId, ['avatar']);
+    if (!user.avatar)
+      throw new HttpException('User not found', HttpStatus.NOT_FOUND);
 
     return user.avatar;
   }
@@ -133,7 +115,7 @@ export class UserService {
   }
 
   async getRank(userId: number): Promise<number> {
-    return (await this.getUserById(userId)).rank;
+    return (await this.getUser(userId, [])).rank;
   }
 
   async createMatchHistory(data: Match): Promise<void> {
@@ -150,10 +132,7 @@ export class UserService {
   }
 
   async getMatches(userId: number): Promise<Match[]> {
-    const user = await this.userRepository.findOne(userId, {
-      relations: ['won', 'lost'],
-    });
-    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+    const user = await this.getUser(userId, ['won', 'lost']);
 
     let matches = [];
     if (user.won) matches = matches.concat(user.won);
@@ -165,8 +144,8 @@ export class UserService {
   async toggleFollow(userId: number, targetId: number): Promise<number[]> {
     if (userId == targetId) return;
 
-    const user = await this.getUserById(userId);
-    const target = await this.getUserById(targetId);
+    const user = await this.getUser(userId, []);
+    const target = await this.getUser(targetId, []);
 
     const index = user.followed.findIndex((userId) => userId == target.id);
     if (index == -1) user.followed.push(target.id);
@@ -185,8 +164,8 @@ export class UserService {
   async toggleBlock(userId: number, targetId: number): Promise<number[]> {
     if (userId == targetId) return;
 
-    const user = await this.getUserById(userId);
-    const target = await this.getUserById(targetId);
+    const user = await this.getUser(userId, []);
+    const target = await this.getUser(targetId, []);
 
     const index = user.blocked.findIndex((userId) => userId == target.id);
     if (index == -1) user.blocked.push(target.id);

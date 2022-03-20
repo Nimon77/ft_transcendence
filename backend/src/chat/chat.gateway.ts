@@ -33,7 +33,7 @@ export class ChatGateway implements OnGatewayConnection {
       client.handshake.headers.authorization.split(' ')[1],
     );
     const user: User = await this.userService
-      .getUserById(payload.sub)
+      .getUser(payload.sub, [])
       .catch(() => null);
     if (!user) return client.disconnect();
 
@@ -78,7 +78,7 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('join')
   async joinChannel(client: Socket, room: ChatRoom): Promise<void> {
     try {
-      await this.chatService.addUserToRoom(room, client.data.user);
+      await this.chatService.addUserToRoom(room, client.data.user.id);
       room = await this.chatService.getRoom(room.id, ['users']);
       this.emitRoom(room, 'join', { room, user: client.data.user });
     } catch {}
@@ -88,7 +88,7 @@ export class ChatGateway implements OnGatewayConnection {
   async leaveChannel(client: Socket, data: any): Promise<void> {
     try {
       let user = client.data.user;
-      if (data.userId) user = await this.userService.getUserById(data.userId);
+      if (data.userId) user = await this.userService.getUser(data.userId, []);
 
       const room = await this.chatService.getRoom(data.roomId, ['users']);
 
@@ -107,7 +107,7 @@ export class ChatGateway implements OnGatewayConnection {
     try {
       const room = await this.chatService.getRoom(data.roomId, ['users']);
       const owner = client.data.user;
-      const admin = await this.userService.getUserById(data.userId);
+      const admin = await this.userService.getUser(data.userId, []);
       let is_admin = false;
 
       await this.chatService.toggleAdminRole(owner, admin.id, room.id);
@@ -127,11 +127,11 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
         'muted',
       ]);
-      const curuser = await this.userService.getUserById(data.userId);
+      const curuser = await this.userService.getUser(data.userId, []);
       const admin = client.data.user;
       let is_muted = false;
 
-      const muted = room.muted.find((muted) => muted.userId == data.userId);
+      const muted = room.muted.find((muted) => muted.user.id == data.userId);
 
       if (muted) await this.chatService.unMuteUserInRoom(muted, room);
       else {
@@ -153,12 +153,12 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
         'banned',
       ]);
-      const curuser = await this.userService.getUserById(data.userId);
+      const curuser = await this.userService.getUser(data.userId, []);
       const admin = client.data.user;
       let is_banned = false;
 
       const banned = room.banned.find(
-        (banned) => banned.userId == banned.userId,
+        (banned) => banned.user.id == data.user.id,
       );
 
       if (banned) await this.chatService.unBanUserInRoom(banned, room);

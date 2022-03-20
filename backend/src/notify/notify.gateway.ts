@@ -28,7 +28,7 @@ export class NotifyGateway {
       client.handshake.headers.authorization.split(' ')[1],
     );
     const user: User = await this.userService
-      .getUserById(payload.sub)
+      .getUser(payload.sub, [])
       .catch(() => null);
     if (!user) return client.disconnect();
 

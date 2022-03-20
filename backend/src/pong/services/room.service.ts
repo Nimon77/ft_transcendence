@@ -172,19 +172,21 @@ export class RoomService {
   async stopGame(room: Room, player: Player): Promise<void> {
     if (room.state == State.END) return;
     room.state = State.END;
-    RoomService.emit(room, 'stop', player.user);
 
     const loser = room.players.find(
       (player1) => player1.user.id != player.user.id,
     ).user;
     const winner = player.user;
+    const score = room.players.map((player) => player.score);
 
     await this.userService.updateRank(winner, loser);
-    return await this.userService.createMatchHistory({
-      score: room.players.map((player) => player.score),
+    await this.userService.createMatchHistory({
+      score,
       winner,
       loser,
     } as Match);
+
+    RoomService.emit(room, 'stop', player.user);
   }
 
   getRoomForUser(userId: number): Room {

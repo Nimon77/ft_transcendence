@@ -13,16 +13,16 @@ export class Match {
   id: number;
 
   @Column('int', { array: true, default: [] })
-  public score: number[];
+  score: number[];
 
   @Column({ type: 'timestamptz' })
-  public date: Date;
+  date: Date;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   winner: User;
 
-  @ManyToOne(() => User, { eager: true })
+  @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()
   loser: User;
 }
