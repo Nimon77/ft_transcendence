@@ -5,7 +5,7 @@
 
         <v-badge bordered bottom left :color="status" offset-x="15" offset-y="15" >
           <v-avatar style="border: solid; border-color: white;" tile size="65" class="mr-2 border">
-            <img :src="'data:image/png;base64,' + avatar" alt="Profile Picture"/>
+            <img :src="avatar" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
         <v-btn router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
