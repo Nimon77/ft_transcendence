@@ -14,9 +14,11 @@ async function bootstrap(): Promise<void> {
   });
 
   const openAPI: OpenAPIObject = JSON.parse(
-    readFileSync('swagger.json', 'utf8'),
+    readFileSync('./swagger/swagger.json', 'utf8'),
   );
-  SwaggerModule.setup('api', app, openAPI);
+  SwaggerModule.setup('api', app, openAPI, {
+    customCss: readFileSync('./swagger/SwaggerDark.css', 'utf-8'),
+  });
 
   await app.listen(configService.get('PORT', 3000));
 }
