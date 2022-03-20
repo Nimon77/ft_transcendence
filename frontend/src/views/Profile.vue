@@ -2,7 +2,7 @@
   <v-container fill-height fluid>
     <v-row align="center">
       <v-col class="d-flex justify-center" cols="12" >
-        <v-card class="mx-auto" max-width="544"  outlined tile>
+        <v-card class="mx-auto" max-width="544" dark outlined tile>
           <v-list-item three-line>
             <v-list-item-content>
               <div class="text-overline mb-4">
@@ -11,7 +11,7 @@
               <v-list-item-title class="text-h5 font-weight-bold mb-1">
                 {{user.username | upCase}} <span class="text-h6 ml-1" > rank : {{user.rank}}  <v-icon class="mb-3" color="orange"> mdi-food </v-icon> </span>
               </v-list-item-title>
-              <v-list-item-subtitle class="font-weight-bold green--text mt-n1">
+              <v-list-item-subtitle class="font-weight-bold mt-n1" style="color: rgb(168, 213, 146)">
                 WINS : {{playerItems.nbWin}} <span class="font-weight-bold black--text"> | </span>
                 <span class="red--text"> LOSSES : {{playerItems.nbLoss}} </span>
               </v-list-item-subtitle>
@@ -24,14 +24,14 @@
         </v-card>
       </v-col>
       <v-col class="d-flex justify-center" cols="12" >
-        <v-card max-width="700">
+        <v-card max-width="700" dark>
           <v-list-item>
             <v-list-item-content class="text-center">
               <div class="mt-3 mb-7 text-h5 font-weight-bold"> MATCH HISTORY </div>
               <div v-for="ph in playerHistory" v-bind:key="ph.date" class="text-h mb-3">
                 <div v-if="ph.winner.id == user.id">
-                  <span class="text-center font-weight-bold green--text"> ({{ph.score[1]}} | {{ph.score[0]}}) - </span>
-                  <span class="text-center font-weight-bold green--text"> WON AGAINST</span>
+                  <span class="text-center font-weight-bold" style="color: rgb(168, 213, 146)"> ({{ph.score[1]}} | {{ph.score[0]}}) - </span>
+                  <span class="text-center font-weight-bold" style="color: rgb(168, 213, 146)"> WON AGAINST</span>
                   <span> {{ph.loser.username | upCase}} </span>
                 </div>
                 <div v-else>

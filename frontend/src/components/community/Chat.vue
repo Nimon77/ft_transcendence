@@ -1,5 +1,5 @@
 <template>
-    <v-card tile flat class="mx-10" color="white" width="50%" height="80%">
+    <v-card tile flat class="mx-10" dark width="50%" height="80%">
       <v-sheet color="green" height="100" dark width="100%" class="text-center">
         <v-divider class="pt-4"></v-divider>
         <span class="span"> CHAT </span>
@@ -19,7 +19,7 @@
         </div>
       </v-list>
 
-      <v-sheet v-else color="grey" height="100%" dark width="100%" class="text-center">
+      <v-sheet v-else color="rgb(79,85,89)" height="100%" dark width="100%" class="text-center">
           <v-divider class="pt-4"></v-divider>
           <span class="span vertical-center"> PLEASE SELECT A CHANNEL </span>
       </v-sheet>

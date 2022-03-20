@@ -12,18 +12,18 @@
         </v-btn>
       </template>
 
-      <v-card>
-          <v-card-title class="text-h5 grey lighten-2">
+      <v-card dark>
+          <v-card-title class="text-h5 grey darken-4">
             <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="searchInput = null" autofocus></v-text-field>
           </v-card-title>
 
           <v-list v-if="searchInput == null || searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
                 <v-list-item-group>
                   <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
-                  <v-list-item-content>
-                    <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog"/>
-                    <v-divider class="mt-2"></v-divider>
-                  </v-list-item-content>
+                    <v-list-item-content>
+                      <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog"/>
+                      <v-divider class="mt-2"></v-divider>
+                    </v-list-item-content>
                   </v-list-item>
                 </v-list-item-group>
           </v-list>
@@ -33,7 +33,7 @@
               <v-list-item-content>
                 <UserDisplay :user="user"/>
                 <v-divider class="mt-1"></v-divider>
-            </v-list-item-content>
+              </v-list-item-content>
             </v-list-item>
           </v-list>
         </v-card>

@@ -2,7 +2,7 @@
   <v-container fluid class="mt-10">
     <v-row align="center" justify="center">
     <v-col cols="7">
-      <v-card flat color="green" height="220">
+      <v-card dark flat color="green" height="220">
         <v-card-text class="white--text">
         <v-row class="mt-9" align="center" justify="center">
           <v-col cols="12">
@@ -17,7 +17,7 @@
         </v-card-text>
       </v-card>
 
-      <v-card flat color="green" class="mt-3" height="150">
+      <v-card dark flat color="green" class="mt-3" height="150">
         <v-card-text class="white--text">
         <v-row align="center" justify="center" class="mt-1">
           <v-col cols="12">
@@ -40,7 +40,7 @@
         </v-card-text>
       </v-card>
 
-    <v-btn v-on:click="readyStat" id="ready" :loading="loader" :color="color" class="mt-5" block height="60" > READY ? </v-btn>
+    <v-btn dark v-on:click="readyStat" id="ready" :loading="loader" :color="color" class="mt-5" block height="60" > READY ? </v-btn>
     </v-col>
     </v-row>
   </v-container>
@@ -61,7 +61,7 @@ export default Vue.extend({
         {name: "CHEVRE"},
       ],
       loader: false,
-      color: 'white',
+      color: 'dark',
     }
   },
   computed: {

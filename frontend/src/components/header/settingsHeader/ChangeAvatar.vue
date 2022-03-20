@@ -4,7 +4,7 @@
           <v-btn v-bind="attrs" v-on="on" color="blue" dark max-width="160"> Avatar/Username </v-btn>
         </template>
         <template v-slot:default="dialog">
-          <v-card>
+          <v-card dark>
             <v-form @submit.prevent="setNewInfos(dialog)" ref="form" v-model="valid">
               <v-toolbar color="primary" elevation="0" class="text-h5 pl-5" dark>CHANGE YOUR THINGS HERE</v-toolbar>
               <v-card-text>

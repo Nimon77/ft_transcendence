@@ -6,7 +6,7 @@
         <PlayButton/>
       </v-col>
       <v-col class="d-flex justify-center" cols="12" >
-        <v-btn router :to="'/community'" class="btn" color="yellow--text" tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
+        <v-btn router :to="'/community'" class="btn" color="yellow--text" dark tile x-large depressed width="295" height="90"> COMMUNITY </v-btn>
       </v-col>
     </v-row>
   </v-container>

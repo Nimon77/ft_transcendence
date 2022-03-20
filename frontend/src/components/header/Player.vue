@@ -16,7 +16,7 @@
           <v-icon small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
-        <v-list class="text-center">
+        <v-list dark class="text-center">
           <v-list-item>
             <v-list-item-title> <ChangeAvatar/> </v-list-item-title>
           </v-list-item>
