@@ -4,7 +4,7 @@
     width="800" height="200" scrollable multiple>
 
       <template v-slot:activator="{ on, attrs}">
-        <v-btn elevation="0" width="130" text dark style="font-size:20px"
+        <v-btn elevation="0" width="130" text dark style="font-size:20px" plain
         v-bind="attrs"
         v-on="on">
             FRIENDS

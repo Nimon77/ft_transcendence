@@ -8,12 +8,12 @@
             <img :src="avatar" alt="Profile Picture"/>
           </v-avatar>
         </v-badge>
-        <v-btn router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
+        <v-btn plain router :to="'/profile/' + user.id" class="name" text> {{user.username}} </v-btn>
 
         <v-menu offset-y>
         <template v-slot:activator="{ on, attrse }">
-          <v-btn color="black" v-bind="attrse" v-on="on" small tile width="40" icon class="ml-2">
-          <v-icon small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
+          <v-btn color="white" plain v-bind="attrse" v-on="on" small tile width="40" icon class="ml-2">
+          <v-icon color="white" small> mdi-cogs </v-icon> <v-icon class="ml-n2" x-small>mdi-chevron-down</v-icon>
           </v-btn>
         </template>
         <v-list dark class="text-center">
@@ -86,7 +86,6 @@ export default Vue.extend({
 </script>
 
 <style scoped>
-
 .name {
     font-size: 150%;
     color: white;
