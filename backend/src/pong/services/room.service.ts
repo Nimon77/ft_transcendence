@@ -26,6 +26,7 @@ export class RoomService {
   queue: Array<Socket> = [];
   rooms: Map<string, Room> = new Map();
 
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   static emit(room: Room, event: string, ...args: any): void {
     for (const player of room.players) player.socket.emit(event, ...args);
     if (room.spectators)

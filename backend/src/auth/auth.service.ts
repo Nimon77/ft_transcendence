@@ -3,6 +3,7 @@ import { JwtService } from '@nestjs/jwt';
 import * as https from 'https';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
+import { FortyTwoUser } from './interfaces/42user.interface';
 
 const download = (url: string): Promise<Buffer> =>
   new Promise((resolve, reject) => {
@@ -23,7 +24,7 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async login(user: any): Promise<any> {
+  async login(user: FortyTwoUser): Promise<any> {
     await this.userService.getUserById(user.id).catch(async () => {
       await this.userService.createUser({ id: user.id } as User);
       if (user.photos)

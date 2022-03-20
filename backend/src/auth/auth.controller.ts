@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Headers,
   Param,
   ParseIntPipe,
   Req,
@@ -9,6 +8,7 @@ import {
   UseGuards,
 } from '@nestjs/common';
 import { Response } from 'express';
+import { Request } from 'src/user/interfaces/request.interface';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { FortyTwoAuthGuard } from './guards/42-auth.guard';
@@ -20,10 +20,10 @@ export class AuthController {
   @Public()
   @UseGuards(FortyTwoAuthGuard)
   @Get('42/callback')
-  async login(@Req() request: any, @Res() response: Response): Promise<void> {
-    const data = await this.authService.login(request.user);
+  async login(@Req() req: Request, @Res() response: Response): Promise<void> {
+    const data = await this.authService.login(req.user);
 
-    const url = new URL(`${request.protocol}:${request.hostname}`);
+    const url = new URL(`${req.protocol}:${req.hostname}`);
     url.port = process.env.FRONT_PORT;
     url.pathname = 'login';
     url.searchParams.set('code', data.access_token);
@@ -33,9 +33,9 @@ export class AuthController {
 
   @Public()
   @Get('jwt')
-  jwt(@Headers() headers): boolean {
-    if (!headers.authorization) return false;
-    const token = headers.authorization.split(' ')[1];
+  jwt(@Req() req: Request): boolean {
+    if (!req.headers.authorization) return false;
+    const token = req.headers.authorization.split(' ')[1];
     return !!this.authService.verify(token).sub;
   }
 

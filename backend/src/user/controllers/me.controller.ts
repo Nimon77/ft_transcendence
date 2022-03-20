@@ -5,7 +5,7 @@ import {
   Get,
   Param,
   Put,
-  Request,
+  Req,
   Res,
   StreamableFile,
   UploadedFile,
@@ -14,6 +14,7 @@ import {
 import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { User } from '../entities/user.entity';
+import { Request } from '../interfaces/request.interface';
 import AvatarService from '../services/avatar.service';
 import { UserService } from '../services/user.service';
 
@@ -25,13 +26,13 @@ export class MeController {
   ) {}
 
   @Get('/me')
-  getUser(@Request() req): Promise<User> {
+  getUser(@Req() req: Request): Promise<User> {
     return this.userService.getUserById(req.user.userId);
   }
 
   @Get('/me/avatar')
   async getAvatar(
-    @Request() req,
+    @Req() req: Request,
     @Res({ passthrough: true }) response: Response,
   ): Promise<StreamableFile> {
     const avatar = await this.userService.getAvatar(req.user.userId);
@@ -44,19 +45,19 @@ export class MeController {
   }
 
   @Put('/me')
-  updateUser(@Request() req, @Body() user: User): Promise<User> {
+  updateUser(@Req() req: Request, @Body() user: User): Promise<User> {
     return this.userService.updateUser(req.user.userId, user);
   }
 
   @Delete('/me')
-  deleteUser(@Request() req): Promise<void> {
+  deleteUser(@Req() req: Request): Promise<void> {
     return this.userService.deleteUser(req.user.userId);
   }
 
   @Put('me/avatar')
   @UseInterceptors(FileInterceptor('file'))
   updateAvatar(
-    @Request() req,
+    @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
     return this.userService.setAvatar(
@@ -68,7 +69,7 @@ export class MeController {
 
   @Put('/me/follow/:id')
   toggleUserFollowed(
-    @Request() req,
+    @Req() req: Request,
     @Param('id') id: number,
   ): Promise<number[]> {
     return this.userService.toggleFollow(req.user.userId, id);
@@ -76,7 +77,7 @@ export class MeController {
 
   @Put('/me/block/:id')
   toggleUserBlocked(
-    @Request() req,
+    @Req() req: Request,
     @Param('id') id: number,
   ): Promise<number[]> {
     return this.userService.toggleBlock(req.user.userId, id);
