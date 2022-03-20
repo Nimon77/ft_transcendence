@@ -168,16 +168,19 @@ export class RoomService {
       if (room.state == State.INGAME) this.pong.update(room);
   }
 
-  stopGame(room: Room, player: Player): Promise<void> {
+  async stopGame(room: Room, player: Player): Promise<void> {
     if (room.state == State.END) return;
     room.state = State.END;
     RoomService.emit(room, 'stop', player.user);
 
-    return this.userService.createMatchHistory({
+    const loser = room.players.find((player1) => player1.user.id != player.user.id).user;
+    const winner = player.user;
+
+    await this.userService.updateRank(winner, loser);
+    return await this.userService.createMatchHistory({
       score: room.players.map((player) => player.score),
-      winner: player.user,
-      loser: room.players.find((player1) => player1.user.id != player.user.id)
-        .user,
+      winner,
+      loser,
     } as Match);
   }
 

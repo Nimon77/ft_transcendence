@@ -112,6 +112,16 @@ export class UserService {
     await this.userRepository.update(userId, { status });
   }
 
+  async updateRank(winner : User, loser : User) : Promise<void> {
+    await this.userRepository.update(winner.id, { rank : winner.rank + 1 });
+    if (loser.rank > 0)
+      await this.userRepository.update(loser.id, { rank : loser.rank - 1});
+  } 
+
+  async getRank(userId: number): Promise<number> {
+    return (await this.getUserById(userId)).rank;
+  }
+
   async createMatchHistory(data: Match): Promise<void> {
     const match: Match = this.matchRepository.create({
       date: new Date(),
