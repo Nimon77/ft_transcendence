@@ -134,6 +134,10 @@ export default Vue.extend({
           username: this.username,
         }).then(() => {
           this.$http.get('/user/me').then((res) => {
+            this.$http.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
+              const avatar = "data:image/*" + ";base64," + Buffer.from(res.data).toString('base64')
+              this.$store.commit('setAvatar', avatar);
+            });
             this.$store.commit('setUser', res.data);
             this.$store.commit('setReady', true);
             this.$router.push({ name: 'Main' });
