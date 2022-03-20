@@ -95,16 +95,6 @@ async function checkJWT() {
   return status;
 }
 
-function _arrayBufferToBase64( buffer ) {
-  let binary = '';
-  const bytes = new Uint8Array( buffer );
-  const len = bytes.byteLength;
-  for (let i = 0; i < len; i++) {
-      binary += String.fromCharCode( bytes[ i ] );
-  }
-  return window.btoa( binary );
-}
-
 router.beforeEach((to, from, next) => {
   // console.log('to', to) // TODO: remove
 
@@ -118,7 +108,8 @@ router.beforeEach((to, from, next) => {
         if (res.data.profileCompleted) {
           store.commit('setReady', true);
           axios.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
-            store.commit('setAvatar', _arrayBufferToBase64(res.data));
+            const avatar = "data:image/*" + ";base64," + Buffer.from(res.data).toString('base64')
+            store.commit('setAvatar', avatar);
           });
           return next({ name: 'Main' });
         }
@@ -143,7 +134,8 @@ router.beforeEach((to, from, next) => {
         store.commit('setUser', res.data);
       });
       axios.get("/user/me/avatar", { responseType: 'arraybuffer' }).then(res => {
-        store.commit('setAvatar', _arrayBufferToBase64(res.data));
+        const avatar = "data:image/*" + ";base64," + Buffer.from(res.data).toString('base64')
+        store.commit('setAvatar', avatar);
       });
     }
     if (store.state.ready === false && Status.JWTvalide && Status.ProfileCompleted && to.name !== 'Login') {
