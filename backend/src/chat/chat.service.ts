@@ -1,4 +1,4 @@
-import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { Injectable, HttpException, HttpStatus, forwardRef, Inject } from '@nestjs/common';
 import { ChatRoom } from './entity/chat.entity';
 import { MutedUser } from './entity/mute.entity';
 import { Repository } from 'typeorm';
@@ -8,12 +8,14 @@ import { BannedUser } from './entity/banned.entity';
 import { Log } from './entity/log.entity';
 import * as bcrypt from 'bcrypt';
 import { User } from 'src/user/entities/user.entity';
+import { UserService } from 'src/user/services/user.service';
 
 const temporary = 30 * 60 * 1000;
 
 @Injectable()
 export class ChatService {
   constructor(
+    @Inject(forwardRef(() => UserService)) private readonly userService: UserService,
     @InjectRepository(ChatRoom)
     private readonly chatRepo: Repository<ChatRoom>,
     @InjectRepository(MutedUser)
@@ -36,7 +38,8 @@ export class ChatService {
     return room;
   }
 
-  async createRoom(room: ChatRoom, admin: User): Promise<ChatRoom> {
+  async createRoom(room: ChatRoom, userId: number): Promise<ChatRoom> {
+    const admin = await this.userService.getUserById(userId);
     if (room.name == undefined)
       throw new HttpException(
         'Room name needs to be specified',
@@ -84,10 +87,11 @@ export class ChatService {
   }
 
   async removeUserFromRoom(
-    user: User,
+    userId: number,
     roomId: number,
     adminId?: number,
   ): Promise<void> {
+    const user = await this.userService.getUserById(userId);
     const room = await this.getRoom(roomId, ['users']);
 
     if (adminId && adminId != user.id) {
@@ -147,8 +151,9 @@ export class ChatService {
     return await bcrypt.compare(password, currentRoom.password);
   }
 
-  async updateRoom(id: number, room: ChatRoom, user: User): Promise<void> {
+  async updateRoom(id: number, room: ChatRoom, userId: number): Promise<void> {
     {
+      const user = await this.userService.getUserById(userId);
       const updatedRoom = await this.getRoom(id, []);
       if (updatedRoom.ownerId != user.id)
         throw new HttpException(
@@ -203,7 +208,8 @@ export class ChatService {
     return await Promise.all(unresolved);
   }
 
-  async addUserToRoom(room: ChatRoom, user: User): Promise<void> {
+  async addUserToRoom(room: ChatRoom, userId: number): Promise<void> {
+    const user = await this.userService.getUserById(userId);
     const curroom = await this.getRoom(room.id, ['users', 'banned'], true);
     if (!curroom.public)
       if (
@@ -235,10 +241,12 @@ export class ChatService {
   }
 
   async toggleAdminRole(
-    owner: User,
-    user: User,
+    ownerId: number,
+    userId: number,
     roomid: number,
   ): Promise<void> {
+    const owner = await this.userService.getUserById(ownerId);
+    const user = await this.userService.getUserById(userId);
     const room = await this.getRoom(roomid, [
       'users',
       'muted',
@@ -287,7 +295,9 @@ export class ChatService {
     this.mutedRepo.delete(user.id);
   }
 
-  async muteUserInRoom(user: User, roomid: number, admin: User): Promise<void> {
+  async muteUserInRoom(userId: number, roomid: number, adminId: number): Promise<void> {
+    const user = await this.userService.getUserById(userId);
+    const admin = await this.userService.getUserById(adminId);
     const currentroom = await this.getRoom(roomid, ['users', 'muted']);
     if (currentroom.ownerId == user.id)
       throw new HttpException(
@@ -318,7 +328,9 @@ export class ChatService {
     }
   }
 
-  async banUserInRoom(user: User, roomid: number, admin: User): Promise<void> {
+  async banUserInRoom(userId: number, roomid: number, adminId: number): Promise<void> {
+    const admin = await this.userService.getUserById(adminId);
+    const user = await this.userService.getUserById(userId);
     const currentroom = await this.getRoom(roomid, ['users', 'banned']);
     if (currentroom.ownerId == user.id)
       throw new HttpException(
@@ -355,7 +367,8 @@ export class ChatService {
     }
   }
 
-  async addLogForRoom(id: number, message: string, user: User): Promise<void> {
+  async addLogForRoom(id: number, message: string, userId : number): Promise<void> {
+    const user = await this.userService.getUserById(userId);
     const currentroom = await this.getRoom(id, ['users', 'logs', 'muted']);
     if (!currentroom.users.find((user1) => user1.id == user.id))
       throw new HttpException('User isnt in room', HttpStatus.NOT_FOUND);
@@ -390,7 +403,8 @@ export class ChatService {
     }
   }
 
-  async getLogsForRoom(id: number, user: User): Promise<Log[]> {
+  async getLogsForRoom(id: number, userId: number): Promise<Log[]> {
+    const user = await this.userService.getUserById(userId);
     const currentroom = await this.getRoom(id, ['logs']);
     const logs = [];
     for (const log of currentroom.logs) {

@@ -24,8 +24,7 @@ export class MeController {
 
   @Post('/')
   async createChannel(@Request() req, @Body() room: ChatRoom) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return await this.chatService.createRoom(room, user);
+    return await this.chatService.createRoom(room, req.user.userId);
   }
 
   @Get('/me')
@@ -35,8 +34,7 @@ export class MeController {
 
   @Put('/join')
   async joinChannel(@Request() req, @Body() room: ChatRoom) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.addUserToRoom(room, user);
+    return this.chatService.addUserToRoom(room, req.user.userId);
   }
 
   @Put('/:id')
@@ -45,8 +43,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() room: ChatRoom,
   ) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.updateRoom(id, room, user);
+    return this.chatService.updateRoom(id, room, req.user.userId);
   }
 
   @Put(':id/admin')
@@ -55,9 +52,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ) {
-    const owner = await this.userService.getUserById(req.user.userId);
-    const admin = await this.userService.getUserById(user.id);
-    return this.chatService.toggleAdminRole(owner, admin, id);
+    return this.chatService.toggleAdminRole(req.user.userId, user.id, id);
   }
 
   @Put(':id/ban')
@@ -66,9 +61,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ) {
-    const curuser = await this.userService.getUserById(user.id);
-    const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.banUserInRoom(curuser, id, admin);
+    return this.chatService.banUserInRoom(user.id, id, req.user.userId);
   }
 
   @Post(':id/change/')
@@ -90,15 +83,12 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ) {
-    const curuser = await this.userService.getUserById(user.id);
-    const admin = await this.userService.getUserById(req.user.userId);
-    return this.chatService.muteUserInRoom(curuser, id, admin);
+    return this.chatService.muteUserInRoom(user.id, id, req.user.userId);
   }
 
   @Get(':id/log') //get current room logs
   async getLogsFromRoom(@Request() req, @Param('id', ParseIntPipe) id: number) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.getLogsForRoom(id, user);
+    return this.chatService.getLogsForRoom(id, req.user.userId);
   }
 
   @Put(':id/log') //add log to room
@@ -107,8 +97,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() message: MessageI,
   ) {
-    const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.addLogForRoom(id, message.message, user);
+    return this.chatService.addLogForRoom(id, message.message, req.user.userId);
   }
 
   //for testing
@@ -119,7 +108,7 @@ export class MeController {
       await this.chatService.getRoom(id, ['users', 'muted', 'banned', 'logs'])
     ).adminId[0];
     const user = await this.userService.getUserById(req.user.userId);
-    return this.chatService.removeUserFromRoom(user, id, admin);
+    return this.chatService.removeUserFromRoom(user.id, id, admin);
   }
 
   @Put('/:id/kick/:userid') // admin removes user from room
@@ -128,8 +117,6 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
   ) {
-    const admin = await this.userService.getUserById(req.user.userId);
-    const user = await this.userService.getUserById(userid);
-    return this.chatService.removeUserFromRoom(user, id, admin.id);
+    return this.chatService.removeUserFromRoom(userid, id, req.user.userId);
   }
 }

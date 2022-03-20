@@ -30,6 +30,7 @@ export class UserService {
   }
 
   async createUser(user: User): Promise<User> {
+    if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
     if (user.id && (await this.userRepository.findOne(user.id)))
       throw new HttpException('User already exist', HttpStatus.CONFLICT);
 
@@ -42,6 +43,7 @@ export class UserService {
   }
 
   async updateUser(id: number, user: User): Promise<User> {
+    if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
     await this.getUserById(id);
 
     const can: Array<string> = ['username', 'friends', 'blocked'];
@@ -69,7 +71,7 @@ export class UserService {
     try {
       const rooms = await this.chatService.getRoomsForUser(id);
       rooms.forEach((room) => {
-        this.chatService.removeUserFromRoom(user, room.id, room.adminId[0]);
+        this.chatService.removeUserFromRoom(user.id, room.id, room.adminId[0]);
       });
       await this.userRepository.delete(id);
     } catch (error) {
