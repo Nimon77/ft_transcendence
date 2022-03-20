@@ -46,10 +46,6 @@
 </script>
 
 <style scoped>
-/* html { overflow-y: hidden; }
-  .app {
-  overflow: hidden;
-} */
 
 .fade-enter-active, .fade-leave-active {
     transition: opacity .2s

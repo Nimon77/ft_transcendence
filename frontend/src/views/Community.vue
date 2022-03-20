@@ -195,6 +195,11 @@ export default Vue.extend({
 
 <style >
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
+
+html, body {
+  overflow: hidden !important;
+}
+
 ::-webkit-scrollbar {
   width: 5px;
 }
