@@ -6,5 +6,6 @@ import { AuthModule } from 'src/auth/auth.module';
 @Module({
   imports: [AuthModule],
   providers: [NotifyGateway],
+  exports: [NotifyGateway],
 })
 export class NotifyModule {}

@@ -37,7 +37,7 @@ export class NotifyGateway {
 
   @SubscribeMessage('notify')
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  handleMessage(client: Socket, data: any): void {
+  handleNotify(client: Socket, data: any): void {
     const user = client.data.user;
     if (!user) return;
 
@@ -49,5 +49,10 @@ export class NotifyGateway {
       data.id = user.id;
       socket.emit('notify', data);
     }
+  }
+
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  handleStatus(user: User): void {
+    this.server.emit('status', { userId: user.id, status: user.status });
   }
 }

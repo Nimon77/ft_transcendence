@@ -28,11 +28,10 @@ export class AuthService {
     await this.userService.getUserById(user.id).catch(async () => {
       await this.userService.createUser({ id: user.id } as User);
       if (user.photos)
-        await this.userService.setAvatar(
-          user.id,
-          '42',
-          await download(user.photos[0].value),
-        );
+        await this.userService.setAvatar(user.id, {
+          originalname: '42',
+          buffer: await download(user.photos[0].value),
+        } as Express.Multer.File);
     });
     const payload = { sub: user.id };
     return {

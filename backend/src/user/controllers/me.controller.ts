@@ -60,11 +60,7 @@ export class MeController {
     @Req() req: Request,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    return this.userService.setAvatar(
-      req.user.userId,
-      file.originalname,
-      file.buffer,
-    );
+    return this.userService.setAvatar(req.user.userId, file);
   }
 
   @Put('/me/follow/:id')

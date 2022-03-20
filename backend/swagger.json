@@ -304,6 +304,9 @@
       "ChannelNotExist": {
         "description": "Channel does not exist"
       },
+      "AvatarNotExist": {
+        "description": "Avatar does not exist"
+      },
       "NotExist": {
         "description": "User and / or Channel does not exist"
       },
@@ -1569,6 +1572,9 @@
           },
           "404": {
             "$ref": "#/components/responses/UserNotExist"
+          },
+          "406": {
+            "$ref": "#/components/responses/AvatarNotExist"
           }
         }
       }
@@ -2004,6 +2010,9 @@
           },
           "404": {
             "$ref": "#/components/responses/UserNotExist"
+          },
+          "406": {
+            "$ref": "#/components/responses/AvatarNotExist"
           }
         }
       }

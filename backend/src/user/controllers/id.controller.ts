@@ -82,6 +82,6 @@ export class IdController {
     @Param('id') id: number,
     @UploadedFile() file: Express.Multer.File,
   ): Promise<void> {
-    return this.userService.setAvatar(id, file.originalname, file.buffer);
+    return this.userService.setAvatar(id, file);
   }
 }
