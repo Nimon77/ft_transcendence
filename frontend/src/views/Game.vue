@@ -162,6 +162,7 @@ canvas {
   /* height: 60vh; */
   width: 80vw;
   display: flex;
+  object-fit: cover;
   justify-content: center;
 
   border: solid white;
