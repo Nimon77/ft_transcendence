@@ -24,7 +24,8 @@ export class UserService {
   }
 
   async getUser(id: number, relations: string[]): Promise<User> {
-    const user: User = await this.userRepository.findOne(id, { relations });
+    const user: User =
+      id && (await this.userRepository.findOne(id, { relations }));
     if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
     return user;
   }

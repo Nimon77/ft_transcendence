@@ -173,18 +173,20 @@ export class RoomService {
     if (room.state == State.END) return;
     room.state = State.END;
 
-    const loser = room.players.find(
-      (player1) => player1.user.id != player.user.id,
-    ).user;
-    const winner = player.user;
-    const score = room.players.map((player) => player.score);
+    if (room.players.length == 2) {
+      const loser = room.players.find(
+        (player1) => player1.user.id != player.user.id,
+      ).user;
+      const winner = player.user;
+      const score = room.players.map((player) => player.score);
 
-    await this.userService.updateRank(winner, loser);
-    await this.userService.createMatchHistory({
-      score,
-      winner,
-      loser,
-    } as Match);
+      await this.userService.updateRank(winner, loser);
+      await this.userService.createMatchHistory({
+        score,
+        winner,
+        loser,
+      } as Match);
+    }
 
     RoomService.emit(room, 'stop', player.user);
   }
