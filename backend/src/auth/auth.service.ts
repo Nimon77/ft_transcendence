@@ -5,6 +5,7 @@ import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 import { FortyTwoUser } from './interfaces/42user.interface';
 import { generateSecret, verify } from '2fa-util';
+import { Socket } from 'socket.io';
 
 const download = (url: string): Promise<Buffer> =>
   new Promise((resolve, reject) => {
@@ -27,27 +28,47 @@ export class AuthService {
     private readonly userService: UserService,
   ) {}
 
-  async login(user: FortyTwoUser): Promise<any> {
-    await this.userService.getUser(user.id, []).catch(async () => {
-      await this.userService.createUser({ id: user.id } as User);
-      if (user.photos)
-        await this.userService.setAvatar(user.id, {
-          originalname: '42',
-          buffer: await download(user.photos[0].value),
-        } as Express.Multer.File);
-    });
-    const payload = { sub: user.id };
-    return {
-      access_token: this.jwtService.sign(payload),
-    };
+  generateJWT(userId: number, otp = true): string {
+    return this.jwtService.sign({ sub: userId, otp });
   }
 
-  verify(token: string): any {
+  verifyJWT(token: string): any {
     try {
       return this.jwtService.verify(token);
     } catch {
-      return {};
+      return null;
     }
+  }
+
+  async login(data: FortyTwoUser): Promise<string> {
+    let user = await this.userService.getUser(data.id, []);
+
+    if (!user) {
+      user = await this.userService.createUser({ id: data.id } as User);
+
+      const photo = await download(data.photos[0].value);
+      await this.userService.setAvatar(user.id, {
+        originalname: '42',
+        buffer: photo,
+      } as Express.Multer.File);
+    }
+
+    return this.generateJWT(user.id, !user.otp);
+  }
+
+  async getUserFromSocket(client: Socket): Promise<User> {
+    const authorization = client.handshake.headers.authorization;
+    const token = authorization && authorization.split(' ')[1];
+    if (!token) return null;
+
+    const payload = this.verifyJWT(token);
+    if (!payload) return null;
+
+    const user = await this.userService
+      .getUser(payload.sub, [])
+      .catch(() => null);
+    if (!user) return null;
+    return user;
   }
 
   async generateQR(userId: number): Promise<string> {
@@ -81,5 +102,16 @@ export class AuthService {
 
     this.secrets.delete(userId);
     await this.userService.updateOTP(userId, secret);
+  }
+
+  async loginOTP(token: string, code: string): Promise<string> {
+    const data = this.verifyJWT(token);
+    if (!data)
+      throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);
+    if (data.otp)
+      throw new HttpException('Already connected', HttpStatus.CONFLICT);
+
+    await this.verifyCode(data.sub, code);
+    return this.generateJWT(data.sub, true);
   }
 }

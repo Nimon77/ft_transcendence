@@ -9,7 +9,6 @@ import { Input } from './interfaces/input.interface';
 import { RoomService } from './services/room.service';
 import { Player } from './interfaces/player.interface';
 import { Room } from './interfaces/room.interface';
-import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
 import { Status } from 'src/user/enums/status.enum';
 
@@ -29,13 +28,7 @@ export class PongGateway {
   server: any;
 
   async handleConnection(client: Socket): Promise<any> {
-    if (!client.handshake.headers.authorization) return client.disconnect();
-    const payload = this.authService.verify(
-      client.handshake.headers.authorization.split(' ')[1],
-    );
-    const user: User = await this.userService
-      .getUser(payload.sub, [])
-      .catch(() => null);
+    const user = await this.authService.getUserFromSocket(client);
     if (!user) return client.disconnect();
 
     await this.userService.setStatus(user.id, Status.GAME);

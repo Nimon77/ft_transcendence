@@ -7,7 +7,6 @@ import {
 } from '@nestjs/websockets';
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
-import { User } from 'src/user/entities/user.entity';
 import { Status } from 'src/user/enums/status.enum';
 import { UserService } from 'src/user/services/user.service';
 import { ChatService } from './chat.service';
@@ -29,13 +28,7 @@ export class ChatGateway implements OnGatewayConnection {
   server: any;
 
   async handleConnection(client: Socket): Promise<any> {
-    if (!client.handshake.headers.authorization) return client.disconnect();
-    const payload = this.authService.verify(
-      client.handshake.headers.authorization.split(' ')[1],
-    );
-    const user: User = await this.userService
-      .getUser(payload.sub, [])
-      .catch(() => null);
+    const user = await this.authService.getUserFromSocket(client);
     if (!user) return client.disconnect();
 
     await this.userService.setStatus(user.id, Status.CHAT);
