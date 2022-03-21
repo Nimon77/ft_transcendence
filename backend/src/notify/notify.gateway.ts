@@ -3,10 +3,12 @@ import {
   WebSocketGateway,
   WebSocketServer,
 } from '@nestjs/websockets';
-import { Socket } from 'socket.io';
+import { Server, Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/user/entities/user.entity';
+import { Status } from 'src/user/enums/status.enum';
 import { UserService } from 'src/user/services/user.service';
+import { NotifyService } from './notify.service';
 
 @WebSocketGateway({
   cors: {
@@ -18,9 +20,14 @@ export class NotifyGateway {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly notifyService: NotifyService,
   ) {}
   @WebSocketServer()
   server: any;
+
+  afterInit(server: Server): void {
+    this.notifyService.server = server;
+  }
 
   async handleConnection(client: Socket): Promise<any> {
     if (!client.handshake.headers.authorization) return client.disconnect();
@@ -32,7 +39,28 @@ export class NotifyGateway {
       .catch(() => null);
     if (!user) return client.disconnect();
 
+    await this.userService.setStatus(user.id, Status.ONLINE);
+
     client.data.user = user;
+  }
+
+  handleDisconnect(client: Socket): void {
+    if (!client.data.user) return;
+
+    const userId = client.data.user.id;
+
+    setTimeout(async () => {
+      const socket: any = Array.from(this.server.sockets.values()).find(
+        (socket: Socket) => socket.data.user.id == userId,
+      );
+      if (socket) return;
+
+      const user = await this.userService.getUser(userId, []);
+      if (!user) return;
+
+      if (user.status == Status.ONLINE)
+        await this.userService.setStatus(user.id, Status.OFFLINE);
+    }, 5 * 1000);
   }
 
   @SubscribeMessage('notify')
@@ -49,10 +77,5 @@ export class NotifyGateway {
       data.id = user.id;
       socket.emit('notify', data);
     }
-  }
-
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  handleStatus(user: User): void {
-    this.server.emit('status', { userId: user.id, status: user.status });
   }
 }

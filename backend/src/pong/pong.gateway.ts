@@ -11,6 +11,7 @@ import { Player } from './interfaces/player.interface';
 import { Room } from './interfaces/room.interface';
 import { User } from 'src/user/entities/user.entity';
 import { UserService } from 'src/user/services/user.service';
+import { Status } from 'src/user/enums/status.enum';
 
 @WebSocketGateway({
   cors: {
@@ -37,13 +38,17 @@ export class PongGateway {
       .catch(() => null);
     if (!user) return client.disconnect();
 
+    await this.userService.setStatus(user.id, Status.GAME);
+
     client.data.user = user;
     client.emit('info', { user });
   }
 
-  handleDisconnect(client: Socket): any {
+  async handleDisconnect(client: Socket): Promise<any> {
     if (!client.data.user) return;
-    return this.roomService.removeSocket(client);
+
+    await this.roomService.removeSocket(client);
+    await this.userService.setStatus(client.data.user.id, Status.ONLINE);
   }
 
   @SubscribeMessage('queue')
