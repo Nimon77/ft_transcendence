@@ -14,43 +14,43 @@
 </template>
 
 <script lang="ts">
-  import Header from './components/header/Header.vue'
-  import Footer from './components/Footer.vue'
+import Header from './components/header/Header.vue'
+import Footer from './components/Footer.vue'
 
-  export default {
-    components: {
-      Header,
-      Footer,
+export default {
+  components: {
+    Header,
+    Footer,
+  },
+  computed: {
+    isReady(): boolean {
+      return this.$store.getters.getReady;
     },
-    computed: {
-      isReady(): boolean {
-        return this.$store.getters.getReady;
-      }
+  },
+  created(): void {
+    window.addEventListener('resize', this.onResize);
+  },
+  mounted(): void {
+    this.onResize();
+  },
+  methods: {
+    onResize(): void {
+      const bananes = document.querySelectorAll<HTMLElement>('.bananane');
+      bananes.forEach((banane) => {
+        var posXAl = Math.random() * (window.innerWidth - 150);
+        posXAl = Math.floor(posXAl);
+        banane.style.left = posXAl + "px";
+        const width = Math.floor(Math.random() * (300 - 100 + 1) + 100)
+        banane.style.width = width + "px";
+        banane.style.animationDelay = Math.floor(Math.random() * 10) + "s";
+        banane.style.animationDuration = Math.floor(Math.random() * (7 - 3 + 1) + 3) + "s";
+        banane.style.filter = "blur(" + Math.pow(width / 125, 2) + "px)";
+        banane.style.animationTimingFunction = "linear";
+        banane.style.animationIterationCount = "infinite";
+      });
     },
-    created() {
-      window.addEventListener('resize', this.onResize);
-    },
-    mounted(): void {
-      this.onResize();
-    },
-    methods: {
-      onResize(): void {
-        const bananes = document.querySelectorAll<HTMLElement>('.bananane');
-        bananes.forEach((banane) => {
-          var posXAl = Math.random() * (window.innerWidth - 150);
-          posXAl = Math.floor(posXAl);
-          banane.style.left = posXAl + "px";
-          const width = Math.floor(Math.random() * (300 - 100 + 1) + 100)
-          banane.style.width = width + "px";
-          banane.style.animationDelay = Math.floor(Math.random() * 10) + "s";
-          banane.style.animationDuration = Math.floor(Math.random() * (7 - 3 + 1) + 3) + "s";
-          banane.style.filter = "blur(" + Math.pow(width / 125, 2) + "px)";
-          banane.style.animationTimingFunction = "linear";
-          banane.style.animationIterationCount = "infinite";
-        });
-      },
-    }
-  };
+  }
+};
 </script>
 
 <style scoped>

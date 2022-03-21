@@ -93,6 +93,10 @@ export default Vue.extend({
       });
       this.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
     }
+  },
+  created() {
+    console.log("PREGAME");
+    console.log("ROOM", this.$store.getters.getGameRoom);
   }
 });
 </script>

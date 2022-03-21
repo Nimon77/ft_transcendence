@@ -3,7 +3,7 @@ import Vuex from 'vuex';
 import { POSITION } from 'vue-toastification';
 
 import InvitePlayer from '@/components/InvitePlayer.vue';
-import { Socket } from 'socket.io-client';
+import { io, Socket } from 'socket.io-client';
 
 import IUser from '@/models/IUser';
 import IGameOptions from '@/models/IGameOptions';
@@ -26,6 +26,7 @@ export default new Vuex.Store({
     avatar: null,
     ready: false,
 
+    notifySocket: <Socket> null,
     notify: {
       id: Number,
       message: String,
@@ -47,6 +48,7 @@ export default new Vuex.Store({
     getReady: state => state.ready,
     getUser: state => state.user,
     getAvatar: state => state.avatar,
+    getNotifySocket: state => state.notifySocket,
     getNotify: state => state.notify,
     getIdCR: state => state.chat.idCR,
     getCRs: state => state.chat.CRs,
@@ -92,26 +94,48 @@ export default new Vuex.Store({
     setUsersInGame(state, users) {
       state.usersInGame = users;
     },
+    // connectNotifySocket(state) {
+    //   state.notifySocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/notify`, {
+    //     transportOptions: {
+    //       polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+    //     },
+    //   });
+    //   state.notifySocket.on('notify', (data) => {
+    //     this.commit('NOTIFY_notify', data);
+    //   });
+    // },
     'NOTIFY_notify': (state, payload) => {
-      state.notify = payload;
-      console.log(state.notify); // TODO: remove
-      Vue.$toast(InvitePlayer, {
-        position: POSITION.TOP_LEFT,
-        timeout: false,
-        closeOnClick: true,
-        pauseOnFocusLoss: true,
-        pauseOnHover: true,
-        draggable: true,
-        draggablePercent: 0.6,
-        showCloseButtonOnHover: false,
-        hideProgressBar: true,
-        closeButton: "button",
-        icon: true,
-        rtl: false
-      })
+      if (payload.type === undefined) {
+        state.notify = payload;
+        console.log(state.notify); // TODO: remove
+        Vue.$toast(InvitePlayer, {
+          position: POSITION.TOP_LEFT,
+          timeout: false,
+          closeOnClick: true,
+          pauseOnFocusLoss: true,
+          pauseOnHover: true,
+          draggable: true,
+          draggablePercent: 0.6,
+          showCloseButtonOnHover: false,
+          hideProgressBar: true,
+          closeButton: "button",
+          icon: true,
+          rtl: false
+        })
+      }
     },
   },
   actions: {
+    connectNotify({ commit }) {
+      this.state.notifySocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/notify`, {
+        transportOptions: {
+          polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+        },
+      });
+      this.state.notifySocket.on('notify', (data) => {
+        commit('NOTIFY_notify', data);
+      });
+    }
   },
   modules: {
   },

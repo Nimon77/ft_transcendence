@@ -97,9 +97,10 @@ async function checkJWT() {
 
 router.beforeEach((to, from, next) => {
   // console.log('to', to) // TODO: remove
-
   checkJWT().then(Status => {
-    // console.log('Status', Status) // TODO: remove
+    if (Status.JWTvalide && (store.getters.getNotifySocket === null || !store.getters.getNotifySocket.connected)) {
+      store.dispatch('connectNotify');
+    }
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();

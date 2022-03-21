@@ -6,7 +6,8 @@
       <template v-slot:activator="{ on, attrs}">
         <v-btn elevation="0" width="130" text dark style="font-size:20px" plain
         v-bind="attrs"
-        v-on="on">
+        v-on="on"
+        v-on:click="fetchUsers">
             FRIENDS
             <v-icon>mdi-chevron-down</v-icon>
         </v-btn>
@@ -51,59 +52,64 @@ Vue.component('FriendDisplay', FriendDisplay);
 Vue.component('UserDisplay', UserDisplay);
 
 export default Vue.extend({
-    data () {
-      return {
-        searchInput: null,
-        dialog: false,
-        users: [],
-        added: false,
-      }
+  data () {
+    return {
+      searchInput: null,
+      dialog: false,
+      users: [],
+      added: false,
+    }
+  },
+  methods: {
+    closeDialog() {
+      this.dialog=false;
     },
-    methods: {
-      closeDialog() {
-        this.dialog=false;
-      },
-      async rmFriend(rmId: number) {
-        console.log("rmId = ", rmId); // TODO: remove
-        await this.$http.put(`/user/me/follow/${rmId}`).then(response => {
-          console.log('PUT REQUEST', response); // TODO: remove
-          });
-        await this.$http.get('/user/me').then(response => {
-          this.me = response.data;
+    async rmFriend(rmId: number) {
+      console.log("rmId = ", rmId); // TODO: remove
+      await this.$http.put(`/user/me/follow/${rmId}`).then(response => {
+        console.log('PUT REQUEST', response); // TODO: remove
         });
-      },
-    },
-    async created() {
-      await this.$http.get('/user').then(response => {
-        this.users = response.data;
+      await this.$http.get('/user/me').then(response => {
+        this.me = response.data;
       });
     },
-    computed: {
-      me: {
-        get() {
-          return this.$store.getters.getUser;
-        },
-        set(value) {
-          console.log("set me", value); // TODO: remove
-          this.$store.commit('setUser', value);
-        }
-      },
-      filteredUsers(): unknown {
-        let cleanUsers;
-        cleanUsers = this.users.filter((user) => {
-          if (this.me.followed.indexOf(user.id) == -1 && user.id != this.me.id)
-            return true;
-          else
-            return false;
-        });
-        cleanUsers = cleanUsers.filter((user) => {
-          if (user.username == null)
-            return false;
-          return user.username.match(this.searchInput);
-        })
-        return cleanUsers;
-      }
+    fetchUsers() {
+      this.$http.get('/user').then(response => {
+        this.users = response.data;
+      });
     }
+  },
+  async created() {
+    await this.$http.get('/user').then(response => {
+      this.users = response.data;
+    });
+  },
+  computed: {
+    me: {
+      get() {
+        return this.$store.getters.getUser;
+      },
+      set(value) {
+        console.log("set me", value); // TODO: remove
+        this.$store.commit('setUser', value);
+      }
+    },
+    filteredUsers(): unknown {
+      let cleanUsers;
+      cleanUsers = this.users.filter((user) => {
+        if (this.me.followed.indexOf(user.id) == -1 && user.id != this.me.id)
+          return true;
+        else
+          return false;
+      });
+      cleanUsers = cleanUsers.filter((user) => {
+        if (user.username == null)
+          return false;
+        return user.username.match(this.searchInput);
+      })
+      return cleanUsers;
+    }
+  }
 })
 
 </script>

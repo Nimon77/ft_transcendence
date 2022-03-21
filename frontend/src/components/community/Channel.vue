@@ -40,9 +40,7 @@
       </v-card>
     </v-dialog>
 
-      <v-form>
-        <v-text-field v-model="searchCR" dense class="d-flex justify-center mb-n2 mt-5 pl-5 pr-5" label="search channel"></v-text-field>
-      </v-form>
+      <v-text-field v-model="searchCR" dense class="d-flex justify-center mb-n2 mt-5 pl-5 pr-5" label="search channel"></v-text-field>
       <v-divider class="mt-1"></v-divider>
   
       <v-list v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->

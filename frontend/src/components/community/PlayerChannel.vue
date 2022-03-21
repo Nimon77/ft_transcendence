@@ -80,6 +80,7 @@ export default Vue.extend({
       userCR() {
         return this.$store.getters.getUserCR;
       },
+      notifySocket() { return this.$store.getters.getNotifySocket; },
     },
     methods: {
       isPlayerMuted(idPlayer) {
@@ -116,7 +117,7 @@ export default Vue.extend({
             message: this.user.username + " has invited you to play",
           }
         };
-        this.$socket.emit('notify', payload);
+        this.notifySocket.emit('notify', payload);
       },
 
       status(status: number) {
