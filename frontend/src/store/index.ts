@@ -124,6 +124,11 @@ export default new Vuex.Store({
         })
       }
     },
+    'NOTIFY_status': (state, payload) => {
+      if (payload.userId == state.user.id) {
+        state.user.status = payload.status;
+      }
+    }
   },
   actions: {
     connectNotify({ commit }) {
@@ -134,6 +139,9 @@ export default new Vuex.Store({
       });
       this.state.notifySocket.on('notify', (data) => {
         commit('NOTIFY_notify', data);
+      });
+      this.state.notifySocket.on('status', (data) => {
+        commit('NOTIFY_status', data);
       });
     }
   },

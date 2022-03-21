@@ -15,7 +15,7 @@
         <v-list-group v-if="player.id != user.id">
           <template v-slot:activator>
             <v-list-item-content class="mt-n4">
-              <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{player.username}} </v-list-item-title>
+              <v-list-item-title> <v-badge dot inline :color="status(player.status)"> </v-badge> {{player.username}} </v-list-item-title>
             </v-list-item-content>
 
           </template>
@@ -71,16 +71,34 @@ export default Vue.extend({
       isOwner: Boolean,
       isAdmin: Boolean,
       admins: [],
-      idCR: Number,
     },
     computed: {
       user() {
         return this.$store.getters.getUser;
       },
-      userCR() {
-        return this.$store.getters.getUserCR;
+      idCR: {
+        get() {
+          return this.$store.getters.getIdCR;
+        },
+        set(value: number): void {
+          this.$store.commit('setIdCR', value);
+        }
+      },
+      userCR: {
+        get() {
+          return this.$store.getters.getUserCR;
+        },
+        set(value: unknown): void {
+          this.$store.commit('setUserCR', value);
+        }
       },
       notifySocket() { return this.$store.getters.getNotifySocket; },
+    },
+    created(): void {
+      this.notifySocket.on('status', (data) => {
+        if (this.idCR != 0)
+          this.userCR.find(CR => CR.id == this.idCR).users.find(user => user.id == data.userId).status = data.status;
+      });
     },
     methods: {
       isPlayerMuted(idPlayer) {
@@ -126,7 +144,7 @@ export default Vue.extend({
         else if (status == 2)
           return 'orange';
         else if (status == 3)
-          return 'green';
+          return '#49be25';
         else
           return 'grey';
       }
