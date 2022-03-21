@@ -325,6 +325,101 @@
     }
   },
   "paths": {
+    "/auth/2fa": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get the 2fa QR code for the current user",
+        "operationId": "AuthController_get2FA",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "The current user creates a 2fa authentification",
+        "operationId": "IdController_Create2FA",
+        "parameters": [],
+        "requestBody": {
+          "description": "New code for 2fa",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": 128937129
+                  }
+                }
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      },
+      "delete": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "The current userdelete his 2fa authentification",
+        "operationId": "IdController_Delete2FA",
+        "parameters": [],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/auth/jwt": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "Checks if the JWT is valid or not, returns a boolean",
+        "operationId": "AuthController_jwt",
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          }
+        }
+      }
+    },
     "/auth/42/callback": {
       "get": {
         "tags": [
@@ -340,8 +435,8 @@
         }
       }
     },
-    "/auth/jwt": {
-      "get": {
+    "/auth/2fa/check": {
+      "put": {
         "tags": [
           "auth"
         ],
@@ -350,8 +445,26 @@
             "bearerAuth": []
           }
         ],
-        "summary": "Checks if the JWT is valid or not, returns a boolean",
-        "operationId": "AuthController_jwt",
+        "summary": "The current user verifies his 2fa authentification",
+        "operationId": "IdController_Check2FA",
+        "parameters": [],
+        "requestBody": {
+          "description": "code for 2fa to check",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "code": {
+                    "type": "string",
+                    "example": 128937129
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
@@ -423,7 +536,7 @@
         }
       }
     },
-    "/channel/": {
+    "/channel": {
       "post": {
         "tags": [
           "channel me"
@@ -480,7 +593,7 @@
         }
       }
     },
-    "/channel/me/": {
+    "/channel/me": {
       "get": {
         "tags": [
           "channel me"
@@ -506,7 +619,7 @@
         }
       }
     },
-    "/channel/join/": {
+    "/channel/join": {
       "put": {
         "tags": [
           "channel me"
@@ -556,7 +669,7 @@
         }
       }
     },
-    "/channel/{id}/": {
+    "/channel/{id}": {
       "put": {
         "tags": [
           "channel me"
@@ -619,7 +732,7 @@
         }
       }
     },
-    "/channel/{id}/admin/": {
+    "/channel/{id}/admin": {
       "put": {
         "tags": [
           "channel me"
@@ -675,7 +788,7 @@
         }
       }
     },
-    "/channel/{id}/ban/": {
+    "/channel/{id}/ban": {
       "put": {
         "tags": [
           "channel me"
@@ -734,7 +847,7 @@
         }
       }
     },
-    "/channel/{id}/change/": {
+    "/channel/{id}/change": {
       "post": {
         "tags": [
           "channel me"
@@ -787,7 +900,7 @@
         }
       }
     },
-    "/channel/{id}/mute/": {
+    "/channel/{id}/mute": {
       "put": {
         "tags": [
           "channel me"
@@ -846,7 +959,7 @@
         }
       }
     },
-    "/channel/{id}/leave/": {
+    "/channel/{id}/leave": {
       "put": {
         "tags": [
           "channel me"
@@ -888,7 +1001,7 @@
         }
       }
     },
-    "/channel/{id}/log/": {
+    "/channel/{id}/log": {
       "get": {
         "tags": [
           "channel me"
@@ -1032,7 +1145,7 @@
         }
       }
     },
-    "/channel": {
+    "/channel/": {
       "get": {
         "tags": [
           "channel id"
@@ -1055,7 +1168,7 @@
         }
       }
     },
-    "/channel/{id}": {
+    "/channel/{id}/": {
       "get": {
         "tags": [
           "channel id"
@@ -1190,7 +1303,7 @@
         }
       }
     },
-    "/channel/{id}/add/": {
+    "/channel/{id}/add": {
       "put": {
         "tags": [
           "channel id"
@@ -1253,7 +1366,7 @@
         }
       }
     },
-    "/channel/{id}/check/": {
+    "/channel/{id}/check": {
       "put": {
         "tags": [
           "channel id"
