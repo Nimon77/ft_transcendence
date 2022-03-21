@@ -326,26 +326,6 @@
   },
   "paths": {
     "/auth/2fa": {
-      "get": {
-        "tags": [
-          "auth"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Get the 2fa QR code for the current user",
-        "operationId": "AuthController_get2FA",
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      },
       "post": {
         "tags": [
           "auth"
@@ -368,7 +348,7 @@
                 "properties": {
                   "code": {
                     "type": "string",
-                    "example": 128937129
+                    "example": 123456
                   }
                 }
               }
@@ -393,9 +373,48 @@
             "bearerAuth": []
           }
         ],
-        "summary": "The current userdelete his 2fa authentification",
+        "summary": "The current user deletes his 2fa authentification",
         "operationId": "IdController_Delete2FA",
         "parameters": [],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/OK"
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
+    "/auth/otp": {
+      "post": {
+        "tags": [
+          "auth"
+        ],
+        "summary": "The current user generates a new JWT for 2fa",
+        "operationId": "IdController_loginOTP",
+        "parameters": [],
+        "requestBody": {
+          "description": "Old JWT token and 2fa code",
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "type": "object",
+                "properties": {
+                  "token": {
+                    "type": "string",
+                    "example": "ey.eyJzdWIiOiI2MDUzMiIsImlhdCI6MTY0Nzg3OTkwMiwiZXh"
+                  },
+                  "code": {
+                    "type": "string",
+                    "example": 123456
+                  }
+                }
+              }
+            }
+          }
+        },
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
@@ -435,6 +454,36 @@
         }
       }
     },
+    "/auth/2fa/qrcode": {
+      "get": {
+        "tags": [
+          "auth"
+        ],
+        "security": [
+          {
+            "bearerAuth": []
+          }
+        ],
+        "summary": "Get the 2fa QR code for the current user",
+        "operationId": "AuthController_get2FA",
+        "responses": {
+          "200": {
+            "description": "Expected response",
+            "content": {
+              "image/*": {
+                "schema": {
+                  "type": "string",
+                  "format": "binary"
+                }
+              }
+            }
+          },
+          "401": {
+            "$ref": "#/components/responses/UnauthorizedError"
+          }
+        }
+      }
+    },
     "/auth/2fa/check": {
       "put": {
         "tags": [
@@ -458,7 +507,7 @@
                 "properties": {
                   "code": {
                     "type": "string",
-                    "example": 128937129
+                    "example": 123456
                   }
                 }
               }
