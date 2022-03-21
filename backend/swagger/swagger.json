@@ -359,8 +359,17 @@
           "200": {
             "$ref": "#/components/responses/OK"
           },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
+          },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExist"
           }
         }
       },
@@ -379,6 +388,9 @@
         "responses": {
           "200": {
             "$ref": "#/components/responses/OK"
+          },
+          "400": {
+            "$ref": "#/components/responses/DatabaseError"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
@@ -421,6 +433,12 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExist"
           }
         }
       }
@@ -468,18 +486,16 @@
         "operationId": "AuthController_get2FA",
         "responses": {
           "200": {
-            "description": "Expected response",
-            "content": {
-              "image/*": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
+            "$ref": "#/components/responses/OK"
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
+          },
+          "403": {
+            "$ref": "#/components/responses/UnauthorizedValue"
+          },
+          "409": {
+            "$ref": "#/components/responses/AlreadyExist"
           }
         }
       }
