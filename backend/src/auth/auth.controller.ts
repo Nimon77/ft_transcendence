@@ -1,8 +1,11 @@
 import {
   Controller,
+  Delete,
   Get,
   Param,
   ParseIntPipe,
+  Post,
+  Put,
   Req,
   Res,
   UseGuards,
@@ -43,5 +46,25 @@ export class AuthController {
   @Get('generate/:id')
   generateJWT(@Param('id', ParseIntPipe) id: number): Promise<any> {
     return this.authService.login({ id } as FortyTwoUser);
+  }
+
+  @Get('2fa')
+  get2FA(@Req() req: Request): any {
+    return req;
+  }
+
+  @Post('2fa')
+  Create2FA(@Req() req: Request): any {
+    return req;
+  }
+
+  @Delete('2fa')
+  Delete2FA(@Req() req: Request): any {
+    return req;
+  }
+
+  @Put('2fa/check')
+  Check2FA(@Req() req: Request): any {
+    return req;
   }
 }
