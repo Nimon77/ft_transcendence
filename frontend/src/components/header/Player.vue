@@ -77,7 +77,7 @@ export default Vue.extend({
         else if (this.user.status == 2)
           return 'orange';
         else if (this.user.status == 3)
-          return 'green';
+          return '#49be25';
         else
           return 'grey';
       }

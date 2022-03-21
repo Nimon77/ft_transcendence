@@ -3,7 +3,7 @@
     <v-row class="fill-height" align="start" justify="center">
       <Channel :socket="socket" :CRs="CRs" :userCR="userCR" v-on:fetchCR="fetchCR=!fetchCR"/>
       <Chat :socket="socket" v-bind:idCR="idCR" />
-      <PlayerChannel :socket="socket" :playersCR="playersCR" :idCR="idCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
+      <PlayerChannel :socket="socket" :playersCR="playersCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
     </v-row>
   </v-container>
 </template>

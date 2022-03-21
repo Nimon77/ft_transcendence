@@ -5,7 +5,7 @@
         <img v-if="user.id !== undefined" v-auth-image="'/user/'+user.id+'/avatar'"/>
       </v-avatar>
 
-      <v-badge class="ml-3" inline left :color='status'>
+      <v-badge class="ml-3" inline left :color='getStatusColor(user.id)'>
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
@@ -35,7 +35,6 @@ export default Vue.extend({
         disabledAdd: false,
         loader: false,
         color: 'blue',
-        status: 'grey',
       }
     },
     computed: {
@@ -82,7 +81,7 @@ export default Vue.extend({
         else if (status == 2)
           return 'orange';
         else if (status == 3)
-          return 'green';
+          return '#49be25';
         else
           return 'grey';
       },
@@ -96,7 +95,6 @@ export default Vue.extend({
           this.disabledAdd = true;
           document.getElementById('blockButton').innerHTML = "UNBLOCK";
         }
-        this.status = this.getStatusColor(this.user.status);
       // }
     }
 })
