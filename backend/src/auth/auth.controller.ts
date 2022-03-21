@@ -60,7 +60,14 @@ export class AuthController {
   }
 
   @Get('2fa/qrcode')
-  get2FA(@Req() req: Request): Promise<string> {
+  get2FA(
+    @Req() req: Request,
+    @Res({ passthrough: true }) response: Response,
+  ): Promise<string> {
+    response.set({
+      'Content-Disposition': `inline; filename="qrcode"`,
+      'Content-Type': 'image/*',
+    });
     return this.authService.generateQR(req.user.userId);
   }
 
