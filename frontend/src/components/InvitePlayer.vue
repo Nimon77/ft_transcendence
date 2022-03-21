@@ -17,6 +17,8 @@
 <script lang="ts">
 import Vue from 'vue';
 import store from '@/store';
+import io from 'socket.io-client';
+import router from '@/router';
 
 export default Vue.extend({
   name: 'InvitePlayer',
@@ -24,17 +26,50 @@ export default Vue.extend({
     message() {
       return store.getters.getNotify.message;
     },
+    gameSocket: {
+      get() {
+        return store.getters.getGameSock;
+      },
+      set(value: undefined) {
+        store.commit('setGameSock', value);
+      },
+    },
+    notify: {
+      get() {
+        return store.getters.getNotify;
+      },
+      set(value: undefined) {
+        store.commit('setNotify', value);
+      },
+    },
+    room: {
+      get() {
+        return store.getters.getGameRoom;
+      },
+      set(value: undefined) {
+        store.commit('setGameRoom', value);
+      },
+    },
+    socket() { return store.getters.getNotifySocket; },
   },
   methods: {
     clicked() {
-      // const payload = {
-      //   id: store.getters.getNotify.sender,
-      //   sender: store.getters.getUser.id,
-      //   message: store.getters.getUser.username + " has invited you to play",
-      //   roomCode: store.getters.getNotify.roomCode
-      // };
-      // this.$socket.emit('notify', payload);
-      alert(store.getters.getNotify.roomCode);
+      this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
+        transportOptions: {
+          polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+        },
+      });
+      this.room = this.notify.roomCode;
+      this.socket.emit('notify', {
+        id: this.notify.sender,
+        sender: store.getters.getUser.id,
+        type: 'accept',
+        response: true,
+      });
+      this.gameSocket.emit('room', this.notify.roomCode);
+      console.log('room', this.room);
+      router.push('/pregame');
+      // alert(store.getters.getNotify.roomCode);
     }
   }
 });

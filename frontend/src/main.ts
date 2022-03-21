@@ -10,7 +10,7 @@ import router from './router';
 import vuetify from './plugins/vuetify';
 
 import './plugins/toast';
-import './plugins/notify';
+// import './plugins/notify';
 
 Vue.prototype.$http = axios;
 // Vue.prototype.$http = axios

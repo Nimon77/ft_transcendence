@@ -81,6 +81,7 @@ export default Vue.extend({
           this.$store.commit('setGameSock', value);
         },
       },
+      notifySocket() { return this.$store.getters.getNotifySocket; },
     },
     methods: {
       spectate(): void {
@@ -164,31 +165,32 @@ export default Vue.extend({
               this.gameSocket.emit('room');
             });
             this.gameSocket.on('room', (code) => {
-                this.dialog = false;
-                console.log('CODE ROOM ', code);
-                this.$store.commit('setGameRoom', code);
-                const payload = {
-                  id: this.user.id,
-                  sender: this.me.id,
-                  message: this.me.username + " has invited you to play",
-                  roomCode: code
-                };
-                this.$socket.emit('notify', payload);
-                // this.$socket.on('notify', (console.log('NOTIFY')));
-                // this.$router.push({ name: 'game' });
+              this.dialog = false;
+              console.log('CODE ROOM ', code);
+              this.$store.commit('setGameRoom', code);
+              const payload = {
+                id: this.user.id,
+                sender: this.me.id,
+                message: this.me.username + " has invited you to play",
+                roomCode: code
+              };
+              this.notifySocket.emit('notify', payload);
+              this.notifySocket.on('notify', (data) => {
+                if (data.sender == this.user.id) {
+                  console.log('NOTIFY', data); // TODO: remove
+                  this.notifySocket.off('notify');
+                  this.invitDialog = false;
+                  this.$router.push('/pregame');
+                }
+              });
             });
-          this.gameSocket.on('ready', (options, players) => {
-            console.log(options, players);
-            this.$store.commit('setGameOptions', options);
-            this.$store.commit('setUsersInGame', players);
-          });
       }
     },
   },
-    created() {
-      this.fetchFriend();
-    },
-  })
+  created() {
+    this.fetchFriend();
+  },
+});
 </script>
 
 <style scoped>

@@ -1,7 +1,7 @@
 <template>
   <v-container fluid>
     <!-- <v-row justify="center"> -->
-    <v-card class="mt-10" min-width="50%">
+    <v-card dark class="mt-10" min-width="50%">
       <v-sheet color="green" dark min-height="100" width="100%" class="text-center">
         <v-divider class="pt-7"></v-divider>
         <span class="span">COMPLETE YOUR PROFILE</span>

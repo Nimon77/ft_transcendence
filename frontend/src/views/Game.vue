@@ -2,8 +2,8 @@
 <v-container fill-height fluid>
   <v-dialog v-model="endDialog" persistent transition="dialog-top-transition" max-width="600">
     <template>
-      <v-card>
-        <v-toolbar color="primary" dark>Game INFO</v-toolbar>
+      <v-card dark>
+        <v-toolbar color="primary" dark>GAME INFO</v-toolbar>
         <v-card-text>
           <div class="text-h2 pa-12"> {{winner}} has won! </div>
         </v-card-text>
