@@ -31,13 +31,12 @@ export class AuthController {
   @Get('42/callback')
   // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
   async login(@Req() req: any, @Res() response: Response): Promise<void> {
+    const token = await this.authService.login(req.user as FortyTwoUser);
+
     const url = new URL(`${req.protocol}:${req.hostname}`);
     url.port = process.env.FRONT_PORT;
     url.pathname = 'login';
-    url.searchParams.set(
-      'code',
-      await this.authService.login(req.user as FortyTwoUser),
-    );
+    url.searchParams.set('code', token);
 
     response.status(302).redirect(url.href);
   }

@@ -41,7 +41,7 @@ export class AuthService {
   }
 
   async login(data: FortyTwoUser): Promise<string> {
-    let user = await this.userService.getUser(data.id, []);
+    let user = await this.userService.getUser(data.id, []).catch(() => null);
 
     if (!user) {
       user = await this.userService.createUser({ id: data.id } as User);

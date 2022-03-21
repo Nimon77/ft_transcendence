@@ -73,9 +73,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: user.id, username: user.username },
         ...data,
       });
-    } catch (error) {
-      console.error(error);
-    }
+    } catch {}
   }
 
   @SubscribeMessage('join')
