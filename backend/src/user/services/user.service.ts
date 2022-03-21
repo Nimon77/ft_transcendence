@@ -2,17 +2,17 @@ import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { AvatarService } from './avatar.service';
-import { ChatService } from 'src/chat/chat.service';
 import { User } from '../entities/user.entity';
 import { Match } from '../entities/match.entity';
 import { Status } from '../enums/status.enum';
 import { Avatar } from '../entities/avatar.entity';
+import { NotifyService } from 'src/notify/notify.service';
 
 @Injectable()
 export class UserService {
   constructor(
     private readonly avatarService: AvatarService,
-    private readonly chatService: ChatService,
+    private readonly notifyService: NotifyService,
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
     @InjectRepository(Match)
@@ -98,8 +98,13 @@ export class UserService {
   }
 
   async setStatus(userId: number, status: Status): Promise<void> {
+    const user = await this.getUser(userId, []);
+
+    if (user.status == status) return;
+
     try {
-      await this.userRepository.update(userId, { status });
+      await this.userRepository.update(user.id, { status });
+      this.notifyService.emitStatus(user.id, status);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }

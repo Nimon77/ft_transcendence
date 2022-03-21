@@ -8,6 +8,7 @@ import {
 import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { User } from 'src/user/entities/user.entity';
+import { Status } from 'src/user/enums/status.enum';
 import { UserService } from 'src/user/services/user.service';
 import { ChatService } from './chat.service';
 import { ChatRoom } from './entity/chat.entity';
@@ -37,11 +38,19 @@ export class ChatGateway implements OnGatewayConnection {
       .catch(() => null);
     if (!user) return client.disconnect();
 
+    await this.userService.setStatus(user.id, Status.CHAT);
+
     client.data.user = user;
     client.emit('info', {
       user,
       channels: await this.chatService.getRoomsForUser(user.id),
     });
+  }
+
+  handleDisconnect(client: Socket): Promise<any> {
+    if (!client.data.user) return;
+
+    return this.userService.setStatus(client.data.user.id, Status.ONLINE);
   }
 
   emitRoom(room: ChatRoom, event: string, ...args: any): void {
