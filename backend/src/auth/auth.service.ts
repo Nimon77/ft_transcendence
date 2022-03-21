@@ -106,8 +106,7 @@ export class AuthService {
 
   async loginOTP(token: string, code: string): Promise<string> {
     const data = this.verifyJWT(token);
-    if (!data)
-      throw new HttpException('Invalid token', HttpStatus.NOT_ACCEPTABLE);
+    if (!data) throw new HttpException('Invalid token', HttpStatus.FORBIDDEN);
     if (data.otp)
       throw new HttpException('Already connected', HttpStatus.CONFLICT);
 
