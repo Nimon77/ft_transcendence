@@ -72,16 +72,17 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('text')
   async handleMessage(client: Socket, data: any): Promise<void> {
     try {
+      const user = client.data.user;
       const room = await this.chatService.getRoom(data.id, ['users']);
 
-      const user = client.data.user;
-
-      await this.chatService.addLogForRoom(data.id, data.value, user);
+      await this.chatService.addLogForRoom(data.id, data.value, user.id);
       this.emitRoom(room, 'text', {
         user: { id: user.id, username: user.username },
         ...data,
       });
-    } catch {}
+    } catch (error) {
+      console.error(error);
+    }
   }
 
   @SubscribeMessage('join')
