@@ -186,4 +186,14 @@ export class UserService {
     }
     return user.blocked;
   }
+
+  async updateOTP(userId: number, secret?: string): Promise<void> {
+    try {
+      await this.userRepository.update(userId, {
+        otp: secret,
+      });
+    } catch (error) {
+      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
+    }
+  }
 }

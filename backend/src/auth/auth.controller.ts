@@ -1,4 +1,5 @@
 import {
+  Body,
   Controller,
   Delete,
   Get,
@@ -10,7 +11,9 @@ import {
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { Request, Response } from 'express';
+import { Response } from 'express';
+import { Request } from 'src/user/interfaces/request.interface';
+import { UserService } from 'src/user/services/user.service';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { FortyTwoAuthGuard } from './guards/42-auth.guard';
@@ -18,12 +21,16 @@ import { FortyTwoUser } from './interfaces/42user.interface';
 
 @Controller('auth')
 export class AuthController {
-  constructor(private readonly authService: AuthService) {}
+  constructor(
+    private readonly authService: AuthService,
+    private readonly userService: UserService,
+  ) {}
 
   @Public()
   @UseGuards(FortyTwoAuthGuard)
   @Get('42/callback')
-  async login(@Req() req: Request, @Res() response: Response): Promise<void> {
+  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+  async login(@Req() req: any, @Res() response: Response): Promise<void> {
     const data = await this.authService.login(req.user as FortyTwoUser);
 
     const url = new URL(`${req.protocol}:${req.hostname}`);
@@ -49,22 +56,22 @@ export class AuthController {
   }
 
   @Get('2fa')
-  get2FA(@Req() req: Request): any {
-    return req;
+  get2FA(@Req() req: Request): Promise<string> {
+    return this.authService.generateQR(req.user.userId);
   }
 
   @Post('2fa')
-  Create2FA(@Req() req: Request): any {
-    return req;
+  create2FA(@Req() req: Request, @Body('code') code: string): Promise<void> {
+    return this.authService.saveSecret(req.user.userId, code);
   }
 
   @Delete('2fa')
-  Delete2FA(@Req() req: Request): any {
-    return req;
+  delete2FA(@Req() req: Request): Promise<void> {
+    return this.userService.updateOTP(req.user.userId);
   }
 
   @Put('2fa/check')
-  Check2FA(@Req() req: Request): any {
-    return req;
+  check2FA(@Req() req: Request, @Body('code') code: string): any {
+    return this.authService.verifyCode(req.user.userId, code);
   }
 }
