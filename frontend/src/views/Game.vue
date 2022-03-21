@@ -14,7 +14,7 @@
     </template>
   </v-dialog>
   <v-row justify="center" align="center" >
-    <v-card color="green" tile>
+    <v-card color="green" class="game" tile>
       <div class="text-center font-weight-bold text-h3 mt-6">
         {{this.$store.getters.getUsersInGame[0].username}}
         <span class="white--text"> VS </span>
@@ -160,7 +160,8 @@ body {
 /* @media and (aspect-ratio: 11/5) { ... } */
 canvas {
   /* height: 60vh; */
-  width: 80vw;
+  max-width: 80vw;
+  max-height: 60vh;
   display: flex;
   object-fit: cover;
   justify-content: center;
@@ -168,5 +169,11 @@ canvas {
   border: solid white;
   /* border-top: 0; */
   /* border-bottom: 0; */
+}
+
+.game {
+  max-width: 100vw;
+  max-height: 80vh;
+  object-fit: cover;
 }
 </style>
