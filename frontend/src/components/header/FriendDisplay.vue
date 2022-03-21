@@ -175,10 +175,9 @@ export default Vue.extend({
                 roomCode: code
               };
               this.notifySocket.emit('notify', payload);
-              this.notifySocket.on('notify', (data) => {
+              this.notifySocket.once('notify', (data) => {
                 if (data.sender == this.user.id) {
                   console.log('NOTIFY', data); // TODO: remove
-                  this.notifySocket.off('notify');
                   this.invitDialog = false;
                   this.$router.push('/pregame');
                 }
