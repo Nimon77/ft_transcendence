@@ -54,9 +54,6 @@
 <script lang="ts">
 import Vue from 'vue';
 
-const messages = [];
-
-
 export default Vue.extend({
     name: 'Chat',
 
@@ -129,9 +126,6 @@ export default Vue.extend({
 
     created() {
         this.$watch(() => this.idCurrentChannel, () => { this.cleanLogs(); },{ immediate: true })
-        this.socket.on('info', (data) => {
-          // console.log('INFO', data); // TODO: remove
-        })
         this.socket.on("text", data => {
           // console.log("TEXT EVENT", data); // TODO: remove
           if (data.id == this.idCurrentChannel)
