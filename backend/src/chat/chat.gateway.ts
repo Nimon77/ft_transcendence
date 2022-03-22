@@ -28,38 +28,54 @@ export class ChatGateway implements OnGatewayConnection {
   server: any;
 
   async handleConnection(client: Socket): Promise<any> {
-    const user = await this.authService.getUserFromSocket(client);
-    if (!user) return client.disconnect();
+    try {
+      const user = await this.authService.getUserFromSocket(client);
+      if (!user) return client.disconnect();
 
-    await this.userService.setStatus(user.id, Status.CHAT);
+      await this.userService.setStatus(user.id, Status.CHAT);
 
-    client.data.user = user;
-    client.emit('info', {
-      user,
-      channels: await this.chatService.getRoomsForUser(user.id),
-    });
+      client.data.user = user;
+      client.emit('info', {
+        user,
+        channels: await this.chatService.getRoomsForUser(user.id),
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   handleDisconnect(client: Socket): Promise<any> {
-    if (!client.data.user) return;
+    try {
+      if (!client.data.user) return;
 
-    return this.userService.setStatus(client.data.user.id, Status.ONLINE);
+      return this.userService.setStatus(client.data.user.id, Status.ONLINE);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   emitRoom(room: ChatRoom, event: string, ...args: any): void {
-    if (!room.users) return;
+    try {
+      if (!room.users) return;
 
-    const sockets: any[] = Array.from(this.server.sockets.values());
-    sockets.forEach((socket) => {
-      if (room.users.find((user) => user.id == socket.data.user.id))
-        socket.emit(event, ...args);
-    });
+      const sockets: any[] = Array.from(this.server.sockets.values());
+      sockets.forEach((socket) => {
+        if (room.users.find((user) => user.id == socket.data.user.id))
+          socket.emit(event, ...args);
+      });
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('channel')
   async getChannel(client: Socket, id: number): Promise<void> {
-    const channel = await this.chatService.getRoom(id, ['users', 'logs']);
-    client.emit('channel', channel);
+    try {
+      const channel = await this.chatService.getRoom(id, ['users', 'logs']);
+      client.emit('channel', channel);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('text')
