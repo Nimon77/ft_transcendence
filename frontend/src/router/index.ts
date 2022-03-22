@@ -105,6 +105,7 @@ interface JWT {
 
 router.beforeEach((to, from, next) => {
   // console.log('to', to) // TODO: remove
+  document.title = "BananaPong";
   checkJWT().then(Status => {
     if (Status.JWTvalide && (store.getters.getNotifySocket === null || !store.getters.getNotifySocket.connected)) {
       store.dispatch('connectNotify');
