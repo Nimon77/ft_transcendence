@@ -10,9 +10,8 @@ import { Avatar } from 'src/user/entities/avatar.entity';
 import { Status } from '../enums/status.enum';
 import { Match } from './match.entity';
 import { Connection } from './connection.entity';
-import { TextChannel } from 'src/chat/entity/textChannel.entity';
-import { DMChannel } from 'src/chat/entity/dmChannel.entity';
-
+import { DMChannel } from 'src/chat/entities/dmChannel.entity';
+import { TextChannel } from 'src/chat/entities/textChannel.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()

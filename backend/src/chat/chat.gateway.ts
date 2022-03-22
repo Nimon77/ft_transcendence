@@ -9,8 +9,8 @@ import { Socket } from 'socket.io';
 import { AuthService } from 'src/auth/auth.service';
 import { Status } from 'src/user/enums/status.enum';
 import { UserService } from 'src/user/services/user.service';
-import { ChatService } from './chat.service';
-import { TextChannel } from './entity/textChannel.entity';
+import { TextChannel } from './entities/textChannel.entity';
+import { TextChannelService } from './services/textChannel.service';
 
 @WebSocketGateway({
   cors: {
@@ -22,7 +22,7 @@ export class ChatGateway implements OnGatewayConnection {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
-    private readonly chatService: ChatService,
+    private readonly textChannelService: TextChannelService,
   ) {}
   @WebSocketServer()
   server: any;
@@ -37,7 +37,7 @@ export class ChatGateway implements OnGatewayConnection {
       client.data.user = user;
       client.emit('info', {
         user,
-        channels: await this.chatService.getChannelsForUser(user.id),
+        channels: await this.textChannelService.getChannelsForUser(user.id),
       });
     } catch (e) {
       console.error(e);
@@ -71,7 +71,10 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('channel')
   async getChannel(client: Socket, id: number): Promise<void> {
     try {
-      const channel = await this.chatService.getChannel(id, ['users', 'logs']);
+      const channel = await this.textChannelService.getChannel(id, [
+        'users',
+        'logs',
+      ]);
       client.emit('channel', channel);
     } catch (e) {
       console.error(e);
@@ -82,9 +85,15 @@ export class ChatGateway implements OnGatewayConnection {
   async handleMessage(client: Socket, data: any): Promise<void> {
     try {
       const user = client.data.user;
-      const channel = await this.chatService.getChannel(data.id, ['users']);
+      const channel = await this.textChannelService.getChannel(data.id, [
+        'users',
+      ]);
 
-      await this.chatService.addLogForChannel(data.id, data.value, user.id);
+      await this.textChannelService.addLogForChannel(
+        data.id,
+        data.value,
+        user.id,
+      );
       this.emitChannel(channel, 'text', {
         user: { id: user.id, username: user.username },
         ...data,
@@ -97,8 +106,11 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('join')
   async joinChannel(client: Socket, channel: TextChannel): Promise<void> {
     try {
-      await this.chatService.addUserToChannel(channel, client.data.user.id);
-      channel = await this.chatService.getChannel(channel.id, ['users']);
+      await this.textChannelService.addUserToChannel(
+        channel,
+        client.data.user.id,
+      );
+      channel = await this.textChannelService.getChannel(channel.id, ['users']);
       this.emitChannel(channel, 'join', { channel, user: client.data.user });
     } catch (e) {
       console.error(e);
@@ -111,10 +123,10 @@ export class ChatGateway implements OnGatewayConnection {
       let user = client.data.user;
       if (data.userId) user = await this.userService.getUser(data.userId, []);
 
-      const channel = await this.chatService.getChannel(data.channelId, [
+      const channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
       ]);
-      await this.chatService.removeUserFromChannel(
+      await this.textChannelService.removeUserFromChannel(
         user.id,
         data.channelId,
         client.data.user.id,
@@ -128,14 +140,18 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('admin')
   async toggleAdmin(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.chatService.getChannel(data.channelId, [
+      const channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
       ]);
       const owner = client.data.user;
       const admin = await this.userService.getUser(data.userId, []);
       let is_admin = false;
 
-      await this.chatService.toggleAdminRole(owner.id, admin.id, channel.id);
+      await this.textChannelService.toggleAdminRole(
+        owner.id,
+        admin.id,
+        channel.id,
+      );
 
       if (channel.adminId.indexOf(admin.id) != -1) is_admin = true;
       this.emitChannel(channel, 'admin', {
@@ -150,7 +166,7 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('mute')
   async toggleMute(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.chatService.getChannel(data.channelId, [
+      const channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
         'muted',
       ]);
@@ -160,9 +176,10 @@ export class ChatGateway implements OnGatewayConnection {
 
       const muted = channel.muted.find((muted) => muted.user.id == data.userId);
 
-      if (muted) await this.chatService.unMuteUserInChannel(muted, channel);
+      if (muted)
+        await this.textChannelService.unMuteUserInChannel(muted, channel);
       else {
-        await this.chatService.muteUserInChannel(
+        await this.textChannelService.muteUserInChannel(
           curuser.id,
           channel.id,
           admin.id,
@@ -182,7 +199,7 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('ban')
   async toggleBan(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.chatService.getChannel(data.channelId, [
+      const channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
         'banned',
       ]);
@@ -194,9 +211,10 @@ export class ChatGateway implements OnGatewayConnection {
         (banned) => banned.user.id == data.user.id,
       );
 
-      if (banned) await this.chatService.unBanUserInChannel(banned, channel);
+      if (banned)
+        await this.textChannelService.unBanUserInChannel(banned, channel);
       else {
-        await this.chatService.banUserInChannel(
+        await this.textChannelService.banUserInChannel(
           curuser.id,
           channel.id,
           admin.id,

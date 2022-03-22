@@ -1,22 +1,22 @@
 import { Module } from '@nestjs/common';
 import { ChatGateway } from './chat.gateway';
-import { ChatService } from './chat.service';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { AuthModule } from 'src/auth/auth.module';
 import { MeController } from './controllers/me.controller';
 import { IdController } from './controllers/id.controller';
-import { MutedUser } from './entity/mute.entity';
-import { BannedUser } from './entity/banned.entity';
-import { Log } from './entity/log.entity';
-import { TextChannel } from './entity/textChannel.entity';
+import { MutedUser } from './entities/mute.entity';
+import { BannedUser } from './entities/banned.entity';
+import { Log } from './entities/log.entity';
+import { TextChannel } from './entities/textChannel.entity';
+import { TextChannelService } from './services/textChannel.service';
+import { DMChannelService } from './services/dmChannel.service';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([TextChannel, MutedUser, BannedUser, Log]),
     AuthModule,
   ],
-  providers: [ChatGateway, ChatService],
-  exports: [ChatService],
+  providers: [ChatGateway, TextChannelService, DMChannelService],
   controllers: [MeController, IdController],
 })
 export class ChatModule {}

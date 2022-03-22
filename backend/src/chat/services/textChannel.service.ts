@@ -5,20 +5,20 @@ import {
   forwardRef,
   Inject,
 } from '@nestjs/common';
-import { MutedUser } from './entity/mute.entity';
+import { MutedUser } from '../entities/mute.entity';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
-import { PasswordI } from './interfaces/password.interface';
-import { BannedUser } from './entity/banned.entity';
-import { Log } from './entity/log.entity';
+import { PasswordI } from '../interfaces/password.interface';
+import { BannedUser } from '../entities/banned.entity';
+import { Log } from '../entities/log.entity';
 import * as bcrypt from 'bcrypt';
 import { UserService } from 'src/user/services/user.service';
-import { TextChannel } from './entity/textChannel.entity';
+import { TextChannel } from '../entities/textChannel.entity';
 
 const temporary = 30 * 60 * 1000;
 
 @Injectable()
-export class ChatService {
+export class TextChannelService {
   constructor(
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
