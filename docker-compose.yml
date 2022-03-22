@@ -54,7 +54,7 @@ services:
       context: ./docker
       dockerfile: ./frontend.dockerfile
     ports:
-      - 8080:8080
+      - 80:8080
     networks:
       - backend
     volumes:
