@@ -13,6 +13,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { Request } from 'src/user/interfaces/request.interface';
+import { ConnectionService } from 'src/user/services/connection.service';
 import { UserService } from 'src/user/services/user.service';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
@@ -24,6 +25,7 @@ export class AuthController {
   constructor(
     private readonly authService: AuthService,
     private readonly userService: UserService,
+    private readonly connectionService: ConnectionService,
   ) {}
 
   @Public()
@@ -71,7 +73,7 @@ export class AuthController {
 
   @Delete('2fa')
   delete2FA(@Req() req: Request): Promise<void> {
-    return this.userService.updateOTP(req.user.userId);
+    return this.connectionService.updateOTP(req.user.userId);
   }
 
   //for testing ----------------------------------------------------

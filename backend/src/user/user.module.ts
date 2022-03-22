@@ -7,13 +7,18 @@ import { User } from './entities/user.entity';
 import { Match } from './entities/match.entity';
 import { Avatar } from './entities/avatar.entity';
 import { UserService } from './services/user.service';
-import AvatarService from './services/avatar.service';
+import { Connection } from './entities/connection.entity';
+import { ConnectionService } from './services/connection.service';
+import { AvatarService } from './services/avatar.service';
 
 @Global()
 @Module({
-  imports: [TypeOrmModule.forFeature([User, Avatar, Match]), ChatModule],
+  imports: [
+    TypeOrmModule.forFeature([User, Connection, Avatar, Match]),
+    ChatModule,
+  ],
   controllers: [MeController, IdController],
-  providers: [UserService, AvatarService],
-  exports: [UserService],
+  providers: [UserService, ConnectionService, AvatarService],
+  exports: [UserService, ConnectionService],
 })
 export class UserModule {}

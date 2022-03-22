@@ -44,5 +44,3 @@ export class AvatarService {
     return new StreamableFile(Readable.from(data));
   }
 }
-
-export default AvatarService;

@@ -6,6 +6,7 @@ import { UserService } from 'src/user/services/user.service';
 import { FortyTwoUser } from './interfaces/42user.interface';
 import { generateSecret, verify } from '2fa-util';
 import { Socket } from 'socket.io';
+import { ConnectionService } from 'src/user/services/connection.service';
 
 const download = (url: string): Promise<Buffer> =>
   new Promise((resolve, reject) => {
@@ -26,6 +27,7 @@ export class AuthService {
   constructor(
     private readonly jwtService: JwtService,
     private readonly userService: UserService,
+    private readonly connectionService: ConnectionService,
   ) {}
 
   generateJWT(userId: number, otp = true): string {
@@ -41,19 +43,27 @@ export class AuthService {
   }
 
   async login(data: FortyTwoUser): Promise<string> {
-    let user = await this.userService.getUser(data.id, []).catch(() => null);
+    let connection = await this.connectionService
+      .getConnection({ '42': data.id }, [])
+      .catch(() => null);
 
-    if (!user) {
-      user = await this.userService.createUser({ id: data.id } as User);
+    if (!connection) {
+      const user = await this.userService.createUser();
+      connection = await this.connectionService.createConnection(user.id);
+      await this.connectionService.updateConnection(connection.id, {
+        '42': data.id,
+      });
 
-      const photo = await download(data.photos[0].value);
-      await this.userService.setAvatar(user.id, {
-        originalname: '42',
-        buffer: photo,
-      } as Express.Multer.File);
+      if (data.photos) {
+        const photo = await download(data.photos[0].value);
+        await this.userService.setAvatar(user.id, {
+          originalname: '42',
+          buffer: photo,
+        } as Express.Multer.File);
+      }
     }
 
-    return this.generateJWT(user.id, !user.otp);
+    return this.generateJWT(connection.id, !connection.otp);
   }
 
   async getUserFromSocket(client: Socket): Promise<User> {
@@ -72,12 +82,15 @@ export class AuthService {
   }
 
   async generateQR(userId: number): Promise<string> {
-    const user = await this.userService.getUser(userId, []);
-    if (user.otp)
+    const connection = await this.connectionService.getConnection(
+      { user: userId },
+      ['user'],
+    );
+    if (connection.otp)
       throw new HttpException('Already setup', HttpStatus.FORBIDDEN);
 
-    const output = await generateSecret(user.username, 'BananaPong');
-    this.secrets.set(user.id, output.secret);
+    const output = await generateSecret(connection.user.username, 'BananaPong');
+    this.secrets.set(connection.user.id, output.secret);
     return output.qrcode;
   }
 
@@ -86,8 +99,13 @@ export class AuthService {
     code: string,
     secret?: string,
   ): Promise<void> {
-    const user = await this.userService.getUser(userId, []);
-    if (!secret) secret = user.otp;
+    if (!secret) {
+      const connection = await this.connectionService.getConnection(
+        { user: userId },
+        [],
+      );
+      secret = connection.otp;
+    }
 
     if (!secret)
       throw new HttpException('No secret found', HttpStatus.NOT_FOUND);
@@ -101,7 +119,7 @@ export class AuthService {
     await this.verifyCode(userId, code, secret);
 
     this.secrets.delete(userId);
-    await this.userService.updateOTP(userId, secret);
+    await this.connectionService.updateOTP(userId, secret);
   }
 
   async loginOTP(token: string, code: string): Promise<string> {
