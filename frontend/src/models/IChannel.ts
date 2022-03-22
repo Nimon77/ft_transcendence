@@ -9,10 +9,11 @@ interface IChannel {
   adminId: Array<number>,
   users: Array<IUser>,
   public: boolean,
-  poassword: string,
+  password: string,
   muted: Array<IMutedUser>,
   banned: Array<IBannedUser>,
   log: Array<ILog>,
+  owner: IUser,
 }
 
 export default IChannel;

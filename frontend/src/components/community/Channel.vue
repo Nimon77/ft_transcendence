@@ -19,12 +19,12 @@
           <v-container>
             <v-row>
               <v-col cols="12" >
-                <v-form ref="form" v-model="valid" @submit.prevent="newChannel" >
+                <v-form ref="form" v-model="valid" @submit.prevent="createChannel" >
                   <v-text-field v-model="name" :rules="rules" label="name of channel" autofocus></v-text-field>
                 </v-form>
               </v-col>
               <v-col cols="12">
-                <v-form @submit.prevent="newChannel">
+                <v-form @submit.prevent="createChannel">
                   <v-text-field v-model="password" label="Password*" type="password"></v-text-field>
                 </v-form>
               </v-col>
@@ -35,51 +35,51 @@
         <v-card-actions>
           <v-spacer></v-spacer>
           <v-btn color="red darken-1" depressed tile dark @click="dialog = false"> Cancel </v-btn>
-          <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="newChannel"> SAVE </v-btn>
+          <v-btn color="blue darken-1 white--text" :disabled="!valid" depressed tile  @click="createChannel"> SAVE </v-btn>
         </v-card-actions>
       </v-card>
     </v-dialog>
 
-      <v-text-field v-model="searchCR" dense class="d-flex justify-center mb-n2 mt-5 pl-5 pr-5" label="search channel"></v-text-field>
+      <v-text-field v-model="searchChannel" dense class="d-flex justify-center mb-n2 mt-5 pl-5 pr-5" label="search channel"></v-text-field>
       <v-divider class="mt-1"></v-divider>
   
-      <v-list v-if="searchCR==''" mandatory> <!-- Si je ne cherche pas de CR -->
+      <v-list v-if="searchChannel == ''" mandatory> <!-- Si je ne cherche pas de CR -->
        <v-list-item-group>
-        <div v-for="CR in userCR" :key="CR.id">
-        <v-list-item two-line @click="changeCR(CR.id)">
+        <div v-for="channel in myChannels" :key="channel.id">
+        <v-list-item two-line @click="changeChannel(channel.id)">
           <v-list-item-content>
-            <v-list-item-title > {{CR.name}} </v-list-item-title>
-            <v-list-item-subtitle v-if="CR.public"> public
-              <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon>
-              <v-icon v-if="CR.ownerId == user.id" small color="blue"> mdi-account-child-circle </v-icon>
+            <v-list-item-title > {{channel.name}} </v-list-item-title>
+            <v-list-item-subtitle v-if="channel.public"> public
+              <v-icon v-if="isAdmin(channel.adminId)" small color="yellow"> mdi-account </v-icon>
+              <v-icon v-if="channel.owner.id == user.id" small color="blue"> mdi-account-child-circle </v-icon>
             </v-list-item-subtitle>
             <v-list-item-subtitle v-else> private
-              <v-icon v-if="isAdmin(CR.adminId)" small color="yellow"> mdi-account </v-icon>
-              <v-icon v-if="CR.ownerId == user.id" small color="blue"> mdi-account-child-circle </v-icon>
+              <v-icon v-if="isAdmin(channel.adminId)" small color="yellow"> mdi-account </v-icon>
+              <v-icon v-if="channel.owner.id == user.id" small color="blue"> mdi-account-child-circle </v-icon>
             </v-list-item-subtitle>
           </v-list-item-content>
-          <OptionChannel @leaveRoom="leaveRoom(CR.id)" :isOwner="CR.ownerId == user.id" :CR="CR"/>
+          <OptionChannel @leaveChannel="leaveChannel(channel.id)" :channel="channel"/>
         </v-list-item>
         <v-divider></v-divider>
         </div>
       </v-list-item-group>
       </v-list>
 
-      <v-list v-if="searchCR!=''" > <!-- Si je cherche un CR -->
-        <div v-for="cr in filteredCRs" :key="cr.id">
-        <v-list-item two-line v-if="alreadyJoin(cr.id)==false">
+      <v-list v-if="searchChannel != ''" > <!-- Si je cherche un CR -->
+        <div v-for="channel in filteredChannels" :key="channel.id">
+        <v-list-item two-line v-if="alreadyJoin(channel.id)==false">
           <v-list-item-content>
-            <v-list-item-title > {{cr.name}} </v-list-item-title>
-            <v-list-item-subtitle v-if="cr.public"> public </v-list-item-subtitle>
+            <v-list-item-title > {{channel.name}} </v-list-item-title>
+            <v-list-item-subtitle v-if="channel.public"> public </v-list-item-subtitle>
             <v-list-item-subtitle v-else> private </v-list-item-subtitle>
           </v-list-item-content>
           
-          <v-btn v-if="cr.public" dark color="blue" @click.prevent="joinRoom(cr.id)">
+          <v-btn v-if="channel.public" dark color="blue" @click.prevent="joinChannel(channel.id)">
             <v-list-item-title class="text-center">JOIN</v-list-item-title>
           </v-btn>
-          <v-dialog v-else v-model="PWdialog" max-width="600px" >
+          <v-dialog v-else v-model="passwordDialog" max-width="600px" >
           <template v-slot:activator="{ on, attrs }">
-            <v-btn dark color="blue" @click.prevent="PWdialog = !PWdialog">
+            <v-btn dark color="blue" @click.prevent="passwordDialog = !passwordDialog">
               <v-list-item-title v-bind="attrs" v-on="on" class="text-center">JOIN</v-list-item-title>
             </v-btn>
           </template>
@@ -91,7 +91,7 @@
               <v-container>
                 <v-row>
                   <v-col cols="12" >
-                    <v-form @submit.prevent="joinRoom(cr.id)">
+                    <v-form @submit.prevent="joinChannel(channel.id)">
                       <v-text-field v-model="password" type="password" label="Enter password channel"></v-text-field>
                     </v-form>
                   </v-col>
@@ -100,7 +100,7 @@
             </v-card-text>
             <v-card-actions>
               <v-spacer></v-spacer>
-              <v-btn color="blue darken-1 white--text" depressed tile  @click="joinRoom(cr.id)"> JOIN </v-btn>
+              <v-btn color="blue darken-1 white--text" depressed tile  @click="joinChannel(channel.id)"> JOIN </v-btn>
             </v-card-actions>
           </v-card>
         </v-dialog>
@@ -122,42 +122,57 @@ Vue.component('OptionChannel', OptionChannel);
 
 export default Vue.extend({
     name: 'Channel',
+
     props: {
-      userCR: [],
-      CRs: [],
       socket: {},
     },
+
     data() {
         return {
           dialog: false,
-          PWdialog: false,
+          passwordDialog: false,
           showInput: false,
           valid: true,
           name: '',
           password: '',
-          searchCR: '',
+          searchChannel: '',
           awaitingSearch: false,
         }
     },
+
     computed: {
-      currentIdCR: {
+      idCurrentChannel: {
         get() {
-          return this.$store.getters.getIdCR;
+          return this.$store.getters.getIdCurrentChannel;
         },
         set(id: number) {
-          this.$store.commit('setIdCR', id);
+          this.$store.commit('setIdCurrentChannel', id);
+        }
+      },
+      channels: {
+        get() {
+          return this.$store.getters.getChannels;
+        },
+        set(channels: unknown) {
+          this.$store.commit('setChannels', channels);
+        }
+      },
+      myChannels: {
+        get() {
+          return this.$store.getters.getMyChannels;
+        },
+        set(myChannels: unknown) {
+          this.$store.commit('setMyChannels', myChannels);
         }
       },
       user() {
         return this.$store.getters.getUser;
       },
-      filteredCRs(): unknown {
-        // console.log('FILTERED CR', this.CRs); // TODO: remove
-        return this.CRs.filter((cr) => {
-          return cr.name.match(this.searchCR);
+      filteredChannels(): unknown {
+        return this.channels.filter((channel) => {
+          return channel.name.match(this.searchChannel);
         })
       },
-
       rules() {
         const rules = [];
         let rule = v => !!v;
@@ -167,95 +182,59 @@ export default Vue.extend({
         return rules;
       },
     },
+
     methods: {
-      isAdmin(adminIds: []) {
-        let adminId;
-        for (adminId in adminIds)
-          if (adminIds[adminId] == this.user.id)
-            return true;
-        return false;
+      isAdmin(listAdminsId: [number]) {
+        return listAdminsId.includes(this.user.id);
       },
       alreadyJoin(toJoin: number) {
-        let i = 0;
-        while (i < this.userCR.length)
-        {
-          if (this.userCR[i].id == toJoin)
-            return true;
-          i++;
-        }
-        // console.log("FALSE"); // TODO: remove
-        return false;
+        return this.myChannels.some(channel => channel.id == toJoin);
       },
-      checkPW() {
-        this.PWdialog=!this.PWdialog
-      },
-      async joinRoom(idCR) {
-        console.log('Join ROOM', idCR, this.password); // TODO: remove
-        this.socket.emit('join', {id: idCR, password: this.password});
-        // try { await this.$http.put('/channel/join', {id: idCR, password: this.password}).then((resp) => console.log(resp)) } // TODO: remove
-        // catch(error) {
-        //   console.log(error.message); // TODO: remove
-        //   alert("You can't access this channel")
-        // }
-        this.searchCR = '';
-        this.$emit('fetchCR');
-        // this.currentIdCR = idCR;
+      joinChannel(idChannel) {
+        // console.log('Join ROOM', idChannel, this.password); // TODO: remove
+        this.socket.emit('join', {id: idChannel, password: this.password});
+        this.searchChannel = '';
+        this.$emit('fetchChannels');
         this.password = '';
-        this.PWdialog = false;
+        this.passwordDialog = false;
       },
-      async leaveRoom(idCR) {
-        console.log("leave ROOM ", idCR); // TODO: remove
-        this.socket.emit('leave', { roomId: idCR })
-        // await this.$http.put('/channel/' + idCR + '/leave', {id: this.user.id,}).then((resp) => console.log(resp)) // TODO: remove
-        if (this.currentIdCR == idCR)
+      leaveChannel(idChannel) {
+        console.log("leave ROOM ", idChannel); // TODO: remove
+        this.socket.emit('leave', { roomId: idChannel })
+        if (this.currentIdCR == idChannel)
           this.currentIdCR = 0;
-        this.$emit('fetchCR');
+        this.$emit('fetchChannels');
       },
-      async newChannel() {
+      createChannel() {
         // console.log('USER ID IN CHANNEL', this.user.id); //TODO: remove
         if (this.valid) {
           if (this.password == '')
-            await this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
-              console.log(resp); //TODO: remove
-              if (resp.status == 201)
-                this.currentIdCR = resp.data.id;
+            this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
+              // console.log(resp); //TODO: remove
+              this.idCurrentChannel = resp.data.id;
+              this.$emit('fetchChannels');
             });
           else
-            await this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
-              console.log(resp); //TODO: remove
-              if (resp.status == 201)
-                this.currentIdCR = resp.data.id;
+            this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
+              // console.log(resp); //TODO: remove
+              this.idCurrentChannel = resp.data.id;
+              this.$emit('fetchChannels');
             });
           this.dialog = false;
-          this.$emit('fetchCR');
           this.name = '';
           this.password = '';
         }
       },
-      changeCR(idCR) {
-        this.currentIdCR = idCR;
-        this.$emit('fetchCR');
+      changeChannel(idChannel) {
+        this.idCurrentChannel = idChannel;
       },
     },
-    created() {
-      this.socket.on('join', (data) => {
-        console.log('JOIN', data); // TODO: remove
-        if (data.user.id == this.user.id)
-          this.currentIdCR = data.room.id;
-        this.$emit('fetchCR');
-      });
-      this.socket.on('leave', (data) => {
-        console.log('LEAVE', data); // TODO: remove
-        if (this.currentIdCR == data.room.id && data.user.id == this.user.id)
-          this.currentIdCR = 0;
-        this.$emit('fetchCR');
-      });
-    },
+
     watch: {
-      searchCR() {
+      searchChannel() {
         if (!this.awaitingSearch) {
           setTimeout(() => {
-            this.$emit('fetchCR');
+            this.$emit('fetchChannels');
             this.awaitingSearch = false;
           }, 1000);
           this.awaitingSearch = true;

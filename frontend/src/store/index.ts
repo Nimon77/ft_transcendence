@@ -7,6 +7,7 @@ import { io, Socket } from 'socket.io-client';
 
 import IUser from '@/models/IUser';
 import IGameOptions from '@/models/IGameOptions';
+import IChannel from '@/models/IChannel';
 
 Vue.use(Vuex)
 
@@ -32,11 +33,14 @@ export default new Vuex.Store({
       message: String,
     },
 
+    status: [{id: Number, status: Number}],
+
     chat: {
-      idCR: 0,
-      CRs: {},
-      userCR: {},
-      playersCR: {},
+      socket: <Socket> null,
+      idCurrentChannel: 0,
+      currentChannel: <IChannel> {},
+      channels: {},
+      myChannels: {},
     },
 
     gameSock: <Socket> null,
@@ -50,10 +54,12 @@ export default new Vuex.Store({
     getAvatar: state => state.avatar,
     getNotifySocket: state => state.notifySocket,
     getNotify: state => state.notify,
-    getIdCR: state => state.chat.idCR,
-    getCRs: state => state.chat.CRs,
-    getUserCR: state => state.chat.userCR,
-    getPlayersCR: state => state.chat.playersCR,
+    getStatus: state => state.status,
+    getChatSocket: state => state.chat.socket,
+    getIdCurrentChannel: state => state.chat.idCurrentChannel,
+    getCurrentChannel: state => state.chat.currentChannel,
+    getChannels: state => state.chat.channels,
+    getMyChannels: state => state.chat.myChannels,
     getGameSock: state => state.gameSock,
     getGameRoom: state => state.gameRoom,
     getGameOptions: state => state.gameOptions,
@@ -69,17 +75,20 @@ export default new Vuex.Store({
     setReady(state, ready) {
       state.ready = ready;
     },
-    setIdCR(state, idCR) {
-      state.chat.idCR = idCR;
+    setChatSocket(state, socket) {
+      state.chat.socket = socket;
     },
-    setCRs(state, CRs) {
-      state.chat.CRs = CRs;
+    setIdCurrentChannel(state, idCurrentChannel) {
+      state.chat.idCurrentChannel = idCurrentChannel;
     },
-    setUserCR(state, userCR) {
-      state.chat.userCR = userCR;
+    setCurrentChannel(state, currentChannel) {
+      state.chat.currentChannel = currentChannel;
     },
-    setPlayersCR(state, playersCR) {
-      state.chat.playersCR = playersCR;
+    setChannels(state, channels) {
+      state.chat.channels = channels;
+    },
+    setMyChannels(state, myChannels) {
+      state.chat.myChannels = myChannels;
     },
     setGameSock(state, gameSock) {
       state.gameSock = gameSock;
@@ -88,7 +97,6 @@ export default new Vuex.Store({
       state.gameRoom = gameRoom;
     },
     setGameOptions(state, gameOptions) {
-      console.log('gameOptions', gameOptions);
       state.gameOptions = gameOptions;
     },
     setUsersInGame(state, users) {
@@ -117,6 +125,12 @@ export default new Vuex.Store({
     'NOTIFY_status': (state, payload) => {
       if (payload.userId == state.user.id) {
         state.user.status = payload.status;
+      }
+      if (state.chat.idCurrentChannel != 0 &&
+        state.chat.socket.connected &&
+        state.chat.currentChannel.users &&
+        state.chat.currentChannel.users.some(user => user.id == payload.userId)) {
+        state.chat.currentChannel.users.find(user => user.id == payload.userId).status = payload.status;
       }
     }
   },
