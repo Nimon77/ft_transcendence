@@ -1,6 +1,7 @@
 import Vue from 'vue'
 import VueRouter, { RouteConfig } from 'vue-router'
 import axios from 'axios'
+import jwt_decode from 'jwt-decode'
 
 import Login from '@/views/Login.vue'
 import Community from '@/views/Community.vue'
@@ -95,6 +96,13 @@ async function checkJWT() {
   return status;
 }
 
+interface JWT {
+  exp: number,
+  iat: number,
+  otp: boolean,
+  sub: string,
+}
+
 router.beforeEach((to, from, next) => {
   // console.log('to', to) // TODO: remove
   checkJWT().then(Status => {
@@ -104,6 +112,11 @@ router.beforeEach((to, from, next) => {
     if (to.name === 'Login' && to.query.code !== undefined) {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
+      const decoded = jwt_decode(to.query.code.toString()) as JWT;
+      console.log(decoded); // TODO: remove
+      if (decoded.otp === false) {
+        return next({ name: 'Otp' });
+      }
       axios.get("/user/me").then(res => {
         store.commit('setUser', res.data);
         if (res.data.profileCompleted) {

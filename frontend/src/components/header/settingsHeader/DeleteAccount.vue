@@ -44,6 +44,8 @@ export default Vue.extend({
         localStorage.removeItem('token');
         this.$store.commit('setUser', {});
         this.$store.commit('setReady', false);
+        this.$store.getters.getNotifySocket.disconnect();
+        this.$store.state.notifySocket = null;
         this.$router.push({ name: 'Login' });
       });
     }
