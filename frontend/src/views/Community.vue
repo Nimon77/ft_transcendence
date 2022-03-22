@@ -70,8 +70,7 @@ export default Vue.extend({
     },
     methods: {
       getPlayersCR() {
-        let i = 0;
-
+        
         if (this.idCR == 0)
           return (this.playersCR = []);
 
@@ -79,42 +78,30 @@ export default Vue.extend({
           this.idCR = 0;
           return (this.playersCR = []);
         }
-
-        while(i < this.userCR.length && this.userCR[i].id != this.idCR)
-          i++;
-          // console.log(this.userCR[i].id);
-        if (this.userCR[i].id == this.idCR)
-        {
-          this.playersCR = this.userCR[i].users;
-          if (this.userCR[i].ownerId == this.user.id)
-            this.isOwner = true;
-          else
-            this.isOwner = false;
-          this.playerAdmins = this.userCR[i].adminId;
-          for (let j in this.userCR[i].adminId)
-            if (this.userCR[i].adminId[j] == this.user.id)
-            {
-              this.isAdmin = true;
-              return;
-            }
-          this.isAdmin = false;
-          return;
-        }
-        return (this.playersCR = []);
+        console.log(this.userCR.find(CR => CR.id == this.idCR));
+        this.playersCR = [];
+        this.userCR.forEach(CR => {
+          if (CR.id == this.idCR) {
+            this.playersCR = CR.users;
+            this.isOwner = CR.ownerId == this.user.id;
+            this.playerAdmins = CR.adminID;
+            this.isAdmin = CR.adminId.find(id => id == this.user.id) != undefined;
+          }
+        });
       },
 
-      async fetchInfos() {
-        await this.$http.get('/user/me').then((resp) => {
+      fetchInfos() {
+        this.$http.get('/user/me').then((resp) => {
           this.user = resp.data;
           // console.log("GET USER IN COMMUNITY ", this.user); // TODO: remove
         })
-        await this.$http.get('/channel').then((resp) => {
+        this.$http.get('/channel').then((resp) => {
           this.CRs = resp.data;
-          // console.log("GET CRs IN COMMUNITY ", this.CRs); // TODO: remove
+          // console.log("/channel", this.CRs); // TODO: remove
         })
-        await this.$http.get('/channel/me').then((resp) => {
+        this.$http.get('/channel/me').then((resp) => {
           this.userCR = resp.data;
-          // console.log("GET userCR IN COMMUNITY", this.userCR) // TODO: remove
+          // console.log("/channel/me", this.userCR) // TODO: remove
         })
 
         if (this.userCR != undefined)
