@@ -37,7 +37,6 @@ export class TextChannelService {
   ) {}
 
   async getChannel(
-    //yes
     channelId: number,
     relations: string[],
     needPass?: boolean,
@@ -55,7 +54,6 @@ export class TextChannelService {
   }
 
   async createChannel(
-    //yes
     channel: TextChannel,
     userId: number,
   ): Promise<TextChannel> {
@@ -106,7 +104,6 @@ export class TextChannelService {
   }
 
   async deleteChannel(id: number): Promise<void> {
-    //yes
     const channel = await this.getChannel(id, [
       'users',
       'muted',
@@ -248,7 +245,6 @@ export class TextChannelService {
   }
 
   async getChannelsForUser(userId: number): Promise<TextChannel[]> {
-    //yes
     const uncompleted: TextChannel[] = await this.textChannelRepository
       .createQueryBuilder('channel')
       .innerJoin('channel.users', 'user')
@@ -443,7 +439,6 @@ export class TextChannelService {
   }
 
   async addLogForChannel(
-    //yes
     id: number,
     message: string,
     userId: number,
@@ -493,7 +488,6 @@ export class TextChannelService {
   }
 
   async getLogsForChannel(id: number, userId: number): Promise<Log[]> {
-    //yes
     const user = await this.userService.getUser(userId, []);
     const currentChannel = await this.getChannel(id, ['logs']);
     const logs = [];
