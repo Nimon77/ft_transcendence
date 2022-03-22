@@ -8,6 +8,7 @@ import { BannedUser } from 'src/chat/entity/banned.entity';
 import { Log } from 'src/chat/entity/log.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Match } from 'src/user/entities/match.entity';
+import { Connection } from 'src/user/entities/connection.entity';
 
 @Module({
   imports: [
@@ -20,7 +21,17 @@ import { Match } from 'src/user/entities/match.entity';
         username: configService.get('POSTGRES_USER'),
         password: configService.get('POSTGRES_PASSWORD'),
         database: configService.get('POSTGRES_DB'),
-        entities: [User, Avatar, Match, ChatRoom, MutedUser, BannedUser, Log],
+        entities: [
+          User,
+          Connection,
+          Avatar,
+          Match,
+
+          ChatRoom,
+          MutedUser,
+          BannedUser,
+          Log,
+        ],
         synchronize: true, //false for production, else destroy/recreate data in the db
       }),
     }),

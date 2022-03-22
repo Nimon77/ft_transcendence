@@ -13,8 +13,10 @@ export class UserService {
   constructor(
     private readonly avatarService: AvatarService,
     private readonly notifyService: NotifyService,
+
     @InjectRepository(User)
     private readonly userRepository: Repository<User>,
+
     @InjectRepository(Match)
     private readonly matchRepository: Repository<Match>,
   ) {}
@@ -23,18 +25,29 @@ export class UserService {
     return this.userRepository.find();
   }
 
-  async getUser(id: number, relations: string[]): Promise<User> {
-    const user: User =
-      id && (await this.userRepository.findOne(id, { relations }));
+  async getUserByConnection(connectionId: number): Promise<User> {
+    let user = null;
+    if (connectionId)
+      user = await this.userRepository.find({
+        where: { connection: connectionId },
+      });
+
     if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
     return user;
   }
 
-  async createUser(user: User): Promise<User> {
-    if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
-    if (user.id && (await this.userRepository.findOne(user.id)))
-      throw new HttpException('User already exist', HttpStatus.CONFLICT);
+  async getUser(id: number, relations: string[]): Promise<User> {
+    let user = null;
+    if (id) user = await this.userRepository.findOne(id, { relations });
 
+    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    return user;
+  }
+
+  async createUser(): Promise<User> {
+    const user = this.userRepository.create();
     try {
       await this.userRepository.save(user);
     } catch (error) {
@@ -185,15 +198,5 @@ export class UserService {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
     return user.blocked;
-  }
-
-  async updateOTP(userId: number, secret?: string): Promise<void> {
-    try {
-      await this.userRepository.update(userId, {
-        otp: secret,
-      });
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
   }
 }

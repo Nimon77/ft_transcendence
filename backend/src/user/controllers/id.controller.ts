@@ -5,7 +5,6 @@ import {
   Get,
   Param,
   ParseIntPipe,
-  Post,
   Put,
   Res,
   StreamableFile,
@@ -16,7 +15,7 @@ import { FileInterceptor } from '@nestjs/platform-express';
 import { Response } from 'express';
 import { Match } from '../entities/match.entity';
 import { User } from '../entities/user.entity';
-import AvatarService from '../services/avatar.service';
+import { AvatarService } from '../services/avatar.service';
 import { UserService } from '../services/user.service';
 
 @Controller('user')
@@ -59,12 +58,12 @@ export class IdController {
   getRank(@Param('id', ParseIntPipe) userid: number): Promise<number> {
     return this.userService.getRank(userid);
   }
-  //for testing
 
-  @Post()
-  createUser(@Body() user: User): Promise<User> {
-    return this.userService.createUser(user);
-  }
+  //for testing
+  //   @Post()
+  //   createUser(@Body() user: User): Promise<User> {
+  //     return this.userService.createUser();
+  //   }
 
   @Put(':id')
   updateUser(@Param('id') id: number, @Body() user: User): Promise<User> {
