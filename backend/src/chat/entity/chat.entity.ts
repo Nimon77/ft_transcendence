@@ -27,7 +27,7 @@ export class ChatRoom {
   @Column({ nullable: true })
   password: string;
 
-  @ManyToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE', eager: true })
   @JoinColumn()
   owner: User;
 

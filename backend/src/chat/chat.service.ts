@@ -99,7 +99,7 @@ export class ChatService {
     adminId?: number,
   ): Promise<void> {
     const user = await this.userService.getUser(userId, []);
-    const room = await this.getRoom(roomId, ['users', 'owner']);
+    const room = await this.getRoom(roomId, ['users']);
 
     if (adminId && adminId != user.id) {
       if (room.adminId.indexOf(adminId) == -1)
@@ -132,7 +132,7 @@ export class ChatService {
     userId: number,
   ): Promise<void> {
     const user = await this.userService.getUser(userId, []);
-    const room = await this.getRoom(roomId, ['owner']);
+    const room = await this.getRoom(roomId, []);
 
     if (room.public == true)
       throw new HttpException('Room is public', HttpStatus.FORBIDDEN);
@@ -173,7 +173,7 @@ export class ChatService {
   async updateRoom(id: number, room: ChatRoom, userId: number): Promise<void> {
     {
       const user = await this.userService.getUser(userId, []);
-      const updatedRoom = await this.getRoom(id, ['owner']);
+      const updatedRoom = await this.getRoom(id, []);
       if (updatedRoom.owner.id != user.id)
         throw new HttpException(
           'User isnt owner of Room',
@@ -266,13 +266,7 @@ export class ChatService {
   ): Promise<void> {
     const owner = await this.userService.getUser(ownerId, []);
     const user = await this.userService.getUser(userId, []);
-    const room = await this.getRoom(roomid, [
-      'owner',
-      'users',
-      'muted',
-      'banned',
-      'logs',
-    ]);
+    const room = await this.getRoom(roomid, ['users']);
     if (room.owner.id != owner.id)
       throw new HttpException(
         "User isn't the room's owner",
@@ -322,7 +316,7 @@ export class ChatService {
   ): Promise<void> {
     const user = await this.userService.getUser(userId, []);
     const admin = await this.userService.getUser(adminId, []);
-    const currentroom = await this.getRoom(roomid, ['owner', 'users', 'muted']);
+    const currentroom = await this.getRoom(roomid, ['users', 'muted']);
     if (currentroom.owner.id == user.id)
       throw new HttpException(
         'User is owner and thus cannot be muted',
@@ -359,11 +353,7 @@ export class ChatService {
   ): Promise<void> {
     const admin = await this.userService.getUser(adminId, []);
     const user = await this.userService.getUser(userId, []);
-    const currentroom = await this.getRoom(roomid, [
-      'owner',
-      'users',
-      'banned',
-    ]);
+    const currentroom = await this.getRoom(roomid, ['users', 'banned']);
     if (currentroom.owner.id == user.id)
       throw new HttpException(
         'User is owner and thus cannot be banned',
