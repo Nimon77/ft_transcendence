@@ -1,20 +1,18 @@
-import { MutedUser } from './mute.entity';
 import {
   Column,
   Entity,
   PrimaryGeneratedColumn,
-  JoinTable,
-  ManyToMany,
   OneToMany,
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { BannedUser } from './banned.entity';
-import { Log } from './log.entity';
 import { User } from 'src/user/entities/user.entity';
+import { Channel } from './channel.entity';
+import { MutedUser } from './mute.entity';
+import { BannedUser } from './banned.entity';
 
 @Entity()
-export class ChatRoom {
+export class TextChannel extends Channel {
   @PrimaryGeneratedColumn()
   id: number;
 
@@ -34,19 +32,11 @@ export class ChatRoom {
   @Column('int', { array: true, default: [] })
   adminId: number[];
 
-  @ManyToMany(() => User, (user) => user.rooms)
-  @JoinTable()
-  users: User[];
-
-  @OneToMany(() => MutedUser, (MutedUser) => MutedUser.room)
+  @OneToMany(() => MutedUser, (MutedUser) => MutedUser.channel)
   @JoinColumn()
   muted: MutedUser[];
 
-  @OneToMany(() => BannedUser, (BannedUser) => BannedUser.room)
+  @OneToMany(() => BannedUser, (BannedUser) => BannedUser.channel)
   @JoinColumn()
   banned: BannedUser[];
-
-  @OneToMany(() => Log, (Log) => Log.room)
-  @JoinColumn()
-  logs: Log[];
 }

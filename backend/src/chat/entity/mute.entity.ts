@@ -1,6 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { ChatRoom } from './chat.entity';
+import { TextChannel } from './textChannel.entity';
 
 @Entity()
 export class MutedUser {
@@ -13,6 +13,6 @@ export class MutedUser {
   @Column({ type: 'timestamptz' })
   endOfMute: Date;
 
-  @ManyToOne(() => ChatRoom, (room) => room.muted)
-  room: ChatRoom;
+  @ManyToOne(() => TextChannel, (channel) => channel.muted)
+  channel: TextChannel;
 }

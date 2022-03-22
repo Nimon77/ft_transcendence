@@ -8,10 +8,10 @@ import {
   Post,
   Put,
 } from '@nestjs/common';
-import { ChatRoom } from '../entity/chat.entity';
 import { ChatService } from '../chat.service';
 import { MessageI } from '../interfaces/message.interface';
 import { UserService } from 'src/user/services/user.service';
+import { TextChannel } from '../entity/textChannel.entity';
 
 @Controller('channel')
 export class IdController {
@@ -21,52 +21,57 @@ export class IdController {
   ) {}
 
   @Get('/')
-  getAllChannels(): Promise<ChatRoom[]> {
-    return this.chatService.getAllRooms();
+  getAllChannels(): Promise<TextChannel[]> {
+    return this.chatService.getAllChannels();
   }
 
   // for testing purposes
 
-  @Get('/:id') //get full room info including baned muted and users
-  getRoom(@Param('id', ParseIntPipe) id: number): Promise<ChatRoom> {
-    return this.chatService.getRoom(id, ['users', 'muted', 'banned', 'logs']);
+  @Get('/:id') //get full channel info including baned muted and users
+  getChannel(@Param('id', ParseIntPipe) id: number): Promise<TextChannel> {
+    return this.chatService.getChannel(id, [
+      'users',
+      'muted',
+      'banned',
+      'logs',
+    ]);
   }
 
   @Post('/:id') //create channel for specific user
   createChannelForUser(
     @Param('id', ParseIntPipe) userid: number,
-    @Body() room: ChatRoom,
-  ): Promise<ChatRoom> {
-    return this.chatService.createRoom(room, userid);
+    @Body() channel: TextChannel,
+  ): Promise<TextChannel> {
+    return this.chatService.createChannel(channel, userid);
   }
 
   @Delete('/:id')
   deleteChannel(@Param('id', ParseIntPipe) id: number): Promise<void> {
-    return this.chatService.deleteRoom(id);
+    return this.chatService.deleteChannel(id);
   }
 
   @Put('/:id/add') //add any user to any channel
-  addUserToRoom(
+  addUserToChannel(
     @Param('id', ParseIntPipe) userid: number,
-    @Body() room: ChatRoom,
+    @Body() channel: TextChannel,
   ): Promise<void> {
-    return this.chatService.addUserToRoom(room, userid);
+    return this.chatService.addUserToChannel(channel, userid);
   }
 
   @Put(':id/check') //check if password is correct
   checkPass(
     @Param('id', ParseIntPipe) id: number,
-    @Body() room: ChatRoom,
+    @Body() channel: TextChannel,
   ): Promise<boolean> {
-    return this.chatService.checkPassword(id, room.password);
+    return this.chatService.checkPassword(id, channel.password);
   }
 
-  @Put(':id/:userid/log') //add log to room based on userid
-  addLogToRoom(
+  @Put(':id/:userid/log') //add log to channel based on userid
+  addLogToChannel(
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
     @Body() message: MessageI,
   ): Promise<void> {
-    return this.chatService.addLogForRoom(id, message.message, userid);
+    return this.chatService.addLogForChannel(id, message.message, userid);
   }
 }

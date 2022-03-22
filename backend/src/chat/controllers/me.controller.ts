@@ -8,13 +8,13 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { ChatRoom } from '../entity/chat.entity';
 import { ChatService } from '../chat.service';
 import { PasswordI } from '../interfaces/password.interface';
 import { MessageI } from '../interfaces/message.interface';
 import { User } from 'src/user/entities/user.entity';
 import { Log } from '../entity/log.entity';
 import { Request } from 'src/user/interfaces/request.interface';
+import { TextChannel } from '../entity/textChannel.entity';
 
 @Controller('channel')
 export class MeController {
@@ -23,28 +23,31 @@ export class MeController {
   @Post('/')
   createChannel(
     @Req() req: Request,
-    @Body() room: ChatRoom,
-  ): Promise<ChatRoom> {
-    return this.chatService.createRoom(room, req.user.userId);
+    @Body() channel: TextChannel,
+  ): Promise<TextChannel> {
+    return this.chatService.createChannel(channel, req.user.userId);
   }
 
   @Get('/me')
-  getAllChannels(@Req() req: Request): Promise<ChatRoom[]> {
-    return this.chatService.getRoomsForUser(req.user.userId);
+  getAllChannels(@Req() req: Request): Promise<TextChannel[]> {
+    return this.chatService.getChannelsForUser(req.user.userId);
   }
 
   @Put('/join')
-  joinChannel(@Req() req: Request, @Body() room: ChatRoom): Promise<void> {
-    return this.chatService.addUserToRoom(room, req.user.userId);
+  joinChannel(
+    @Req() req: Request,
+    @Body() channel: TextChannel,
+  ): Promise<void> {
+    return this.chatService.addUserToChannel(channel, req.user.userId);
   }
 
   @Put('/:id')
   updateChannel(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
-    @Body() room: ChatRoom,
+    @Body() channel: TextChannel,
   ): Promise<void> {
-    return this.chatService.updateRoom(id, room, req.user.userId);
+    return this.chatService.updateChannel(id, channel, req.user.userId);
   }
 
   @Put(':id/admin')
@@ -57,12 +60,12 @@ export class MeController {
   }
 
   @Put(':id/ban')
-  banUserFromRoom(
+  banUserFromChannel(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ): Promise<void> {
-    return this.chatService.banUserInRoom(user.id, id, req.user.userId);
+    return this.chatService.banUserInChannel(user.id, id, req.user.userId);
   }
 
   @Post(':id/change/')
@@ -75,29 +78,33 @@ export class MeController {
   }
 
   @Put(':id/mute') //mute user from channel
-  muteUserFromRoom(
+  muteUserFromChannel(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ): Promise<void> {
-    return this.chatService.muteUserInRoom(user.id, id, req.user.userId);
+    return this.chatService.muteUserInChannel(user.id, id, req.user.userId);
   }
 
-  @Get(':id/log') //get current room logs
-  getLogsFromRoom(
+  @Get(':id/log') //get current channel logs
+  getLogsFromChannel(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Log[]> {
-    return this.chatService.getLogsForRoom(id, req.user.userId);
+    return this.chatService.getLogsForChannel(id, req.user.userId);
   }
 
-  @Put(':id/log') //add log to room
-  addLogsToRoom(
+  @Put(':id/log') //add log to channel
+  addLogsToChannel(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
     @Body() message: MessageI,
   ): Promise<void> {
-    return this.chatService.addLogForRoom(id, message.message, req.user.userId);
+    return this.chatService.addLogForChannel(
+      id,
+      message.message,
+      req.user.userId,
+    );
   }
 
   //for testing
@@ -107,15 +114,15 @@ export class MeController {
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<void> {
-    return this.chatService.removeUserFromRoom(req.user.userId, id);
+    return this.chatService.removeUserFromChannel(req.user.userId, id);
   }
 
-  @Put('/:id/kick/:userid') // admin removes user from room
+  @Put('/:id/kick/:userid') // admin removes user from channel
   kickUserFromChannel(
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
   ): Promise<void> {
-    return this.chatService.removeUserFromRoom(userid, id, req.user.userId);
+    return this.chatService.removeUserFromChannel(userid, id, req.user.userId);
   }
 }
