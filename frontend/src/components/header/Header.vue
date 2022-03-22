@@ -1,5 +1,5 @@
 <template>
-  <v-app-bar app elevation="0" height="90px" color="green" clipped-left clipped-right>
+  <v-app-bar app elevation="0" height="90px" color="green darken-1" clipped-left clipped-right>
     <v-btn router to="/" class="titl" x-large plain text width="385" height="60">
       BananaPong
     </v-btn>

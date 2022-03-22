@@ -1,7 +1,7 @@
 <template>
   <v-footer app padless>
     <v-col
-      class="text-center green white--text"
+      class="text-center green darken-1 white--text"
       cols="12"
     >
       {{ new Date().getFullYear() }} — <strong>BananaPong Inc.</strong>

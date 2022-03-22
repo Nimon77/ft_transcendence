@@ -2,7 +2,7 @@
   <v-dialog width="500" max-height="500" v-model="dialog" persistent>
     <template v-slot:activator="{ on, attrs }">
     <v-btn elevation="1" v-on:click="searchPlayer" v-bind="attrs" v-on="on" slot="activator"
-    class="btn" style="font-size: 60px !important;color: #F6D42A;" dark tile x-large depressed
+    class="btn" style="font-size: 60px !important;color: #F6D42A;" dark tile x-large depressed color="#121212"
     width="395" height="170">
     PLAY
     </v-btn>
