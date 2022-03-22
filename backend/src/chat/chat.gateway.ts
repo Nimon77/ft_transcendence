@@ -73,7 +73,9 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: user.id, username: user.username },
         ...data,
       });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('join')
@@ -82,7 +84,9 @@ export class ChatGateway implements OnGatewayConnection {
       await this.chatService.addUserToRoom(room, client.data.user.id);
       room = await this.chatService.getRoom(room.id, ['users']);
       this.emitRoom(room, 'join', { room, user: client.data.user });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('leave')
@@ -92,15 +96,15 @@ export class ChatGateway implements OnGatewayConnection {
       if (data.userId) user = await this.userService.getUser(data.userId, []);
 
       const room = await this.chatService.getRoom(data.roomId, ['users']);
-
       await this.chatService.removeUserFromRoom(
-        user,
+        user.id,
         data.roomId,
         client.data.user.id,
       );
-
       this.emitRoom(room, 'leave', { room, user: client.data.user });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('admin')
@@ -111,14 +115,16 @@ export class ChatGateway implements OnGatewayConnection {
       const admin = await this.userService.getUser(data.userId, []);
       let is_admin = false;
 
-      await this.chatService.toggleAdminRole(owner, admin.id, room.id);
+      await this.chatService.toggleAdminRole(owner.id, admin.id, room.id);
 
       if (room.adminId.indexOf(admin.id) != -1) is_admin = true;
       this.emitRoom(room, 'admin', {
         user: { id: admin.id, username: admin.username },
         is_admin: is_admin,
       });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('mute')
@@ -136,7 +142,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       if (muted) await this.chatService.unMuteUserInRoom(muted, room);
       else {
-        await this.chatService.muteUserInRoom(curuser.id, room.id, admin);
+        await this.chatService.muteUserInRoom(curuser.id, room.id, admin.id);
         is_muted = true;
       }
       this.emitRoom(room, 'mute', {
@@ -144,7 +150,9 @@ export class ChatGateway implements OnGatewayConnection {
         muted_user: { id: curuser.id, username: curuser.username },
         is_muted: is_muted,
       });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('ban')
@@ -164,7 +172,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       if (banned) await this.chatService.unBanUserInRoom(banned, room);
       else {
-        await this.chatService.banUserInRoom(curuser.id, room.id, admin);
+        await this.chatService.banUserInRoom(curuser.id, room.id, admin.id);
         is_banned = true;
       }
       this.emitRoom(room, 'ban', {
@@ -172,6 +180,8 @@ export class ChatGateway implements OnGatewayConnection {
         banned_user: { id: curuser.id, username: curuser.username },
         is_banned: is_banned,
       });
-    } catch {}
+    } catch (e) {
+      console.error(e);
+    }
   }
 }

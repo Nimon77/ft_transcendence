@@ -63,7 +63,8 @@ export class ChatService {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       }
     }
-
+    if (this.chatRepo.findOne({ where: { name: room.name } }))
+      throw new HttpException('Channel already exists', HttpStatus.FORBIDDEN);
     const currentRoom = this.chatRepo.create({
       name: room.name,
       adminId: [admin.id],
