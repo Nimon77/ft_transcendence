@@ -1,9 +1,9 @@
 <template>
     <v-container fluid class="fill-height">
     <v-row class="fill-height" align="start" justify="center">
-      <Channel :socket="socket" :CRs="CRs" :userCR="userCR" v-on:fetchCR="fetchCR=!fetchCR"/>
-      <Chat :socket="socket" v-bind:idCR="idCR" />
-      <PlayerChannel :socket="socket" :playersCR="playersCR" v-bind:isOwner="isOwner" :admins="playerAdmins" :isAdmin="isAdmin"/>
+      <Channel :socket="socket" v-on:fetchChannels="fetchChannels = !fetchChannels"/>
+      <Chat :socket="socket"/>
+      <PlayerChannel :socket="socket"/>
     </v-row>
   </v-container>
 </template>
@@ -23,100 +23,69 @@ Vue.component('PlayerChannel', PlayerChannel);
 
 export default Vue.extend({
     name: 'Community',
+
     data() {
       return {
-        fetchCR: false,
-        socket: {},
-        socketData: [],
-        isOwner: false,
-        isAdmin: false,
-        user: [],
-        playerAdmins: [],
+        fetchChannels: false,
       }
     },
+
     computed: {
-      idCR: {
+      user() {
+        return this.$store.getters.getUser;
+      },
+      socket: {
         get() {
-          return this.$store.getters.getIdCR;
+          return this.$store.getters.getChatSocket;
         },
-        set(value) {
-          this.$store.commit('setIdCR', value);
+        set(socket: unknown) {
+          this.$store.commit('setChatSocket', socket);
         }
       },
-      CRs: {
+      idCurrentChannel: {
         get() {
-          return this.$store.getters.getCRs;
+          return this.$store.getters.getIdCurrentChannel;
         },
-        set(value) {
-          this.$store.commit('setCRs', value);
+        set(id: number) {
+          this.$store.commit('setIdCurrentChannel', id);
         }
       },
-      userCR: {
+      currentChannel: {
         get() {
-          return this.$store.getters.getUserCR;
+          return this.$store.getters.getCurrentChannel;
         },
-        set(value) {
-          this.$store.commit('setUserCR', value);
+        set(channel: unknown) {
+          this.$store.commit('setCurrentChannel', channel);
         }
       },
-      playersCR: {
+      myChannels: {
         get() {
-          return this.$store.getters.getPlayersCR;
+          return this.$store.getters.getMyChannels;
         },
-        set(value) {
-          this.$store.commit('setPlayersCR', value);
+        set(channels: unknown) {
+          this.$store.commit('setMyChannels', channels);
         }
       },
     },
+
     methods: {
-      getPlayersCR() {
-        
-        if (this.idCR == 0)
-          return (this.playersCR = []);
-
-        if (!this.userCR.find(CR => CR.id == this.idCR)) {
-          this.idCR = 0;
-          return (this.playersCR = []);
+      fetchCurrentChannelInfos() {
+        if (this.idCurrentChannel != 0) {
+          this.$http.get('/channel/' + this.idCurrentChannel).then(response => {
+            this.currentChannel = response.data;
+          });
         }
-        console.log(this.userCR.find(CR => CR.id == this.idCR));
-        this.playersCR = [];
-        this.userCR.forEach(CR => {
-          if (CR.id == this.idCR) {
-            this.playersCR = CR.users;
-            this.isOwner = CR.ownerId == this.user.id;
-            this.playerAdmins = CR.adminId;
-            this.isAdmin = CR.adminId.find(id => id == this.user.id) != undefined;
-          }
+      },
+      fetchChannelsList() {
+        this.$http.get('/channel').then(response => {
+          this.$store.commit('setChannels', response.data);
         });
-      },
-
-      fetchInfos() {
-        this.$http.get('/user/me').then((resp) => {
-          this.user = resp.data;
-          // console.log("GET USER IN COMMUNITY ", this.user); // TODO: remove
-        })
-        this.$http.get('/channel').then((resp) => {
-          this.CRs = resp.data;
-          // console.log("/channel", this.CRs); // TODO: remove
-        })
-        this.$http.get('/channel/me').then((resp) => {
-          this.userCR = resp.data;
-          // console.log("/channel/me", this.userCR) // TODO: remove
-        })
-
-        if (this.userCR != undefined)
-          this.getPlayersCR();
-      },
-      fetchSocket()
-      {
-        this.socket.on("info", data => {
-          this.socketData = data;
-          this.user = data.user;
-          this.userCR = data.channels;
-          if (this.userCR != undefined)
-            this.getPlayersCR();
+        this.$http.get('/channel/me').then(response => {
+          this.myChannels = response.data;
         });
-      },
+        this.fetchCurrentChannelInfos();
+      }
+      
     },
 
     created() {
@@ -125,52 +94,65 @@ export default Vue.extend({
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
         },
       });
-      this.fetchSocket();
-      this.$watch(() => this.fetchCR, () => {this.fetchInfos()},{ immediate: true })
-      this.$watch(() => this.idCR, () => {this.fetchInfos()},{ immediate: true })
+      this.$watch(() => this.fetchChannels, () => {this.fetchChannelsList()}, { immediate: true });
+      this.$watch(() => this.idCurrentChannel, () => {this.fetchChannelsList()}, { immediate: true });
+      this.socket.on("info", () => {
+        this.fetchCurrentChannelInfos();
+      });
 
+      this.socket.on('join', (data) => {
+        console.log('JOIN', data); // TODO: remove
+        if (data.user.id == this.user.id)
+          this.idCurrentChannel = data.channel.id;
+        this.fetchChannelsList();
+      });
+      this.socket.on('leave', (data) => {
+        console.log('LEAVE', data); // TODO: remove
+        if (this.idCurrentChannel == data.channel.id && data.user.id == this.user.id)
+          this.idCurrentChannel = 0;
+        this.fetchChannelsList();
+      });
       this.socket.on('mute', data => {
-        console.log("MUTE", data);
         if (data.muted_user.id == this.user.id) {
           const message = data.is_muted ? "You have been muted by " + data.user.username : "You have been unmuted by " + data.user.username;
           this.$toast.warning(message, {
             position: POSITION.TOP_RIGHT,
-            timeout: 5000,
+            timeout: 3000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
             pauseOnHover: true,
             draggable: true,
             draggablePercent: 0.6,
             showCloseButtonOnHover: false,
-            hideProgressBar: true,
+            hideProgressBar: false,
             closeButton: "button",
             icon: true,
             rtl: false
           });
         }
-        this.fetchInfos();
+        this.fetchCurrentChannelInfos();
       });
       this.socket.on('ban', data => {
         if (data.banned_user.id == this.user.id) {
           this.$toast.error("You have been banned by " + data.user.username, {
             position: "top-right",
-            timeout: 5000,
+            timeout: 3000,
             closeOnClick: true,
             pauseOnFocusLoss: true,
             pauseOnHover: true,
             draggable: true,
             draggablePercent: 0.6,
             showCloseButtonOnHover: false,
-            hideProgressBar: true,
+            hideProgressBar: false,
             closeButton: "button",
             icon: true,
             rtl: false
           });
         }
-        this.fetchInfos();
+        this.fetchChannelsList();
       });
       this.socket.on("admin", () => {
-        this.fetchInfos();
+        this.fetchChannelsList();
       });
     },
     beforeRouteLeave(to, from, next) {
