@@ -2,7 +2,6 @@ import {
   Column,
   Entity,
   OneToOne,
-  ManyToMany,
   OneToMany,
   PrimaryGeneratedColumn,
 } from 'typeorm';
@@ -10,8 +9,6 @@ import { Avatar } from 'src/user/entities/avatar.entity';
 import { Status } from '../enums/status.enum';
 import { Match } from './match.entity';
 import { Connection } from './connection.entity';
-import { DMChannel } from 'src/chat/entities/dmChannel.entity';
-import { TextChannel } from 'src/chat/entities/textChannel.entity';
 @Entity()
 export class User {
   @PrimaryGeneratedColumn()
@@ -37,16 +34,6 @@ export class User {
 
   @Column('int', { array: true, default: [] })
   blocked: number[];
-
-  @ManyToMany(() => DMChannel, (channel) => channel.users, {
-    onDelete: 'CASCADE',
-  })
-  dmChannels: DMChannel[];
-
-  @ManyToMany(() => TextChannel, (channel) => channel.users, {
-    onDelete: 'CASCADE',
-  })
-  textChannels: TextChannel[];
 
   @Column({ default: Status.OFFLINE })
   status: Status;

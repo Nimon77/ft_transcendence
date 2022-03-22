@@ -34,11 +34,12 @@ export class ChatGateway implements OnGatewayConnection {
 
       await this.userService.setStatus(user.id, Status.CHAT);
 
+      const channels = await this.textChannelService.getChannelsForUser(
+        user.id,
+      );
+
       client.data.user = user;
-      client.emit('info', {
-        user,
-        channels: await this.textChannelService.getChannelsForUser(user.id),
-      });
+      client.emit('info', { user, channels });
     } catch (e) {
       console.error(e);
     }

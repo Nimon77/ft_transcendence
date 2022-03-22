@@ -32,11 +32,9 @@ export class TextChannel extends Channel {
   @Column('int', { array: true, default: [] })
   adminId: number[];
 
-  @OneToMany(() => MutedUser, (MutedUser) => MutedUser.channel)
-  @JoinColumn()
+  @OneToMany(() => MutedUser, (mutedUser) => mutedUser.channel)
   muted: MutedUser[];
 
-  @OneToMany(() => BannedUser, (BannedUser) => BannedUser.channel)
-  @JoinColumn()
+  @OneToMany(() => BannedUser, (bannedUser) => bannedUser.channel)
   banned: BannedUser[];
 }
