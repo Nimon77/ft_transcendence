@@ -7,7 +7,7 @@ import {
   ManyToMany,
   OneToMany,
   JoinColumn,
-  OneToOne,
+  ManyToOne,
 } from 'typeorm';
 import { BannedUser } from './banned.entity';
 import { Log } from './log.entity';
@@ -18,7 +18,7 @@ export class ChatRoom {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column()
+  @Column({ unique: true })
   name: string;
 
   @Column({ default: true })
@@ -27,7 +27,7 @@ export class ChatRoom {
   @Column({ nullable: true })
   password: string;
 
-  @OneToOne(() => User, { onDelete: 'CASCADE' })
+  @ManyToOne(() => User, { onDelete: 'CASCADE' })
   @JoinColumn()
   owner: User;
 
