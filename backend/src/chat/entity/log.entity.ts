@@ -6,7 +6,6 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { TextChannel } from './textChannel.entity';
 
 @Entity()
 export class Log {
@@ -15,9 +14,6 @@ export class Log {
 
   @Column()
   message: string;
-
-  @ManyToOne(() => TextChannel, (channel) => channel.logs)
-  channel: TextChannel;
 
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()

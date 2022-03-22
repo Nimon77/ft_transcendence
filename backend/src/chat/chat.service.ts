@@ -22,14 +22,18 @@ export class ChatService {
   constructor(
     @Inject(forwardRef(() => UserService))
     private readonly userService: UserService,
+
     @InjectRepository(TextChannel)
-    private readonly chatRepo: Repository<TextChannel>,
+    private readonly textChannelRepository: Repository<TextChannel>,
+
     @InjectRepository(MutedUser)
-    private readonly mutedRepo: Repository<MutedUser>,
+    private readonly mutedUserRepository: Repository<MutedUser>,
+
     @InjectRepository(BannedUser)
-    private readonly bannedRepo: Repository<BannedUser>,
+    private readonly bannedUserRepository: Repository<BannedUser>,
+
     @InjectRepository(Log)
-    private readonly logRepo: Repository<Log>,
+    private readonly logRepository: Repository<Log>,
   ) {}
 
   async getChannel(
@@ -37,7 +41,9 @@ export class ChatService {
     relations: string[],
     needPass?: boolean,
   ): Promise<TextChannel> {
-    const channel = await this.chatRepo.findOne(channelId, { relations });
+    const channel = await this.textChannelRepository.findOne(channelId, {
+      relations,
+    });
     if (!channel)
       throw new HttpException('TextChannel not found', HttpStatus.NOT_FOUND);
 
@@ -67,12 +73,16 @@ export class ChatService {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       }
     }
-    if (await this.chatRepo.findOne({ where: { name: channel.name } }))
+    if (
+      await this.textChannelRepository.findOne({
+        where: { name: channel.name },
+      })
+    )
       throw new HttpException(
         'TextChannel already exists',
         HttpStatus.FORBIDDEN,
       );
-    const currentChannel = this.chatRepo.create({
+    const currentChannel = this.textChannelRepository.create({
       name: channel.name,
       adminId: [admin.id],
       public: channel.public !== false,
@@ -83,7 +93,7 @@ export class ChatService {
     });
 
     try {
-      await this.chatRepo.save(currentChannel);
+      await this.textChannelRepository.save(currentChannel);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -99,10 +109,10 @@ export class ChatService {
       'logs',
     ]);
 
-    await this.logRepo.remove(channel.logs);
-    await this.mutedRepo.remove(channel.muted);
-    await this.bannedRepo.remove(channel.banned);
-    await this.chatRepo.remove(channel);
+    await this.logRepository.remove(channel.logs);
+    await this.mutedUserRepository.remove(channel.muted);
+    await this.bannedUserRepository.remove(channel.banned);
+    await this.textChannelRepository.remove(channel);
   }
 
   async removeUserFromChannel(
@@ -133,7 +143,7 @@ export class ChatService {
     }
 
     try {
-      await this.chatRepo.save(channel);
+      await this.textChannelRepository.save(channel);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -168,7 +178,7 @@ export class ChatService {
 
     try {
       const password = await bcrypt.hash(pass.newPassword, 10);
-      await this.chatRepo.update(channel.id, { password });
+      await this.textChannelRepository.update(channel.id, { password });
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -220,20 +230,20 @@ export class ChatService {
     }
 
     try {
-      await this.chatRepo.update(channel.id, partial);
+      await this.textChannelRepository.update(channel.id, partial);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
   }
 
   async getAllChannels(): Promise<TextChannel[]> {
-    const channels = await this.chatRepo.find();
+    const channels = await this.textChannelRepository.find();
     channels.forEach((chat) => delete chat.password);
     return channels;
   }
 
   async getChannelsForUser(userId: number): Promise<TextChannel[]> {
-    const uncompleted: TextChannel[] = await this.chatRepo
+    const uncompleted: TextChannel[] = await this.textChannelRepository
       .createQueryBuilder('channel')
       .leftJoin('channel.users', 'user')
       .where('user.id = :userId', { userId })
@@ -275,7 +285,7 @@ export class ChatService {
     if (curchannel.users.find((user1) => user1.id == user.id))
       throw new HttpException('User already in channel', HttpStatus.CONFLICT);
 
-    await this.chatRepo
+    await this.textChannelRepository
       .createQueryBuilder()
       .relation(TextChannel, 'users')
       .of(curchannel)
@@ -312,7 +322,7 @@ export class ChatService {
     }
 
     try {
-      await this.chatRepo.save(channel);
+      await this.textChannelRepository.save(channel);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -325,7 +335,7 @@ export class ChatService {
     const index = channel.banned.findIndex((user1) => user1.id == user.id);
     if (index == -1) return;
 
-    await this.bannedRepo.delete(user.id);
+    await this.bannedUserRepository.delete(user.id);
   }
 
   async unMuteUserInChannel(
@@ -335,7 +345,7 @@ export class ChatService {
     const index = channel.muted.findIndex((user1) => user1.id == user.id);
     if (index == -1) return;
 
-    await this.mutedRepo.delete(user.id);
+    await this.mutedUserRepository.delete(user.id);
   }
 
   async muteUserInChannel(
@@ -345,34 +355,34 @@ export class ChatService {
   ): Promise<void> {
     const user = await this.userService.getUser(userId, []);
     const admin = await this.userService.getUser(adminId, []);
-    const currentchannel = await this.getChannel(channelid, ['users', 'muted']);
-    if (currentchannel.owner.id == user.id)
+    const currentChannel = await this.getChannel(channelid, ['users', 'muted']);
+    if (currentChannel.owner.id == user.id)
       throw new HttpException(
         'User is owner and thus cannot be muted',
         HttpStatus.FORBIDDEN,
       );
 
-    if (!currentchannel.users.find((user1) => user1.id == user.id))
+    if (!currentChannel.users.find((user1) => user1.id == user.id))
       throw new HttpException('User isnt in channel', HttpStatus.NOT_FOUND);
 
-    if (!currentchannel.adminId.find((adminId) => adminId == admin.id))
+    if (!currentChannel.adminId.find((adminId) => adminId == admin.id))
       throw new HttpException(
         'User isnt admin in channel',
         HttpStatus.FORBIDDEN,
       );
 
-    if (currentchannel.muted.find((user1) => user1.user.id == user.id))
+    if (currentChannel.muted.find((user1) => user1.user.id == user.id))
       throw new HttpException('User is already muted', HttpStatus.FORBIDDEN);
 
     const time = new Date(Date.now() + temporary);
-    const muted = this.mutedRepo.create({
+    const muted = this.mutedUserRepository.create({
       user,
       endOfMute: time,
-      channel: currentchannel,
+      channel: currentChannel,
     });
 
     try {
-      await this.mutedRepo.save(muted);
+      await this.mutedUserRepository.save(muted);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -385,43 +395,43 @@ export class ChatService {
   ): Promise<void> {
     const admin = await this.userService.getUser(adminId, []);
     const user = await this.userService.getUser(userId, []);
-    const currentchannel = await this.getChannel(channelid, [
+    const currentChannel = await this.getChannel(channelid, [
       'users',
       'banned',
     ]);
-    if (currentchannel.owner.id == user.id)
+    if (currentChannel.owner.id == user.id)
       throw new HttpException(
         'User is owner and thus cannot be banned',
         HttpStatus.FORBIDDEN,
       );
 
-    if (!currentchannel.users.find((user1) => user1.id == user.id))
+    if (!currentChannel.users.find((user1) => user1.id == user.id))
       throw new HttpException('User isnt in channel', HttpStatus.NOT_FOUND);
 
-    if (!currentchannel.adminId.find((adminId) => adminId == admin.id))
+    if (!currentChannel.adminId.find((adminId) => adminId == admin.id))
       throw new HttpException(
         'User isnt admin in channel',
         HttpStatus.FORBIDDEN,
       );
 
-    if (currentchannel.banned.find((user1) => user1.user.id == user.id))
+    if (currentChannel.banned.find((user1) => user1.user.id == user.id))
       throw new HttpException('User is already banned', HttpStatus.FORBIDDEN);
 
     const time = new Date(Date.now() + temporary);
-    const banned = this.bannedRepo.create({
+    const banned = this.bannedUserRepository.create({
       user,
       endOfBan: time,
-      channel: currentchannel,
+      channel: currentChannel,
     });
 
-    currentchannel.users.splice(
-      currentchannel.users.findIndex((user1) => user1.id == user.id),
+    currentChannel.users.splice(
+      currentChannel.users.findIndex((user1) => user1.id == user.id),
       1,
     );
 
     try {
-      await this.bannedRepo.save(banned);
-      await this.chatRepo.save(currentchannel);
+      await this.bannedUserRepository.save(banned);
+      await this.textChannelRepository.save(currentChannel);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -433,16 +443,16 @@ export class ChatService {
     userId: number,
   ): Promise<void> {
     const user = await this.userService.getUser(userId, []);
-    const currentchannel = await this.getChannel(id, [
+    const currentChannel = await this.getChannel(id, [
       'users',
       'logs',
       'muted',
     ]);
-    if (!currentchannel.users.find((user1) => user1.id == user.id))
+    if (!currentChannel.users.find((user1) => user1.id == user.id))
       throw new HttpException('User isnt in channel', HttpStatus.NOT_FOUND);
 
     {
-      const muted = currentchannel.muted.find(
+      const muted = currentChannel.muted.find(
         (user1) => user1.user.id == user.id,
       );
       if (muted) {
@@ -452,21 +462,25 @@ export class ChatService {
             'User is muted from TextChannel',
             HttpStatus.FORBIDDEN,
           );
-        await this.unMuteUserInChannel(muted, currentchannel);
+        await this.unMuteUserInChannel(muted, currentChannel);
       }
     }
 
-    if (currentchannel.logs.length >= 100)
-      await this.logRepo.delete(currentchannel.logs[0]);
+    if (currentChannel.logs.length >= 100)
+      await this.logRepository.delete(currentChannel.logs[0]);
 
-    const log = this.logRepo.create({
+    const log = this.logRepository.create({
       message: message,
-      channel: currentchannel,
       user: user,
     });
 
     try {
-      await this.logRepo.save(log);
+      await this.logRepository.save(log);
+      await this.textChannelRepository
+        .createQueryBuilder()
+        .relation(TextChannel, 'logs')
+        .of(currentChannel)
+        .add(log);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
@@ -474,9 +488,9 @@ export class ChatService {
 
   async getLogsForChannel(id: number, userId: number): Promise<Log[]> {
     const user = await this.userService.getUser(userId, []);
-    const currentchannel = await this.getChannel(id, ['logs']);
+    const currentChannel = await this.getChannel(id, ['logs']);
     const logs = [];
-    for (const log of currentchannel.logs) {
+    for (const log of currentChannel.logs) {
       if (user.blocked.indexOf(log.user.id) == -1) logs.push(log);
     }
     return logs;

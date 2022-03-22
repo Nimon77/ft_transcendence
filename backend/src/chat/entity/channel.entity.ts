@@ -3,8 +3,6 @@ import {
   PrimaryGeneratedColumn,
   JoinTable,
   ManyToMany,
-  OneToMany,
-  JoinColumn,
   TableInheritance,
 } from 'typeorm';
 import { Log } from './log.entity';
@@ -20,7 +18,7 @@ export class Channel {
   @JoinTable()
   users: User[];
 
-  @OneToMany(() => Log, (Log) => Log.channel)
-  @JoinColumn()
+  @ManyToMany(() => Log)
+  @JoinTable()
   logs: Log[];
 }
