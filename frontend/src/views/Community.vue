@@ -84,7 +84,7 @@ export default Vue.extend({
           if (CR.id == this.idCR) {
             this.playersCR = CR.users;
             this.isOwner = CR.ownerId == this.user.id;
-            this.playerAdmins = CR.adminID;
+            this.playerAdmins = CR.adminId;
             this.isAdmin = CR.adminId.find(id => id == this.user.id) != undefined;
           }
         });
