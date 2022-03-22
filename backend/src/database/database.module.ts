@@ -2,13 +2,14 @@ import { Module } from '@nestjs/common';
 import { TypeOrmModule } from '@nestjs/typeorm';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { Avatar } from 'src/user/entities/avatar.entity';
-import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { MutedUser } from 'src/chat/entity/mute.entity';
 import { BannedUser } from 'src/chat/entity/banned.entity';
 import { Log } from 'src/chat/entity/log.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Match } from 'src/user/entities/match.entity';
 import { Connection } from 'src/user/entities/connection.entity';
+import { TextChannel } from 'src/chat/entity/textChannel.entity';
+import { DMChannel } from 'src/chat/entity/dmChannel.entity';
 
 @Module({
   imports: [
@@ -27,10 +28,12 @@ import { Connection } from 'src/user/entities/connection.entity';
           Avatar,
           Match,
 
-          ChatRoom,
+          DMChannel,
+          Log,
+
+          TextChannel,
           MutedUser,
           BannedUser,
-          Log,
         ],
         synchronize: true, //false for production, else destroy/recreate data in the db
       }),

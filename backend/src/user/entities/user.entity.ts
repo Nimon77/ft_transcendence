@@ -7,10 +7,11 @@ import {
   PrimaryGeneratedColumn,
 } from 'typeorm';
 import { Avatar } from 'src/user/entities/avatar.entity';
-import { ChatRoom } from 'src/chat/entity/chat.entity';
 import { Status } from '../enums/status.enum';
 import { Match } from './match.entity';
 import { Connection } from './connection.entity';
+import { TextChannel } from 'src/chat/entity/textChannel.entity';
+import { DMChannel } from 'src/chat/entity/dmChannel.entity';
 
 @Entity()
 export class User {
@@ -38,10 +39,15 @@ export class User {
   @Column('int', { array: true, default: [] })
   blocked: number[];
 
-  @ManyToMany(() => ChatRoom, (room) => room.users, {
+  @ManyToMany(() => DMChannel, (channel) => channel.users, {
     onDelete: 'CASCADE',
   })
-  rooms: ChatRoom[];
+  dmChannels: DMChannel[];
+
+  @ManyToMany(() => TextChannel, (channel) => channel.users, {
+    onDelete: 'CASCADE',
+  })
+  textChannels: TextChannel[];
 
   @Column({ default: Status.OFFLINE })
   status: Status;

@@ -6,7 +6,7 @@ import {
   JoinColumn,
   ManyToOne,
 } from 'typeorm';
-import { ChatRoom } from './chat.entity';
+import { TextChannel } from './textChannel.entity';
 
 @Entity()
 export class Log {
@@ -16,8 +16,8 @@ export class Log {
   @Column()
   message: string;
 
-  @ManyToOne(() => ChatRoom, (room) => room.logs)
-  room: ChatRoom;
+  @ManyToOne(() => TextChannel, (channel) => channel.logs)
+  channel: TextChannel;
 
   @ManyToOne(() => User, { eager: true, onDelete: 'CASCADE' })
   @JoinColumn()

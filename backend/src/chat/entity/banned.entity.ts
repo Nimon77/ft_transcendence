@@ -1,6 +1,6 @@
 import { User } from 'src/user/entities/user.entity';
 import { Column, Entity, PrimaryGeneratedColumn, ManyToOne } from 'typeorm';
-import { ChatRoom } from './chat.entity';
+import { TextChannel } from './textChannel.entity';
 
 @Entity()
 export class BannedUser {
@@ -13,6 +13,6 @@ export class BannedUser {
   @Column({ type: 'timestamptz' })
   endOfBan: Date;
 
-  @ManyToOne(() => ChatRoom, (room) => room.banned)
-  room: ChatRoom;
+  @ManyToOne(() => TextChannel, (channel) => channel.banned)
+  channel: TextChannel;
 }
