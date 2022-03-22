@@ -66,6 +66,15 @@ export class AuthController {
     return this.authService.generateQR(req.user.userId);
   }
 
+  @Get('2fa/me')
+  async get2FAofUser(@Req() req: Request): Promise<boolean> {
+    const connection = await this.connectionService.getConnection(
+      { user: req.user.userId },
+      [],
+    );
+    return !!connection.otp;
+  }
+
   @Post('2fa')
   create2FA(@Req() req: Request, @Body('code') code: string): Promise<void> {
     return this.authService.saveSecret(req.user.userId, code);
