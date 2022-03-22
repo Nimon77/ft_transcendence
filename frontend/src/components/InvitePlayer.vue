@@ -66,9 +66,11 @@ export default Vue.extend({
         type: 'accept',
         response: true,
       });
-      this.gameSocket.emit('room', this.notify.roomCode);
-      console.log('room', this.room);
-      router.push('/pregame');
+      this.gameSocket.on('info', () => {
+        this.gameSocket.emit('room', this.notify.roomCode);
+        console.log('room', this.room);
+        router.push('/pregame');
+      })
       // alert(store.getters.getNotify.roomCode);
     }
   }

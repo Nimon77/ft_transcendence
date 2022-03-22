@@ -1,16 +1,13 @@
 <template>
   <v-container fluid>
     <!-- <v-row justify="center"> -->
-    <v-card dark class="mt-10" min-width="50%">
+    <v-card dark class="mt-10 profile">
       <v-sheet color="green" dark min-height="100" width="100%" class="text-center">
         <v-divider class="pt-7"></v-divider>
         <span class="span">COMPLETE YOUR PROFILE</span>
       </v-sheet>
       <v-form v-model="valid" @submit.prevent="validate()">
       <v-card-text>
-        <v-container>
-          <v-row>
-            <v-col align="center" cols="12" class="mt-11">
               <v-text-field
                 :rules="rules"
                 v-model="username"
@@ -19,30 +16,28 @@
                 class="mt-2"
                 autofocus
               ></v-text-field>
-              <v-card class="mt-6" v-if="image.src">
+              <v-container v-if="image.src">
+              <!-- <v-card class="mt-6 cropper" v-if="image.src"> -->
                 <cropper
                   :src="image.src"
                   :stencil-props="{
                     aspectRatio: 1,
                   }"
+                  class="cropper"
                   ref="cropper"
                 />
-              </v-card>
-            </v-col>
-          </v-row>
-          <v-row>
-            <v-col align="center" cols="12" class="mt-11">
-              <v-btn @click="$refs.file.click()">
+              <!-- </v-card> -->
+              </v-container>
+          </v-card-text>
+          <v-card-actions>
+              <v-btn @click="$refs.file.click()" class="center">
                 <v-icon>mdi-upload</v-icon> Upload Avatar
                 <input ref="file" type="file" accept="image/*" style="display:none" @change="loadImage($event)" />
               </v-btn>
-              <v-btn :disabled="!valid" @click="validate()">
+              <v-btn :disabled="!valid" @click="validate()" class="center">
                 <v-icon>mdi-check</v-icon>  Validate
               </v-btn>
-            </v-col>
-          </v-row>
-        </v-container>
-      </v-card-text>
+          </v-card-actions>
       </v-form>
     </v-card>
   </v-container>
@@ -187,6 +182,25 @@ export default Vue.extend({
   font-size: 30px;
   letter-spacing: 0.1em;
   /* margin-left: 60px; */
+}
+
+.profile {
+  width: 75vh;
+  max-height: 75vh;
+  margin: auto;
+}
+
+.cropper {
+  width: 40vh;
+  height: 40vh;
+  background: #1E1E1E;
+
+  /* object-fit: cover; */
+  margin: auto;
+}
+
+.center {
+  margin: auto;
 }
 
 </style>

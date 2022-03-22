@@ -63,7 +63,8 @@ export default Vue.extend({
         type: Number,
         required: true,
       },
-      me: []
+      me: [],
+      parentDialog: Boolean
     },
     data() {
       return {
@@ -179,6 +180,7 @@ export default Vue.extend({
                 if (data.sender == this.user.id) {
                   console.log('NOTIFY', data); // TODO: remove
                   this.invitDialog = false;
+                  this.$emit('close');
                   this.$router.push('/pregame');
                 }
               });

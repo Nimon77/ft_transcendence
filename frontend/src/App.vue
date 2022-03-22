@@ -108,37 +108,3 @@ export default {
 }
 
 </style>
-
-/*
-Note/bugs:
-
-channels
-  -click sur channel root sur url type /community/:idChannel=2
-  -je sais quel channel est selectionné et peut donc accéder aux infos
-
--trier la liste de user (pas de me + followed)
--ajouter option dialog sur channel items + faire ressortir les dots
-
--TWO F AUTHENTICATION
--SPECTATE
--CHAT ONE-TO-ONE
--INVITE TO GAME
--PREGAME
--GAME
-
--endgame screen
--button de retour doit set une alerte et faire quitter la game
--les msg de joueur bloques ne doivent pas s'afficher dans le chat/channel
--ownersChannels peuvent pas etre mute/ban/kick
-
-
-
-
-
-Handling lags or disconnects in an efficient way is appreciated but not mandatory: 
-- Have the game pause for a set time 
-- Disconnected user can reconnect 
-- Lagging user can catch up to the match 
-- etc 
-Any way is acceptable, your game simply must not crash. 
-*/

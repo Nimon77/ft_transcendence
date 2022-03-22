@@ -94,16 +94,6 @@ export default new Vuex.Store({
     setUsersInGame(state, users) {
       state.usersInGame = users;
     },
-    // connectNotifySocket(state) {
-    //   state.notifySocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/notify`, {
-    //     transportOptions: {
-    //       polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
-    //     },
-    //   });
-    //   state.notifySocket.on('notify', (data) => {
-    //     this.commit('NOTIFY_notify', data);
-    //   });
-    // },
     'NOTIFY_notify': (state, payload) => {
       if (payload.type === undefined) {
         state.notify = payload;

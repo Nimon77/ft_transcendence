@@ -11,6 +11,7 @@
     "@types/node": "^17.0.21",
     "axios": "^0.26.0",
     "core-js": "^3.6.5",
+    "jwt-decode": "^3.1.2",
     "socket.io-client": "^4.4.1",
     "vue": "^2.6.11",
     "vue-advanced-cropper": "^1.10.1",

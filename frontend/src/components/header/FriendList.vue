@@ -22,7 +22,7 @@
                 <v-list-item-group>
                   <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
                     <v-list-item-content>
-                      <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog"/>
+                      <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog" :parentDialog="dialog" @close="dialog = false"/>
                       <v-divider class="mt-2"></v-divider>
                     </v-list-item-content>
                   </v-list-item>
