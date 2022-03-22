@@ -251,9 +251,8 @@ export class TextChannelService {
     //yes
     const uncompleted: TextChannel[] = await this.textChannelRepository
       .createQueryBuilder('channel')
-      .leftJoin('channel.users', 'user')
+      .innerJoin('channel.users', 'user')
       .where('user.id = :userId', { userId })
-      .leftJoinAndSelect('channel.users', 'all_users')
       .getMany();
 
     const unresolved: Promise<TextChannel>[] = uncompleted.map((channel) =>
@@ -436,8 +435,8 @@ export class TextChannelService {
     );
 
     try {
-      await this.bannedUserRepository.save(banned);
       await this.textChannelRepository.save(currentChannel);
+      await this.bannedUserRepository.save(banned);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
