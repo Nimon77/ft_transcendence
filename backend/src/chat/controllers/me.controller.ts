@@ -8,29 +8,29 @@ import {
   Post,
   Req,
 } from '@nestjs/common';
-import { ChatService } from '../chat.service';
 import { PasswordI } from '../interfaces/password.interface';
 import { MessageI } from '../interfaces/message.interface';
 import { User } from 'src/user/entities/user.entity';
-import { Log } from '../entity/log.entity';
+import { Log } from '../entities/log.entity';
 import { Request } from 'src/user/interfaces/request.interface';
-import { TextChannel } from '../entity/textChannel.entity';
+import { TextChannel } from '../entities/textChannel.entity';
+import { TextChannelService } from '../services/textChannel.service';
 
 @Controller('channel')
 export class MeController {
-  constructor(private readonly chatService: ChatService) {}
+  constructor(private readonly textChannelService: TextChannelService) {}
 
   @Post('/')
   createChannel(
     @Req() req: Request,
     @Body() channel: TextChannel,
   ): Promise<TextChannel> {
-    return this.chatService.createChannel(channel, req.user.userId);
+    return this.textChannelService.createChannel(channel, req.user.userId);
   }
 
   @Get('/me')
   getAllChannels(@Req() req: Request): Promise<TextChannel[]> {
-    return this.chatService.getChannelsForUser(req.user.userId);
+    return this.textChannelService.getChannelsForUser(req.user.userId);
   }
 
   @Put('/join')
@@ -38,7 +38,7 @@ export class MeController {
     @Req() req: Request,
     @Body() channel: TextChannel,
   ): Promise<void> {
-    return this.chatService.addUserToChannel(channel, req.user.userId);
+    return this.textChannelService.addUserToChannel(channel, req.user.userId);
   }
 
   @Put('/:id')
@@ -47,7 +47,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() channel: TextChannel,
   ): Promise<void> {
-    return this.chatService.updateChannel(id, channel, req.user.userId);
+    return this.textChannelService.updateChannel(id, channel, req.user.userId);
   }
 
   @Put(':id/admin')
@@ -56,7 +56,11 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ): Promise<void> {
-    return this.chatService.toggleAdminRole(req.user.userId, user.id, id);
+    return this.textChannelService.toggleAdminRole(
+      req.user.userId,
+      user.id,
+      id,
+    );
   }
 
   @Put(':id/ban')
@@ -65,7 +69,11 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ): Promise<void> {
-    return this.chatService.banUserInChannel(user.id, id, req.user.userId);
+    return this.textChannelService.banUserInChannel(
+      user.id,
+      id,
+      req.user.userId,
+    );
   }
 
   @Post(':id/change/')
@@ -74,7 +82,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() pass: PasswordI,
   ): Promise<void> {
-    return this.chatService.changePassword(pass, id, req.user.userId);
+    return this.textChannelService.changePassword(pass, id, req.user.userId);
   }
 
   @Put(':id/mute') //mute user from channel
@@ -83,7 +91,11 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() user: User,
   ): Promise<void> {
-    return this.chatService.muteUserInChannel(user.id, id, req.user.userId);
+    return this.textChannelService.muteUserInChannel(
+      user.id,
+      id,
+      req.user.userId,
+    );
   }
 
   @Get(':id/log') //get current channel logs
@@ -91,7 +103,7 @@ export class MeController {
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<Log[]> {
-    return this.chatService.getLogsForChannel(id, req.user.userId);
+    return this.textChannelService.getLogsForChannel(id, req.user.userId);
   }
 
   @Put(':id/log') //add log to channel
@@ -100,7 +112,7 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Body() message: MessageI,
   ): Promise<void> {
-    return this.chatService.addLogForChannel(
+    return this.textChannelService.addLogForChannel(
       id,
       message.message,
       req.user.userId,
@@ -114,7 +126,7 @@ export class MeController {
     @Req() req: Request,
     @Param('id', ParseIntPipe) id: number,
   ): Promise<void> {
-    return this.chatService.removeUserFromChannel(req.user.userId, id);
+    return this.textChannelService.removeUserFromChannel(req.user.userId, id);
   }
 
   @Put('/:id/kick/:userid') // admin removes user from channel
@@ -123,6 +135,10 @@ export class MeController {
     @Param('id', ParseIntPipe) id: number,
     @Param('userid', ParseIntPipe) userid: number,
   ): Promise<void> {
-    return this.chatService.removeUserFromChannel(userid, id, req.user.userId);
+    return this.textChannelService.removeUserFromChannel(
+      userid,
+      id,
+      req.user.userId,
+    );
   }
 }
