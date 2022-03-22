@@ -2,7 +2,7 @@
   <v-container fill-height fluid>
     <v-row align="center">
       <v-col class="d-flex justify-center" cols="12" >
-        <v-card class="mx-auto" max-width="544" dark outlined tile>
+        <v-card class="mx-auto" max-width="700" dark color="#121212" outlined tile>
           <v-list-item three-line>
             <v-list-item-content>
               <div class="text-overline mb-4">
@@ -17,14 +17,14 @@
               </v-list-item-subtitle>
               <v-list-item-subtitle>"For the holy Banana"</v-list-item-subtitle>
             </v-list-item-content>
-            <v-list-item-avatar tile size="80">
+            <v-list-item-avatar tile size="110">
               <img v-auth-image="'/user/'+this.$route.params.id+'/avatar'"/>
             </v-list-item-avatar>
           </v-list-item>
         </v-card>
       </v-col>
       <v-col class="d-flex justify-center" cols="12" >
-        <v-card max-width="700" dark>
+        <v-card max-width="500" dark color="#121212">
           <v-list-item>
             <v-list-item-content class="text-center">
               <div class="mt-3 mb-7 text-h5 font-weight-bold"> MATCH HISTORY </div>
@@ -101,5 +101,6 @@ export default Vue.extend({
 
 <style scoped>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
-
+.spacing{
+}
 </style>
