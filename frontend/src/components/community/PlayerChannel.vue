@@ -103,13 +103,13 @@ export default Vue.extend({
           return "SET ADMIN";
       },
       mutePlayer(idPlayer) {
-        this.socket.emit('mute', {userId: idPlayer, roomId: this.idCR});
+        this.socket.emit('mute', {userId: idPlayer, channelId: this.idCurrentChannel});
       },
-      banPlayer (idPlayer) {
-        this.socket.emit('ban', {userId: idPlayer, roomId: this.idCR});
+      banPlayer(idPlayer) {
+        this.socket.emit('ban', {userId: idPlayer, channelId: this.idCurrentChannel});
       },
       setAdmin(idPlayer) {
-        this.socket.emit('admin', {userId: idPlayer, roomId: this.idCR});
+        this.socket.emit('admin', {userId: idPlayer, channelId: this.idCurrentChannel});
       },
       invite(id: number) {
         const payload = {

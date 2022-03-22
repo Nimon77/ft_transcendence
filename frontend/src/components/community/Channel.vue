@@ -200,7 +200,7 @@ export default Vue.extend({
       },
       leaveChannel(idChannel) {
         console.log("leave ROOM ", idChannel); // TODO: remove
-        this.socket.emit('leave', { roomId: idChannel })
+        this.socket.emit('leave', { channelId: idChannel })
         if (this.currentIdCR == idChannel)
           this.currentIdCR = 0;
         this.$emit('fetchChannels');
