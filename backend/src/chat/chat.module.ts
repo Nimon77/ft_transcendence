@@ -10,10 +10,18 @@ import { Log } from './entities/log.entity';
 import { TextChannel } from './entities/textChannel.entity';
 import { TextChannelService } from './services/textChannel.service';
 import { DMChannelService } from './services/dmChannel.service';
+import { DMChannel } from './entities/dmChannel.entity';
 
 @Module({
   imports: [
-    TypeOrmModule.forFeature([TextChannel, MutedUser, BannedUser, Log]),
+    TypeOrmModule.forFeature([
+      DMChannel,
+      Log,
+
+      TextChannel,
+      MutedUser,
+      BannedUser,
+    ]),
     AuthModule,
   ],
   providers: [ChatGateway, TextChannelService, DMChannelService],
