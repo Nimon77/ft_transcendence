@@ -101,6 +101,5 @@ export default Vue.extend({
 
 <style scoped>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
-.spacing{
-}
+
 </style>
