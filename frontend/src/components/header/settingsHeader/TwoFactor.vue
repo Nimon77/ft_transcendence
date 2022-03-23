@@ -9,9 +9,9 @@
         <v-card-text>
           <v-container fluid v-if="!otpSetup">
             <v-row>
-              <v-col align="center" cols="12" class="mt-11" >
+              <v-col align="center" cols="12">
                 <img :src="qrCode" alt="qrCode" class="mt-5">
-                <h3>Verification code :</h3>
+                <h3 class="mt-5">Verification code :</h3>
                 <v-otp-input
                   v-model="otp"
                   :disabled="loading"

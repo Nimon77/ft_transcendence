@@ -228,8 +228,10 @@ export default Vue.extend({
               this.idCurrentChannel = channelMeDM.find(dm => dm.users.some(user => user.id === this.user.id)).id;
             chatSocket.disconnect();
             this.$emit('close');
-            this.$router.push({ name: 'community' });
+            if (this.$router.currentRoute.name !== 'community')
+              this.$router.push({ name: 'community' });
           });
+          this.idCurrentChannel = 0;
           chatSocket.emit('channelMeDM');
         });
       },

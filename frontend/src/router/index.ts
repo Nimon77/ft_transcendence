@@ -180,7 +180,6 @@ router.beforeEach((to, from, next) => {
       return next({ name: 'Main'});
     }
     if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
-      alert("you are leaving the room!");
       store.getters.getGameSock.on('disconnect', ()=>{
           console.log("disconnected");
           store.commit('setGameRoom', '');
@@ -190,7 +189,6 @@ router.beforeEach((to, from, next) => {
         store.getters.getGameSock.disconnect(true);
       }
     if (from.name === 'game' && store.state.gameRoom.length) {
-      alert("you are gonna leave the game!");
       store.getters.getGameSock.on('disconnect', ()=>{
           console.log("disconnected");
           store.commit('setGameRoom', '');
