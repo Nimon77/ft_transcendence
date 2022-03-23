@@ -81,15 +81,14 @@ export default Vue.extend({
         this.gameSock.disconnect();
       });
       console.log("PLAYER READY");
-      console.log("MAP: ", this.gameMap);
-      console.log("MOD: ", this.gameMode);
       this.loader = !this.loader;
       this.color = 'green';
       this.gameSock.on('ready', (options, users) => {
         console.log('Game ready!', options);
         this.$store.commit('setGameOptions', options);
         this.$store.commit('setUsersInGame', users);
-        this.$router.push('/game');
+        this.gameSock.off('stop');
+        this.$router.push({ name: 'game'});
       });
       this.gameSock.emit('ready', { plan: this.gameMap, mode: this.gameMode });
     }
@@ -97,7 +96,22 @@ export default Vue.extend({
   created() {
     console.log("PREGAME");
     console.log("ROOM", this.$store.getters.getGameRoom);
-  }
+    this.gameSock.on('stop', () => {
+      this.endDialog = true;
+      this.gameSock.disconnect();
+      this.$toast.warning("Other player leave", {
+        position: 'top-center',
+        pauseOnHover: false,
+      })
+      this.$router.push({ name: 'Main' });
+    });
+  },
+
+  beforeRouteLeave(to, from, next) {
+    if (this.gameSock.connected && to.name !== 'game')
+      this.gameSock.disconnect();
+    next();
+  },
 });
 </script>
 
