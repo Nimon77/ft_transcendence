@@ -179,26 +179,6 @@ router.beforeEach((to, from, next) => {
     if ((to.name === 'preGame' || to.name === 'game') && !store.state.gameRoom.length) {
       return next({ name: 'Main'});
     }
-    if (from.name === 'preGame' && to.name !== 'game' && store.state.gameRoom.length) {
-      store.getters.getGameSock.on('disconnect', ()=>{
-          console.log("disconnected");
-          store.commit('setGameRoom', '');
-          store.getters.getGameSock.disconnect();
-          store.getters.getGameSock.close();
-        });
-        store.getters.getGameSock.disconnect(true);
-      }
-    if (from.name === 'game' && store.state.gameRoom.length) {
-      store.getters.getGameSock.on('disconnect', ()=>{
-          console.log("disconnected");
-          store.commit('setGameRoom', '');
-          store.getters.getGameSock.disconnect();
-          store.getters.getGameSock.close();
-        });
-        store.getters.getGameSock.disconnect(true);
-        if (to.name === 'preGame')
-          return next({ name: 'Main'});
-      }  
     next();
   });
 })

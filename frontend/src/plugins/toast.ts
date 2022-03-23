@@ -6,7 +6,8 @@ import "vue-toastification/dist/index.css";
 const options = {
 	transition: "Vue-Toastification__bounce",
 	maxToasts: 20,
-	newestOnTop: true
+	newestOnTop: true,
+	pauseOnFocusLoss: false,
 };
 
 Vue.use(Toast, options);

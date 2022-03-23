@@ -44,6 +44,7 @@ export default Vue.extend({
         mapColor: '#121212',
       };
     },
+
     computed: {
       me: {
         get() {
@@ -67,9 +68,11 @@ export default Vue.extend({
         },
       },
     },
+
     methods: {
       leaveRoom(): void {
         this.endDialog = false;
+        this.gameSock.disconnect();
         this.$router.push({ name: 'Main'});
       },
       handleMouseMove(event): void {
@@ -82,6 +85,7 @@ export default Vue.extend({
         this.gameSock.emit('tray', tray);
       },
     },
+
     mounted() {
       this.canvas = document.getElementById('pong');
       this.input = this.options.input;
@@ -123,12 +127,11 @@ export default Vue.extend({
           console.log("disconnected");
           this.$store.commit('setGameRoom', '');
           this.gameSock.disconnect();
-          this.gameSock.close();
       });
 
       let count = 3;
       const intervalID = setInterval(() => {
-        if (count) {
+        if (count && this.pong) {
           this.pong.context.clearRect(
             0,
             0,
@@ -145,7 +148,17 @@ export default Vue.extend({
         clearInterval(intervalID);
         this.gameSock.emit('start');
       }, 1000);
-    }
+    },
+
+    beforeRouteLeave(to, from, next) {
+      console.log("before leave");
+      if (this.pong) {
+        delete this.pong;
+        this.pong = null;
+      }
+      this.gameSock.disconnect();
+      next();
+    },
 })
 </script>
 
