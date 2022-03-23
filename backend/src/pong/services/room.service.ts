@@ -43,12 +43,10 @@ export class RoomService {
 
       for (const player of room.players)
         if (player.socket.id == socket.id) {
-          if (
-            room.state == State.INGAME ||
-            room.state == State.STARTING ||
-            room.state == State.COUNTDOWN
-          )
-            await this.stopGame(room, room.players[0]);
+          await this.stopGame(
+            room,
+            room.players.find((player1) => player1.user.id != player.user.id),
+          );
           room.players.splice(room.players.indexOf(player), 1);
           break;
         }

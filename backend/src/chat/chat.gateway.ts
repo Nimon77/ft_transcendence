@@ -258,14 +258,14 @@ export class ChatGateway implements OnGatewayConnection {
           banned: new_channel.banned,
         },
         user: { id: admin.id, username: admin.username },
-        banned_used: { id: curuser.id, username: curuser.username },
+        banned_user: { id: curuser.id, username: curuser.username },
       });
     } catch (e) {
       console.error(e);
     }
   }
 
-  //direct message :< ----------------------------------------------------------------------
+  //direct message :D ----------------------------------------------------------------------
 
   @SubscribeMessage('channeldm')
   async getDMChannel(client: Socket, channelid: number): Promise<void> {
