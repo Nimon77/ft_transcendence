@@ -22,7 +22,7 @@
             <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-list-item-title class="d-flex justify-center text-button" v-bind="attrs" v-on="on" slot="activator" @click="invite(player.id)">
-                  <v-btn color="yellow darken-1" tile dark min-width="100%"> INVITE </v-btn>
+                  <v-btn color="yellow darken-1" tile dark min-width="100%"> INVITE TO GAME </v-btn>
                 </v-list-item-title>
               </template>
               <v-card>

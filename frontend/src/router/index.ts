@@ -1,16 +1,17 @@
-import Vue from 'vue'
-import VueRouter, { RouteConfig } from 'vue-router'
-import axios from 'axios'
-import jwt_decode from 'jwt-decode'
+import Vue from 'vue';
+import VueRouter, { RouteConfig } from 'vue-router';
+import axios from 'axios';
+import jwt_decode from 'jwt-decode';
 
-import Login from '@/views/Login.vue'
-import Community from '@/views/Community.vue'
-import Profile from '@/views/Profile.vue'
-import Pregame from '@/views/Pregame.vue'
-import Game from '@/views/Game.vue'
-import Main from '@/views/Main.vue'
-import UpdateProfile from '@/views/UpdateProfile.vue'
-import store from '@/store'
+import Login from '@/views/Login.vue';
+import Community from '@/views/Community.vue';
+import Profile from '@/views/Profile.vue';
+import Pregame from '@/views/Pregame.vue';
+import Game from '@/views/Game.vue';
+import Main from '@/views/Main.vue';
+import UpdateProfile from '@/views/UpdateProfile.vue';
+import Otp from '@/views/Otp.vue';
+import store from '@/store';
 
 Vue.use(VueRouter)
 
@@ -46,6 +47,11 @@ const routes: Array<RouteConfig> = [
     component: Login,
   },
   {
+    path: '/otp',
+    name: 'Otp',
+    component: Otp,
+  },
+  {
     path: '/updateprofile',
     name: 'UpdateProfile',
     component: UpdateProfile,
@@ -63,15 +69,19 @@ async function checkJWT() {
     loggedIn: false,
     JWTvalide: false,
     ProfileCompleted: false,
+    OTP: false,
   }
   const token = localStorage.getItem('token')
   status.loggedIn = token !== null
   if (token) {
+    status.OTP = (jwt_decode(token) as JWT).otp;
+    if (!status.OTP)
+      return status;
     await axios.get('/auth/jwt', {
       headers: {
         Authorization: 'Bearer ' + token
     }}).then(res => {
-      console.log(res); // TODO: remove
+      // console.log(res); // TODO: remove
       status.JWTvalide = res.data;
     });
     if (status.JWTvalide) {
@@ -87,6 +97,7 @@ async function checkJWT() {
           status.JWTvalide = false;
           status.loggedIn = false;
           status.ProfileCompleted = false;
+          status.OTP = false;
           localStorage.removeItem('token');
           store.commit('setReady', false);
         }
@@ -114,8 +125,8 @@ router.beforeEach((to, from, next) => {
       localStorage.setItem('token', to.query.code.toString());
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
       const decoded = jwt_decode(to.query.code.toString()) as JWT;
-      console.log(decoded); // TODO: remove
       if (decoded.otp === false) {
+        console.log(Status)
         return next({ name: 'Otp' });
       }
       axios.get("/user/me").then(res => {
@@ -133,6 +144,12 @@ router.beforeEach((to, from, next) => {
           return next({ name: 'UpdateProfile' });
         }
       });
+    }
+    else if (to.name === 'Otp' && !Status.OTP) {
+      return next();
+    }
+    else if (to.name === 'Otp' && Status.OTP) {
+      return next({ name: 'Login' });
     }
     else if (to.name !== 'Login' && (!Status.loggedIn || !Status.JWTvalide)) {
       store.commit('setReady', false);
