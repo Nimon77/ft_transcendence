@@ -333,13 +333,19 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('textDM')
   async sendMessageDM(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.dmChannelService.getChannel(data.channelId);
+      const channel = await this.dmChannelService.getChannel(data.channelId, [
+        'users',
+      ]);
       const log = await this.dmChannelService.createMessage(
         channel.id,
         client.data.user.id,
         data.text,
       );
-      this.emitChannel(channel, 'text', { user: log.user, text: log.message });
+      this.emitChannel(channel, 'textDM', {
+        user: log.user,
+        text: log.message,
+        channelId: channel.id,
+      });
     } catch (e) {
       console.error(e);
     }

@@ -466,9 +466,6 @@ export class TextChannelService {
       }
     }
 
-    if (currentChannel.logs.length >= 100)
-      await this.logRepository.delete(currentChannel.logs[0]);
-
     const log = this.logRepository.create({
       message: message,
       user: user,

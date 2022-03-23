@@ -82,15 +82,18 @@ export class DMChannelService {
     const channel = await this.getChannel(channelId, ['logs', 'users']);
     const user = await this.userService.getUser(userId);
 
-    if (!channel.users.some(user => user.id == userId))
+    if (!channel.users.some((user) => user.id == userId))
       throw new HttpException('User not in channel', HttpStatus.NOT_FOUND);
 
     const log = this.logRepository.create({ message: text, user });
-    channel.logs.push(log);
 
     try {
       await this.logRepository.save(log);
-      await this.dmChannelRepository.update(channel.id, { logs: channel.logs });
+      await this.dmChannelRepository
+        .createQueryBuilder()
+        .relation(DMChannel, 'logs')
+        .of(channel)
+        .add(log);
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
