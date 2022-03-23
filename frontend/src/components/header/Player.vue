@@ -24,9 +24,6 @@
             <v-list-item-title> <TwoFactor/> </v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title> <DeleteAccount/> </v-list-item-title>
-          </v-list-item>
-          <v-list-item>
             <v-list-item-title> <Logout/> </v-list-item-title>
           </v-list-item>
         </v-list>
