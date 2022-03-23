@@ -80,7 +80,14 @@ export class DMChannelService {
     text: string,
   ): Promise<Log> {
     const channel = await this.getChannel(channelId, ['logs', 'users']);
-    const user = await this.userService.getUser(userId);
+
+    const user = await this.userService.getUser(userId, []);
+
+    const other = channel.users.find((user1) => user1.id != user.id);
+    if (!other) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
+
+    if (other.blocked.includes(user.id))
+      throw new HttpException('User is blocked', HttpStatus.CONFLICT);
 
     if (!channel.users.some((user) => user.id == userId))
       throw new HttpException('User not in channel', HttpStatus.NOT_FOUND);

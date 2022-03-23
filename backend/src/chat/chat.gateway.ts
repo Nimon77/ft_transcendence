@@ -336,6 +336,13 @@ export class ChatGateway implements OnGatewayConnection {
       const channel = await this.dmChannelService.getChannel(data.channelId, [
         'users',
       ]);
+
+      const other = channel.users.find(
+        (user) => user.id != client.data.user.id,
+      );
+      if (other && other.blocked.includes(client.data.user.id))
+        client.emit('blocked');
+
       const log = await this.dmChannelService.createMessage(
         channel.id,
         client.data.user.id,
