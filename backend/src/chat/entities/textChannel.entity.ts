@@ -16,13 +16,13 @@ export class TextChannel extends Channel {
   @PrimaryGeneratedColumn()
   id: number;
 
-  @Column({ unique: true })
+  @Column({ unique: true, length: 8 })
   name: string;
 
   @Column({ default: true })
   public: boolean;
 
-  @Column({ nullable: true })
+  @Column({ nullable: true, length: 16 })
   password: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE', eager: true })

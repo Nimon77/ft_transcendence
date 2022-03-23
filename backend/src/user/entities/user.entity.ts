@@ -20,7 +20,7 @@ export class User {
   @OneToOne(() => Avatar, (avatar) => avatar.user)
   avatar: Avatar;
 
-  @Column({ unique: true, nullable: true })
+  @Column({ unique: true, nullable: true, length: 8 })
   username: string;
 
   @Column('boolean', { default: false })
