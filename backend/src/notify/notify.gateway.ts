@@ -53,7 +53,7 @@ export class NotifyGateway {
         );
         if (socket) return;
 
-        const user = await this.userService.getUser(userId, []);
+        const user = await this.userService.getUser(userId);
         if (!user) return;
 
         if (user.status == Status.ONLINE)

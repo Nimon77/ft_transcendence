@@ -44,7 +44,7 @@ export class AuthService {
 
   async login(data: FortyTwoUser): Promise<string> {
     let connection = await this.connectionService
-      .getConnection({ '42': data.id }, [])
+      .getConnection({ '42': data.id })
       .catch(() => null);
 
     if (!connection) {
@@ -75,7 +75,7 @@ export class AuthService {
     if (!payload) return null;
 
     const user = await this.userService
-      .getUser(payload.sub, [])
+      .getUser(payload.sub)
       .catch(() => null);
     if (!user) return null;
     return user;

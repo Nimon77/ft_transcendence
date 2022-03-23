@@ -32,7 +32,7 @@ export class IdController {
 
   @Get('/:id')
   getUser(@Param('id', ParseIntPipe) id: number): Promise<User> {
-    return this.userService.getUser(id, []);
+    return this.userService.getUser(id);
   }
 
   @Get('/:id/avatar')

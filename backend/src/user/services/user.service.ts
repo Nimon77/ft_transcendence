@@ -37,7 +37,7 @@ export class UserService {
     return user;
   }
 
-  async getUser(id: number, relations: string[]): Promise<User> {
+  async getUser(id: number, relations = [] as string[]): Promise<User> {
     let user = null;
     if (id) user = await this.userRepository.findOne(id, { relations });
 
@@ -58,7 +58,7 @@ export class UserService {
 
   async updateUser(id: number, user: User): Promise<User> {
     if (!user) throw new HttpException('Body null', HttpStatus.NOT_FOUND);
-    await this.getUser(id, []);
+    await this.getUser(id);
 
     const can: Array<string> = ['username', 'followed', 'blocked'];
 
@@ -81,7 +81,7 @@ export class UserService {
   }
 
   async deleteUser(id: number): Promise<void> {
-    await this.getUser(id, []);
+    await this.getUser(id);
     try {
       await this.userRepository.delete(id);
     } catch (error) {
@@ -111,7 +111,7 @@ export class UserService {
   }
 
   async setStatus(userId: number, status: Status): Promise<void> {
-    const user = await this.getUser(userId, []);
+    const user = await this.getUser(userId);
 
     if (user.status == status) return;
 
@@ -134,7 +134,7 @@ export class UserService {
   }
 
   async getRank(userId: number): Promise<number> {
-    return (await this.getUser(userId, [])).rank;
+    return (await this.getUser(userId)).rank;
   }
 
   async createMatchHistory(data: Match): Promise<void> {
@@ -163,8 +163,8 @@ export class UserService {
   async toggleFollow(userId: number, targetId: number): Promise<number[]> {
     if (userId == targetId) return;
 
-    const user = await this.getUser(userId, []);
-    const target = await this.getUser(targetId, []);
+    const user = await this.getUser(userId);
+    const target = await this.getUser(targetId);
 
     const index = user.followed.findIndex((userId) => userId == target.id);
     if (index == -1) user.followed.push(target.id);
@@ -183,8 +183,8 @@ export class UserService {
   async toggleBlock(userId: number, targetId: number): Promise<number[]> {
     if (userId == targetId) return;
 
-    const user = await this.getUser(userId, []);
-    const target = await this.getUser(targetId, []);
+    const user = await this.getUser(userId);
+    const target = await this.getUser(targetId);
 
     const index = user.blocked.findIndex((userId) => userId == target.id);
     if (index == -1) user.blocked.push(target.id);
