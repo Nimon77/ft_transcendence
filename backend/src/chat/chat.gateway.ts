@@ -34,12 +34,14 @@ export class ChatGateway implements OnGatewayConnection {
 
       await this.userService.setStatus(user.id, Status.CHAT);
 
-      const channels = await this.textChannelService.getChannelsForUser(
+      const channels_user = await this.textChannelService.getChannelsForUser(
         user.id,
       );
 
+      const channels_all = await this.textChannelService.getAllChannels();
+
       client.data.user = user;
-      client.emit('info', { user, channels });
+      client.emit('info', { user, channels_user, channels_all });
     } catch (e) {
       console.error(e);
     }
@@ -75,8 +77,23 @@ export class ChatGateway implements OnGatewayConnection {
       const channel = await this.textChannelService.getChannel(id, [
         'users',
         'logs',
+        'muted',
+        'banned',
       ]);
       client.emit('channel', channel);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  @SubscribeMessage('channelMe')
+  async getChannelMe(client: Socket): Promise<void> {
+    try {
+      const channels = await this.textChannelService.getChannelsForUser(
+        client.data.user.id,
+      );
+
+      client.emit('channelMe', channels);
     } catch (e) {
       console.error(e);
     }
