@@ -5,7 +5,7 @@
         <img v-if="user.id !== undefined" v-auth-image="'/user/'+user.id+'/avatar'"/>
       </v-avatar>
 
-      <v-badge class="ml-3" inline left :color='getStatusColor(user.id)'>
+      <v-badge class="ml-3" inline left :color='getStatusColor'>
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
@@ -46,6 +46,16 @@ export default Vue.extend({
           this.$store.commit('setUser', user);
         },
       },
+      getStatusColor() {
+        if (this.user.status == 1)
+          return 'blue';
+        else if (this.user.status == 2)
+          return 'orange';
+        else if (this.user.status == 3)
+          return '#49be25';
+        else
+          return 'grey';
+      },
     },
     methods: {
       async block() {
@@ -74,16 +84,6 @@ export default Vue.extend({
       setDone(): void {
         // document.getElementById(this.user.id).innerHTML = "DONE!";
         this.loader = false;
-      },
-      getStatusColor(status: number) {
-        if (status == 1)
-          return 'green';
-        else if (status == 2)
-          return 'orange';
-        else if (status == 3)
-          return '#49be25';
-        else
-          return 'grey';
       },
 
     },

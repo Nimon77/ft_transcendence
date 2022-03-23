@@ -21,9 +21,24 @@
           </template>
 
           <v-list-item dense>
-              <v-list-item-title class="d-flex justify-center text-button">
-                <v-btn color="yellow darken-1" tile dark min-width="100%" @click="invite(player.id)"> INVITE </v-btn>
-              </v-list-item-title>
+            <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
+              <template v-slot:activator="{ on, attrs }">
+                <v-list-item-title class="d-flex justify-center text-button" v-bind="attrs" v-on="on" slot="activator" @click="invite(player.id)">
+                  <v-btn color="yellow darken-1" tile dark min-width="100%"> INVITE </v-btn>
+                </v-list-item-title>
+              </template>
+              <v-card>
+              <v-card-title>
+                <div style="margin-left: 120px">
+                <h3 class="headline">Waiting for player...</h3>
+                <div style="margin-left: 95px; margin-top: 30px; margin-bottom: 20px;"> <v-progress-circular indeterminate color="grey"></v-progress-circular> </div>
+                </div>
+              </v-card-title>
+              <v-card-actions>
+                <v-btn @click="cancelInvit" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
+              </v-card-actions>
+              </v-card>
+            </v-dialog>
           </v-list-item>
           <v-list-item dense>
               <v-list-item-title class="d-flex justify-center text-button">
@@ -61,12 +76,19 @@
 <script lang="ts">
 
 import Vue from 'vue';
+import io from 'socket.io-client';
 
 export default Vue.extend({
     name: 'PlayerChannel',
 
     props: {
       socket: {},
+    },
+
+    data() {
+      return {
+        invitDialog: false,
+      }
     },
 
     computed: {
@@ -83,6 +105,14 @@ export default Vue.extend({
         return this.$store.getters.getCurrentChannel;
       },
       notifySocket() { return this.$store.getters.getNotifySocket; },
+      gameSocket: {
+        get() {
+          return this.$store.getters.getGameSock;
+        },
+        set(value: undefined) {
+          this.$store.commit('setGameSock', value);
+        },
+      },
     },
 
     methods: {
@@ -111,14 +141,45 @@ export default Vue.extend({
       setAdmin(idPlayer) {
         this.socket.emit('admin', {userId: idPlayer, channelId: this.idCurrentChannel});
       },
+      cancelInvit() {
+        this.gameSocket.disconnect();
+        // destroy roomCode ?
+        this.invitDialog = false;
+      },
       invite(id: number) {
-        const payload = {
-          id: id,
-          data: {
-            message: this.user.username + " has invited you to play",
-          }
-        };
-        this.notifySocket.emit('notify', payload);
+        console.log("invite");
+        // vérifier que le user n'est pas deja in game
+        if (this.status != 'orange') {
+          this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
+              transportOptions: {
+              polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+              },
+          });
+          this.gameSocket.on('info', (data) => {
+            console.log('Connected', data); // TODO: remove
+              this.gameSocket.emit('room');
+          });
+          this.gameSocket.on('room', (code) => {
+            this.dialog = false;
+            console.log('CODE ROOM ', code);
+            this.$store.commit('setGameRoom', code);
+            const payload = {
+              id: id,
+              sender: this.user.id,
+              message: this.user.username + " has invited you to play",
+              roomCode: code
+            };
+            this.notifySocket.emit('notify', payload);
+            this.notifySocket.once('notify', (data) => {
+              if (data.sender == id) {
+                console.log('NOTIFY', data); // TODO: remove
+                this.invitDialog = false;
+                // this.$emit('close');
+                this.$router.push('/pregame');
+              }
+            });
+          });
+        }
       },
 
       status(status: number) {

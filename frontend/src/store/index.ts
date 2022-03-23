@@ -38,9 +38,8 @@ export default new Vuex.Store({
     chat: {
       socket: <Socket> null,
       idCurrentChannel: 0,
-      currentChannel: <IChannel> {},
-      channels: {},
-      myChannels: {},
+      channels: Array<IChannel>(),
+      myChannels: Array<IChannel>(),
     },
 
     gameSock: <Socket> null,
@@ -57,7 +56,7 @@ export default new Vuex.Store({
     getStatus: state => state.status,
     getChatSocket: state => state.chat.socket,
     getIdCurrentChannel: state => state.chat.idCurrentChannel,
-    getCurrentChannel: state => state.chat.currentChannel,
+    getCurrentChannel: state => state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel),
     getChannels: state => state.chat.channels,
     getMyChannels: state => state.chat.myChannels,
     getGameSock: state => state.gameSock,
@@ -80,9 +79,6 @@ export default new Vuex.Store({
     },
     setIdCurrentChannel(state, idCurrentChannel) {
       state.chat.idCurrentChannel = idCurrentChannel;
-    },
-    setCurrentChannel(state, currentChannel) {
-      state.chat.currentChannel = currentChannel;
     },
     setChannels(state, channels) {
       state.chat.channels = channels;
@@ -126,11 +122,12 @@ export default new Vuex.Store({
       if (payload.userId == state.user.id) {
         state.user.status = payload.status;
       }
+      const currentChannel = state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel);
       if (state.chat.idCurrentChannel != 0 &&
         state.chat.socket.connected &&
-        state.chat.currentChannel.users &&
-        state.chat.currentChannel.users.some(user => user.id == payload.userId)) {
-        state.chat.currentChannel.users.find(user => user.id == payload.userId).status = payload.status;
+        currentChannel.users &&
+        currentChannel.users.some(user => user.id == payload.userId)) {
+        currentChannel.users.find(user => user.id == payload.userId).status = payload.status;
       }
     }
   },

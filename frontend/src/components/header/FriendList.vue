@@ -79,10 +79,8 @@ export default Vue.extend({
       });
     }
   },
-  async created() {
-    await this.$http.get('/user').then(response => {
-      this.users = response.data;
-    });
+  mounted() {
+    this.fetchUsers();
   },
   computed: {
     me: {
