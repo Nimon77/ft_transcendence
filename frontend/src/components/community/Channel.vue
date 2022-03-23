@@ -108,15 +108,23 @@
         <v-divider></v-divider>
       </div>
     </v-list>
-    <v-list v-if="chatDirect" mandatory>
-      <div v-for="channel in directChannels" :key="channel.id">
+    <v-list v-if="chatDirect">
+      <v-list-item-group v-for="channel in directChannels" :key="channel.id">
         <v-list-item @click="changeChannel(channel.id)">
+          <v-list-item-icon>
+            <v-icon>mdi-message-text</v-icon>
+          </v-list-item-icon>
           <v-list-item-content>
-            <v-list-item-title style="text-align:center"> {{channel.users[0].username}} <v-icon>mdi-arrow-left-right-bold</v-icon> {{channel.users[1].username}} </v-list-item-title>
+            <v-list-item-title>{{channel.users.find(channelUser => channelUser.id != user.id).username}} </v-list-item-title>
           </v-list-item-content>
+          <v-list-item-avatar>
+            <v-avatar>
+              <img v-auth-image="'/user/' + channel.users.find(channelUser => channelUser.id != user.id).id + '/avatar'" alt="" class="mr-2">
+            </v-avatar>
+          </v-list-item-avatar>
         </v-list-item>
         <v-divider></v-divider>
-      </div>
+      </v-list-item-group>
     </v-list>
     <v-card-actions class="justify-center">
         <v-btn color="blue darken-1" class="ma-1" dark depressed tile @click="chatDirect = false; idCurrentChannel = 0">General</v-btn>
