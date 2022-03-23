@@ -226,7 +226,7 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('ban')
   async toggleBan(client: Socket, data: any): Promise<void> {
     try {
-      let channel = await this.textChannelService.getChannel(data.channelId, [
+      const channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
         'banned',
       ]);
@@ -246,13 +246,17 @@ export class ChatGateway implements OnGatewayConnection {
           admin.id,
         );
 
-      channel = await this.textChannelService.getChannel(data.channelId, [
-        'users',
-        'banned',
-      ]);
+      const new_channel = await this.textChannelService.getChannel(
+        data.channelId,
+        ['banned'],
+      );
 
       this.emitChannel(channel, 'ban', {
-        channel: { id: channel.id, name: channel.name, banned: channel.banned },
+        channel: {
+          id: channel.id,
+          name: channel.name,
+          banned: new_channel.banned,
+        },
         user: { id: admin.id, username: admin.username },
         banned_used: { id: curuser.id, username: curuser.username },
       });
