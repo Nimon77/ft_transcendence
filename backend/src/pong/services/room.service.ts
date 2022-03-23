@@ -168,6 +168,7 @@ export class RoomService {
   }
 
   async stopGame(room: Room, player: Player): Promise<void> {
+    if (!player) return;
     if (room.state == State.END) return;
     room.state = State.END;
 
