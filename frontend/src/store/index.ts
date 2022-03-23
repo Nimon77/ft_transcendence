@@ -59,7 +59,12 @@ export default new Vuex.Store({
     getChatDirect: state => state.chat.direct,
     getChatSocket: state => state.chat.socket,
     getIdCurrentChannel: state => state.chat.idCurrentChannel,
-    getCurrentChannel: state => state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel),
+    getCurrentChannel: state => {
+      if (state.chat.direct)
+        return state.chat.directChannels.find(channel => channel.id === state.chat.idCurrentChannel);
+      else
+        return state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel)
+    },
     getChannels: state => state.chat.channels,
     getMyChannels: state => state.chat.myChannels,
     getDirectChannels: state => state.chat.directChannels,
@@ -132,13 +137,25 @@ export default new Vuex.Store({
       if (payload.userId == state.user.id) {
         state.user.status = payload.status;
       }
-      const currentChannel = state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel);
-      if (state.chat.idCurrentChannel != 0 &&
-        state.chat.socket.connected &&
-        currentChannel.users &&
-        currentChannel.users.some(user => user.id == payload.userId)) {
-        currentChannel.users.find(user => user.id == payload.userId).status = payload.status;
-      }
+      // const currentChannel = state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel);
+      // if (state.chat.idCurrentChannel != 0 &&
+      //   state.chat.socket.connected &&
+      //   currentChannel.users &&
+      //   currentChannel.users.some(user => user.id == payload.userId)) {
+      //   currentChannel.users.find(user => user.id == payload.userId).status = payload.status;
+      // }
+      state.chat.myChannels.forEach(channel => {
+        if (channel.users &&
+          channel.users.some(user => user.id == payload.userId)) {
+          channel.users.find(user => user.id == payload.userId).status = payload.status;
+        }
+      });
+      state.chat.directChannels.forEach(channel => {
+        if (channel.users &&
+          channel.users.some(user => user.id == payload.userId)) {
+          channel.users.find(user => user.id == payload.userId).status = payload.status;
+        }
+      });
     }
   },
   actions: {
