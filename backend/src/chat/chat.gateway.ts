@@ -180,6 +180,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       this.emitChannel(channel, 'admin', {
         channel: { id: channel.id, name: channel.name, admin: channel.adminId },
+        admin_user: { id: admin.id, username: admin.username },
       });
     } catch (e) {
       console.error(e);
@@ -215,6 +216,7 @@ export class ChatGateway implements OnGatewayConnection {
       this.emitChannel(channel, 'mute', {
         channel: { id: channel.id, name: channel.name, muted: channel.muted },
         user: { id: admin.id, username: admin.username },
+        muted_user: { id: curuser.id, username: curuser.username },
       });
     } catch (e) {
       console.error(e);
@@ -252,6 +254,7 @@ export class ChatGateway implements OnGatewayConnection {
       this.emitChannel(channel, 'ban', {
         channel: { id: channel.id, name: channel.name, banned: channel.banned },
         user: { id: admin.id, username: admin.username },
+        banned_used: { id: curuser.id, username: curuser.username },
       });
     } catch (e) {
       console.error(e);
