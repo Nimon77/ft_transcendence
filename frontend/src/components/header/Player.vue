@@ -40,12 +40,10 @@ import Vue from 'vue'
 
 import ChangeAvatar from './settingsHeader/ChangeAvatar.vue'
 import TwoFactor from './settingsHeader/TwoFactor.vue'
-import DeleteAccount from './settingsHeader/DeleteAccount.vue'
 import Logout from './settingsHeader/Logout.vue'
 
 Vue.component('ChangeAvatar', ChangeAvatar)
 Vue.component('TwoFactor', TwoFactor)
-Vue.component('DeleteAccount', DeleteAccount)
 Vue.component('Logout', Logout)
 
 export default Vue.extend({
@@ -56,7 +54,6 @@ export default Vue.extend({
         items: [
         { title: 'Change Avatar' },
         { title: 'Two-Factor-Auth' },
-        { title: 'Delete Account' },
         ],
         // user: [],
       }
