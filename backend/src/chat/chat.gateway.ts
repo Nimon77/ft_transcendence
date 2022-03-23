@@ -239,30 +239,42 @@ export class ChatGateway implements OnGatewayConnection {
 
   @SubscribeMessage('channeldm')
   async getDMChannel(client: Socket, channelid: number): Promise<void> {
-    const channel = await this.dmChannelService.getChannel(channelid, [
-      'logs',
-      'users',
-    ]);
-    this.emitChannel(channel, 'channeldm', channel);
+    try {
+      const channel = await this.dmChannelService.getChannel(channelid, [
+        'logs',
+        'users',
+      ]);
+      this.emitChannel(channel, 'channeldm', channel);
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('joindm')
   async joinDM(client: Socket, userId: number): Promise<void> {
-    const channel = await this.dmChannelService.joinChannel(
-      client.data.user.id,
-      userId,
-    );
-    this.emitChannel(channel, 'dm');
+    try {
+      const channel = await this.dmChannelService.joinChannel(
+        client.data.user.id,
+        userId,
+      );
+      this.emitChannel(channel, 'dm');
+    } catch (e) {
+      console.error(e);
+    }
   }
 
   @SubscribeMessage('textdm')
   async sendMessageDM(client: Socket, data: any): Promise<void> {
-    const channel = await this.dmChannelService.getChannel(data.channelId);
-    const log = await this.dmChannelService.createMessage(
-      channel.id,
-      client.data.user.id,
-      data.text,
-    );
-    this.emitChannel(channel, 'text', { user: log.user, text: log.message });
+    try {
+      const channel = await this.dmChannelService.getChannel(data.channelId);
+      const log = await this.dmChannelService.createMessage(
+        channel.id,
+        client.data.user.id,
+        data.text,
+      );
+      this.emitChannel(channel, 'text', { user: log.user, text: log.message });
+    } catch (e) {
+      console.error(e);
+    }
   }
 }
