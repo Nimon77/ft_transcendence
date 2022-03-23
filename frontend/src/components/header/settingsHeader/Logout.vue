@@ -40,12 +40,19 @@ export default Vue.extend({
   },
   methods: {
     logout() {
-      localStorage.removeItem('token');
-      this.$store.commit('setUser', {});
-      this.$store.commit('setReady', false);
+      this.$store.commit('setIdCurrentChannel', 0);
       if (this.$store.getters.getNotifySocket && this.$store.getters.getNotifySocket.connected)
         this.$store.getters.getNotifySocket.disconnect();
       this.$store.state.notifySocket = null;
+      if (this.$store.getters.getChatSocket && this.$store.getters.getChatSocket.connected)
+        this.$store.getters.getChatSocket.disconnect();
+      this.$store.state.chatSocket = null;
+      if (this.$store.getters.getGameSock && this.$store.getters.getGameSock.connected)
+        this.$store.getters.getGameSock.disconnect();
+      this.$store.state.gameSock = null;
+      localStorage.removeItem('token');
+      this.$store.commit('setUser', {});
+      this.$store.commit('setReady', false);
       this.$router.push({ name: 'Login' });
     },
   },
