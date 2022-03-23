@@ -271,7 +271,7 @@ export class TextChannelService {
       )
         throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
 
-    curchannel.banned.forEach(async (banned) => {
+    for (const banned of curchannel.banned)
       if (banned.user.id == user.id) {
         const time = new Date();
         if (banned.endOfBan > time)
@@ -281,7 +281,6 @@ export class TextChannelService {
           );
         await this.unBanUserInChannel(banned, curchannel);
       }
-    });
 
     if (curchannel.users.find((user1) => user1.id == user.id))
       throw new HttpException('User already in channel', HttpStatus.CONFLICT);
