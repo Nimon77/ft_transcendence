@@ -38,7 +38,7 @@ export class TextChannelService {
 
   async getChannel(
     channelId: number,
-    relations: string[],
+    relations = [] as string[],
     needPass?: boolean,
   ): Promise<TextChannel> {
     let channel = null;
@@ -57,7 +57,7 @@ export class TextChannelService {
     channel: TextChannel,
     userId: number,
   ): Promise<TextChannel> {
-    const admin = await this.userService.getUser(userId, []);
+    const admin = await this.userService.getUser(userId);
     if (channel.name == undefined)
       throw new HttpException(
         'TextChannel name needs to be specified',
@@ -122,7 +122,7 @@ export class TextChannelService {
     channelId: number,
     adminId?: number,
   ): Promise<void> {
-    const user = await this.userService.getUser(userId, []);
+    const user = await this.userService.getUser(userId);
     const channel = await this.getChannel(channelId, ['users']);
 
     if (adminId && adminId != user.id) {
@@ -156,8 +156,8 @@ export class TextChannelService {
     channelId: number,
     userId: number,
   ): Promise<void> {
-    const user = await this.userService.getUser(userId, []);
-    const channel = await this.getChannel(channelId, []);
+    const user = await this.userService.getUser(userId);
+    const channel = await this.getChannel(channelId);
 
     if (channel.public == true)
       throw new HttpException('TextChannel is public', HttpStatus.FORBIDDEN);
@@ -201,8 +201,8 @@ export class TextChannelService {
     userId: number,
   ): Promise<void> {
     {
-      const user = await this.userService.getUser(userId, []);
-      const updatedChannel = await this.getChannel(id, []);
+      const user = await this.userService.getUser(userId);
+      const updatedChannel = await this.getChannel(id);
       if (updatedChannel.owner.id != user.id)
         throw new HttpException(
           'User isnt owner of TextChannel',
@@ -258,7 +258,7 @@ export class TextChannelService {
   }
 
   async addUserToChannel(channel: TextChannel, userId: number): Promise<void> {
-    const user = await this.userService.getUser(userId, []);
+    const user = await this.userService.getUser(userId);
     const curchannel = await this.getChannel(
       channel.id,
       ['users', 'banned'],
@@ -298,8 +298,8 @@ export class TextChannelService {
     userId: number,
     channelid: number,
   ): Promise<void> {
-    const owner = await this.userService.getUser(ownerId, []);
-    const user = await this.userService.getUser(userId, []);
+    const owner = await this.userService.getUser(ownerId);
+    const user = await this.userService.getUser(userId);
     const channel = await this.getChannel(channelid, ['users']);
     if (channel.owner.id != owner.id)
       throw new HttpException(
@@ -354,8 +354,8 @@ export class TextChannelService {
     channelid: number,
     adminId: number,
   ): Promise<void> {
-    const user = await this.userService.getUser(userId, []);
-    const admin = await this.userService.getUser(adminId, []);
+    const user = await this.userService.getUser(userId);
+    const admin = await this.userService.getUser(adminId);
     const currentChannel = await this.getChannel(channelid, ['users', 'muted']);
     if (currentChannel.owner.id == user.id)
       throw new HttpException(
@@ -394,8 +394,8 @@ export class TextChannelService {
     channelid: number,
     adminId: number,
   ): Promise<void> {
-    const admin = await this.userService.getUser(adminId, []);
-    const user = await this.userService.getUser(userId, []);
+    const admin = await this.userService.getUser(adminId);
+    const user = await this.userService.getUser(userId);
     const currentChannel = await this.getChannel(channelid, [
       'users',
       'banned',
@@ -443,7 +443,7 @@ export class TextChannelService {
     message: string,
     userId: number,
   ): Promise<void> {
-    const user = await this.userService.getUser(userId, []);
+    const user = await this.userService.getUser(userId);
     const currentChannel = await this.getChannel(id, [
       'users',
       'logs',
@@ -488,7 +488,7 @@ export class TextChannelService {
   }
 
   async getLogsForChannel(id: number, userId: number): Promise<Log[]> {
-    const user = await this.userService.getUser(userId, []);
+    const user = await this.userService.getUser(userId);
     const currentChannel = await this.getChannel(id, ['logs']);
     const logs = [];
     for (const log of currentChannel.logs) {

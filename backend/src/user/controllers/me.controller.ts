@@ -27,7 +27,7 @@ export class MeController {
 
   @Get('/me')
   getUser(@Req() req: Request): Promise<User> {
-    return this.userService.getUser(req.user.userId, []);
+    return this.userService.getUser(req.user.userId);
   }
 
   @Get('/me/avatar')

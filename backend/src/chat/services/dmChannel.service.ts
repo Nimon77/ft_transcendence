@@ -1,6 +1,7 @@
 import { Injectable, HttpStatus, HttpException } from '@nestjs/common';
 import { Repository } from 'typeorm';
 import { InjectRepository } from '@nestjs/typeorm';
+import { UserService } from 'src/user/services/user.service';
 import { DMChannel } from '../entities/dmChannel.entity';
 import { User } from 'src/user/entities/user.entity';
 import { Log } from '../entities/log.entity';
@@ -8,6 +9,8 @@ import { Log } from '../entities/log.entity';
 @Injectable()
 export class DMChannelService {
   constructor(
+    private readonly userService: UserService,
+
     @InjectRepository(DMChannel)
     private readonly dmChannelRepository: Repository<DMChannel>,
 
@@ -17,7 +20,7 @@ export class DMChannelService {
 
   async getChannel(
     channelId: number,
-    relations: string[],
+    relations = [] as string[],
     needPass?: boolean,
   ): Promise<DMChannel> {
     let channel = null;
@@ -71,10 +74,18 @@ export class DMChannelService {
     }
   }
 
-  async createMessage(channelId: number, text: string): Promise<void> {
+  async createMessage(
+    channelId: number,
+    userId: number,
+    text: string,
+  ): Promise<Log> {
     const channel = await this.getChannel(channelId, ['logs']);
+    const user = await this.userService.getUser(userId);
 
-    const log = this.logRepository.create({ message: text });
+    if (!channel.users.includes(user))
+      throw new HttpException('User not in channel', HttpStatus.NOT_FOUND);
+
+    const log = this.logRepository.create({ message: text, user });
     channel.logs.push(log);
 
     try {
@@ -83,5 +94,12 @@ export class DMChannelService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
+    return log;
+  }
+
+  async joinChannel(userId: number, targetId: number): Promise<DMChannel> {
+    const user = await this.userService.getUser(userId);
+    const target = await this.userService.getUser(targetId);
+    return await this.createChannel([user, target]);
   }
 }
