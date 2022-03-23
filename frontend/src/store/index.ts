@@ -36,10 +36,12 @@ export default new Vuex.Store({
     status: [{id: Number, status: Number}],
 
     chat: {
+      direct: false,
       socket: <Socket> null,
       idCurrentChannel: 0,
       channels: Array<IChannel>(),
       myChannels: Array<IChannel>(),
+      directChannels: Array<IChannel>(),
     },
 
     gameSock: <Socket> null,
@@ -54,11 +56,13 @@ export default new Vuex.Store({
     getNotifySocket: state => state.notifySocket,
     getNotify: state => state.notify,
     getStatus: state => state.status,
+    getChatDirect: state => state.chat.direct,
     getChatSocket: state => state.chat.socket,
     getIdCurrentChannel: state => state.chat.idCurrentChannel,
     getCurrentChannel: state => state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel),
     getChannels: state => state.chat.channels,
     getMyChannels: state => state.chat.myChannels,
+    getDirectChannels: state => state.chat.directChannels,
     getGameSock: state => state.gameSock,
     getGameRoom: state => state.gameRoom,
     getGameOptions: state => state.gameOptions,
@@ -74,6 +78,9 @@ export default new Vuex.Store({
     setReady(state, ready) {
       state.ready = ready;
     },
+    setChatDirect(state, direct) {
+      state.chat.direct = direct;
+    },
     setChatSocket(state, socket) {
       state.chat.socket = socket;
     },
@@ -85,6 +92,9 @@ export default new Vuex.Store({
     },
     setMyChannels(state, myChannels) {
       state.chat.myChannels = myChannels;
+    },
+    setDirectChannels(state, directChannels) {
+      state.chat.directChannels = directChannels;
     },
     setGameSock(state, gameSock) {
       state.gameSock = gameSock;

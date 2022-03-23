@@ -76,6 +76,9 @@ export default Vue.extend({
         idCurrentChannel() {
           return this.$store.getters.getIdCurrentChannel;
         },
+        chatDirect() {
+          return this.$store.getters.getChatDirect;
+        },
     },
 
     methods: {
@@ -95,23 +98,34 @@ export default Vue.extend({
           return false;
         return true;
       },
-      async sendMsg() {
+      sendMsg() {
         if (this.input == '' || this.idCurrentChannel == 0)
           return;
-        this.socket.emit('text', {
-          id: this.idCurrentChannel,
-          user: this.user,
-          value: this.input,
-        });
+        if (this.chatDirect)
+          this.socket.emit('textDM', {
+            text: this.input,
+            channelId: this.idCurrentChannel,
+          });
+        else
+          this.socket.emit('text', {
+            id: this.idCurrentChannel,
+            user: this.user,
+            value: this.input,
+          });
         this.input = '';
       },
       cleanLogs() {
         if (this.idCurrentChannel == 0)
             this.messages = [];
-        if (this.idCurrentChannel > 0)
-          this.socket.emit('channel', {
-            id: this.idCurrentChannel
-          });
+        if (this.idCurrentChannel > 0) {
+          if (this.chatDirect) {
+            this.socket.emit('channelDM', this.idCurrentChannel);
+          }
+          else
+            this.socket.emit('channel', {
+              id: this.idCurrentChannel
+            });
+        }
       },
       pushLogs() {
         this.messages = [];
@@ -136,8 +150,26 @@ export default Vue.extend({
             }, 100);
           }
         });
+        this.socket.on("textDM", data => {
+          // console.log("TEXT DM EVENT", data); // TODO: remove
+          if (data.id == this.idCurrentChannel)
+          {
+            this.messages.push( { sender: data.user, msg: data.value } );
+            setTimeout(() => {
+              document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
+            }, 100);
+          }
+        });
         this.socket.on("channel", data => {
           // console.log("CHANNEL EVENT", data); // TODO: remove
+          if (data.id == this.idCurrentChannel)
+          {
+            this.logs = data.logs;
+            this.pushLogs();
+          }
+        });
+        this.socket.on("channelDM", data => {
+          // console.log("CHANNELDM EVENT", data); // TODO: remove
           if (data.id == this.idCurrentChannel)
           {
             this.logs = data.logs;

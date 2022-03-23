@@ -5,7 +5,7 @@
       <span class="span"> CHANNELS </span>
     </v-sheet>
 
-    <v-dialog v-if="!direct" v-model="dialog" persistent max-width="600px" >
+    <v-dialog v-if="!chatDirect" v-model="dialog" persistent max-width="600px" >
       <template v-slot:activator="{ on, attrs }">
         <v-btn v-bind="attrs" v-on="on" class="ma-1" color="green" bottom tile left  @click="dialog = !dialog">
           <v-icon>mdi-plus</v-icon>
@@ -40,10 +40,10 @@
       </v-card>
     </v-dialog>
 
-    <v-text-field v-if="!direct" v-model="searchChannel" dense class="d-flex justify-center mb-n2 mt-5 pl-5 pr-5" label="search channel"></v-text-field>
+    <v-text-field v-if="!chatDirect" v-model="searchChannel" dense class="d-flex justify-center mb-n2 mt-5 pl-5 pr-5" label="search channel"></v-text-field>
     <v-divider class="mt-1"></v-divider>
 
-    <v-list v-if="searchChannel == ''" mandatory> <!-- Si je ne cherche pas de CR -->
+    <v-list v-if="searchChannel == '' && !chatDirect" mandatory> <!-- Si je ne cherche pas de CR -->
       <v-list-item-group>
         <div v-for="channel in myChannels" :key="channel.id">
           <v-list-item two-line @click="changeChannel(channel.id)">
@@ -65,7 +65,7 @@
       </v-list-item-group>
     </v-list>
 
-    <v-list v-if="searchChannel != ''" > <!-- Si je cherche un CR -->
+    <v-list v-if="searchChannel != '' && !chatDirect" > <!-- Si je cherche un CR -->
       <div v-for="channel in filteredChannels" :key="channel.id">
         <v-list-item two-line v-if="alreadyJoin(channel.id)==false">
           <v-list-item-content>
@@ -100,10 +100,20 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1 white--text" depressed tile  @click="joinChannel(channel.id)"> JOIN </v-btn>
+                <v-btn color="blue darken-1 white--text" depressed tile  @click="joinDMChannel(channel.id)"> JOIN </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
+        </v-list-item>
+        <v-divider></v-divider>
+      </div>
+    </v-list>
+    <v-list v-if="chatDirect" mandatory>
+      <div v-for="channel in directChannels" :key="channel.id">
+        <v-list-item @click="changeChannel(channel.id)">
+          <v-list-item-content>
+            <v-list-item-title style="text-align:center"> {{channel.users[0].username}} <v-icon>mdi-arrow-left-right-bold</v-icon> {{channel.users[1].username}} </v-list-item-title>
+          </v-list-item-content>
         </v-list-item>
         <v-divider></v-divider>
       </div>
@@ -112,15 +122,11 @@
     <!-- General / direct channel -->
     <v-row>
       <v-col>
-    <v-btn color="blue darken-1" dark depressed tile @click="direct = false">
-      <v-list-item-title class="text-center">General</v-list-item-title>
-    </v-btn>
-    </v-col>
-    <v-col>
-    <v-btn color="blue darken-1" dark depressed tile @click="direct = true">
-      <v-list-item-title class="text-center">Direct</v-list-item-title>
-    </v-btn>
-    </v-col>
+        <v-btn color="blue darken-1" dark depressed tile @click="chatDirect = false; idCurrentChannel = 0">General</v-btn>
+      </v-col>
+      <v-col>
+        <v-btn color="blue darken-1" dark depressed tile @click="chatDirect = true; idCurrentChannel = 0">Direct</v-btn>
+      </v-col>
     </v-row>
   </v-card>
 </template>
@@ -149,7 +155,6 @@ export default Vue.extend({
         password: '',
         searchChannel: '',
         awaitingSearch: false,
-        direct: false,
       }
   },
 
@@ -176,6 +181,22 @@ export default Vue.extend({
       },
       set(myChannels: unknown) {
         this.$store.commit('setMyChannels', myChannels);
+      }
+    },
+    chatDirect: {
+      get() {
+        return this.$store.getters.getChatDirect;
+      },
+      set(chatDirect: unknown) {
+        this.$store.commit('setChatDirect', chatDirect);
+      }
+    },
+    directChannels: {
+      get() {
+        return this.$store.getters.getDirectChannels;
+      },
+      set(directChannels: unknown) {
+        this.$store.commit('setDirectChannels', directChannels);
       }
     },
     user() {
@@ -222,13 +243,13 @@ export default Vue.extend({
       // console.log('USER ID IN CHANNEL', this.user.id); //TODO: remove
       if (this.valid) {
         if (this.password == '')
-          this.$http.post('/channel', {name: this.name, public: true}).then((resp) => {
+          this.$http.post('/channel', {name: this.name, public: true}).then(() => {
             // console.log(resp); //TODO: remove
             this.$emit('fetchChannels');
             // this.idCurrentChannel = resp.data.id;
           });
         else
-          this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then((resp) => {
+          this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then(() => {
             // console.log(resp); //TODO: remove
             this.$emit('fetchChannels');
             // this.idCurrentChannel = resp.data.id;
