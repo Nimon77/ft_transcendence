@@ -152,9 +152,9 @@ export default Vue.extend({
         });
         this.socket.on("textDM", data => {
           // console.log("TEXT DM EVENT", data); // TODO: remove
-          if (data.id == this.idCurrentChannel && this.chatDirect)
+          if (data.channelId == this.idCurrentChannel && this.chatDirect)
           {
-            this.messages.push( { sender: data.user, msg: data.value } );
+            this.messages.push( { sender: data.user, msg: data.text } );
             setTimeout(() => {
               document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
             }, 100);
