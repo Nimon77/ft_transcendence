@@ -153,7 +153,13 @@ export class ChatGateway implements OnGatewayConnection {
         data.channelId,
         client.data.user.id,
       );
-      this.emitChannel(channel, 'leave', { channel, user: client.data.user });
+
+      const is_delete = channel.owner.id == user.id ? true : false;
+      this.emitChannel(channel, 'leave', {
+        channel,
+        user: client.data.user,
+        is_delete: is_delete,
+      });
     } catch (e) {
       console.error(e);
     }
