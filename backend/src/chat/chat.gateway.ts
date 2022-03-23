@@ -10,6 +10,7 @@ import { AuthService } from 'src/auth/auth.service';
 import { Status } from 'src/user/enums/status.enum';
 import { UserService } from 'src/user/services/user.service';
 import { TextChannel } from './entities/textChannel.entity';
+import { DMChannelService } from './services/dmChannel.service';
 import { TextChannelService } from './services/textChannel.service';
 
 @WebSocketGateway({
@@ -23,6 +24,7 @@ export class ChatGateway implements OnGatewayConnection {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly textChannelService: TextChannelService,
+    private readonly dmChannelService: DMChannelService,
   ) {}
   @WebSocketServer()
   server: any;
@@ -37,11 +39,13 @@ export class ChatGateway implements OnGatewayConnection {
       const channels_user = await this.textChannelService.getChannelsForUser(
         user.id,
       );
+      const dmChannel = await this.dmChannelService.getChannels(user.id);
 
       const channels_all = await this.textChannelService.getAllChannels();
 
       client.data.user = user;
-      client.emit('info', { user, channels_user, channels_all });
+
+      client.emit('info', { user, channels_user, channels_all, dmChannel });
     } catch (e) {
       console.error(e);
     }
@@ -57,7 +61,7 @@ export class ChatGateway implements OnGatewayConnection {
     }
   }
 
-  emitChannel(channel: TextChannel, event: string, ...args: any): void {
+  emitChannel(channel: any, event: string, ...args: any): void {
     try {
       if (!channel.users) return;
 
@@ -139,7 +143,7 @@ export class ChatGateway implements OnGatewayConnection {
   async leaveChannel(client: Socket, data: any): Promise<void> {
     try {
       let user = client.data.user;
-      if (data.userId) user = await this.userService.getUser(data.userId, []);
+      if (data.userId) user = await this.userService.getUser(data.userId);
 
       const channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
@@ -162,7 +166,7 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
       ]);
       const owner = client.data.user;
-      const admin = await this.userService.getUser(data.userId, []);
+      const admin = await this.userService.getUser(data.userId);
       let is_admin = false;
 
       await this.textChannelService.toggleAdminRole(
@@ -188,7 +192,7 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
         'muted',
       ]);
-      const curuser = await this.userService.getUser(data.userId, []);
+      const curuser = await this.userService.getUser(data.userId);
       const admin = client.data.user;
       let is_muted = false;
 
@@ -221,7 +225,7 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
         'banned',
       ]);
-      const curuser = await this.userService.getUser(data.userId, []);
+      const curuser = await this.userService.getUser(data.userId);
       const admin = client.data.user;
       let is_banned = false;
 
@@ -244,6 +248,49 @@ export class ChatGateway implements OnGatewayConnection {
         banned_user: { id: curuser.id, username: curuser.username },
         is_banned: is_banned,
       });
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  //direct message :D ----------------------------------------------------------------------
+
+  @SubscribeMessage('channeldm')
+  async getDMChannel(client: Socket, channelid: number): Promise<void> {
+    try {
+      const channel = await this.dmChannelService.getChannel(channelid, [
+        'logs',
+        'users',
+      ]);
+      this.emitChannel(channel, 'channeldm', channel);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  @SubscribeMessage('joindm')
+  async joinDM(client: Socket, userId: number): Promise<void> {
+    try {
+      const channel = await this.dmChannelService.joinChannel(
+        client.data.user.id,
+        userId,
+      );
+      this.emitChannel(channel, 'dm');
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  @SubscribeMessage('textdm')
+  async sendMessageDM(client: Socket, data: any): Promise<void> {
+    try {
+      const channel = await this.dmChannelService.getChannel(data.channelId);
+      const log = await this.dmChannelService.createMessage(
+        channel.id,
+        client.data.user.id,
+        data.text,
+      );
+      this.emitChannel(channel, 'text', { user: log.user, text: log.message });
     } catch (e) {
       console.error(e);
     }

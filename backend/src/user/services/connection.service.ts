@@ -10,8 +10,11 @@ export class ConnectionService {
     private readonly connectionRepository: Repository<Connection>,
   ) {}
 
-  // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
-  async getConnection(where: any, relations: string[]): Promise<Connection> {
+  async getConnection(
+    // eslint-disable-next-line @typescript-eslint/explicit-module-boundary-types
+    where: any,
+    relations = [] as string[],
+  ): Promise<Connection> {
     const connection = await this.connectionRepository.findOne({
       where,
       relations,
@@ -23,7 +26,7 @@ export class ConnectionService {
   }
 
   async createConnection(userId: number): Promise<Connection> {
-    let connection = await this.getConnection({ user: userId }, []).catch(
+    let connection = await this.getConnection({ user: userId }).catch(
       () => null,
     );
 
@@ -52,7 +55,7 @@ export class ConnectionService {
   }
 
   async updateOTP(userId: number, secret?: string): Promise<void> {
-    const connection = await this.getConnection({ user: userId }, []);
+    const connection = await this.getConnection({ user: userId });
 
     try {
       await this.connectionRepository.update(connection.id, {
