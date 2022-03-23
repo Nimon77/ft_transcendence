@@ -253,7 +253,7 @@ export class ChatGateway implements OnGatewayConnection {
     }
   }
 
-  //direct message :D ----------------------------------------------------------------------
+  //direct message :< ----------------------------------------------------------------------
 
   @SubscribeMessage('channeldm')
   async getDMChannel(client: Socket, channelid: number): Promise<void> {
@@ -263,6 +263,18 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
       ]);
       this.emitChannel(channel, 'channeldm', channel);
+    } catch (e) {
+      console.error(e);
+    }
+  }
+
+  @SubscribeMessage('channelMedm')
+  async getDMChannelMe(client: Socket): Promise<void> {
+    try {
+      const channel = await this.dmChannelService.getChannels(
+        client.data.user.id,
+      );
+      this.emitChannel(channel, 'channelMedm', channel);
     } catch (e) {
       console.error(e);
     }

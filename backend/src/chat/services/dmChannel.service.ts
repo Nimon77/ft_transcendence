@@ -98,6 +98,8 @@ export class DMChannelService {
   }
 
   async joinChannel(userId: number, targetId: number): Promise<DMChannel> {
+    if (userId == targetId)
+      throw new HttpException('User cannot be the same', HttpStatus.FORBIDDEN);
     const user = await this.userService.getUser(userId);
     const target = await this.userService.getUser(targetId);
     return await this.createChannel([user, target]);
