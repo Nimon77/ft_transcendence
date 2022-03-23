@@ -95,8 +95,13 @@ export default Vue.extend({
       user() {
         return this.$store.getters.getUser;
       },
-      idCurrentChannel() {
-        return this.$store.getters.getIdCurrentChannel;
+      idCurrentChannel: {
+        get() {
+          return this.$store.getters.getIdCurrentChannel;
+        },
+        set(value: number) {
+          this.$store.commit('setIdCurrentChannel', value);
+        }
       },
       myChannels() {
         return this.$store.getters.getMyChannels;
@@ -113,8 +118,13 @@ export default Vue.extend({
           this.$store.commit('setGameSock', value);
         },
       },
-      chatDirect() {
-        return this.$store.getters.getChatDirect;
+      chatDirect: {
+        get() {
+          return this.$store.getters.getChatDirect;
+        },
+        set(value: boolean) {
+          this.$store.commit('setChatDirect', value);
+        },
       },
     },
 
@@ -154,9 +164,11 @@ export default Vue.extend({
           console.log('channelMeDM', channelMeDM);
           if (!channelMeDM.some(dm => dm.users.some(user => user.id === playerId)))
             this.socket.emit('joinDM', playerId);
+          else
+            this.idCurrentChannel = channelMeDM.find(dm => dm.users.some(user => user.id === playerId)).id;
           this.chatDirect = true;
-          this.idCurrentChannel = channelMeDM.find(dm => dm.users.some(user => user.id === playerId)).id;
         });
+        this.idCurrentChannel = 0;
         this.socket.emit('channelMeDM');
       },
       invite(id: number) {

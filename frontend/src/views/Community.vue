@@ -121,11 +121,18 @@ export default Vue.extend({
       this.socket.on("channelMe", (data) => {
         this.myChannels = data;
       })
+      this.socket.on("channelMeDM", (data) => {
+        this.directChannels = data;
+      })
 
       this.socket.on('join', (data) => {
         console.log('JOIN', data); // TODO: remove
         this.fetchChannelsList();
         // this.socket.emit('channelMe');
+      });
+      this.socket.on('joinDM', (data) => {
+        console.log('JOINDM', data); // TODO: remove
+        this.socket.emit('channelMeDM');
       });
       this.socket.on('leave', (data) => {
         // console.log('LEAVE', data); // TODO: remove
