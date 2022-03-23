@@ -118,16 +118,10 @@
         <v-divider></v-divider>
       </div>
     </v-list>
-    <!-- <v-divider class="mt-1"></v-divider> -->
-    <!-- General / direct channel -->
-    <v-row>
-      <v-col>
-        <v-btn color="blue darken-1" dark depressed tile @click="chatDirect = false; idCurrentChannel = 0">General</v-btn>
-      </v-col>
-      <v-col>
-        <v-btn color="blue darken-1" dark depressed tile @click="chatDirect = true; idCurrentChannel = 0">Direct</v-btn>
-      </v-col>
-    </v-row>
+    <v-card-actions class="justify-center">
+        <v-btn color="blue darken-1" class="ma-1" dark depressed tile @click="chatDirect = false; idCurrentChannel = 0">General</v-btn>
+        <v-btn color="blue darken-1" class="ma-1" dark depressed tile @click="chatDirect = true; idCurrentChannel = 0">Direct</v-btn>
+    </v-card-actions>
   </v-card>
 </template>
 
@@ -270,7 +264,7 @@ export default Vue.extend({
         setTimeout(() => {
           this.$emit('fetchChannels');
           this.awaitingSearch = false;
-        }, 1000);
+        }, 500);
         this.awaitingSearch = true;
       }
     },

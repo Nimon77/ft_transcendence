@@ -66,6 +66,7 @@ export default Vue.extend({
         input: '',
         messages: [],
         logs: [],
+        sendNotif: true,
       }
     },
 
@@ -158,6 +159,18 @@ export default Vue.extend({
             setTimeout(() => {
               document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
             }, 100);
+          }
+          else if (data.user.id != this.user.id) {
+            if (this.sendNotif) {
+              this.sendNotif = false;
+              this.$toast.info('You have a new message from ' + data.user.username, {
+                position: 'top-center',
+                duration: 5000
+              });
+              setTimeout(() => {
+                this.sendNotif = true;
+              }, 10000);
+            }
           }
         });
         this.socket.on("channel", data => {
