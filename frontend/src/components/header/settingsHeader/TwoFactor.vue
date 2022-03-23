@@ -15,7 +15,7 @@
                 <v-otp-input
                   v-model="otp"
                   :disabled="loading"
-                  @finish="onFinish"
+                  @finish="validate"
                 ></v-otp-input>
                 <v-overlay absolute :value="loading">
                   <v-progress-circular
@@ -25,23 +25,19 @@
                 </v-overlay>
               </v-col>
             </v-row>
-            <v-snackbar v-model="snackbar" tile outlined color="red">
-              <!-- <v-btn color="red" text @click="snackbar = false">Close</v-btn> -->
-              {{ snackbarText }}
-            </v-snackbar>
           </v-container>
           <v-container fluid v-else>
             <v-row>
               <v-col align="center" cols="12" class="mt-11" >
                 <h2>Two-factor authentication is enabled</h2>
                 <v-spacer></v-spacer>
-                <v-btn color="red" dark @click="disableOtp" >DISABLE</v-btn>
+                <v-btn class="mt-5" color="red" dark @click="disableOtp" >DISABLE</v-btn>
               </v-col>
             </v-row>
           </v-container>
         </v-card-text>
         <v-card-actions class="justify-end">
-          <v-btn color="red" dark @click="otp = ''; dialog.value = false" >CANCEL</v-btn>
+          <v-btn color="red" dark @click="otp = ''; dialog.value = false" >CLOSE</v-btn>
         </v-card-actions>
       </v-card>
     </template>
@@ -60,8 +56,6 @@ export default Vue.extend({
         otp: '',
         loading: false,
         otpSetup: false,
-        snackbarText: '',
-        snackbar: false,
     }
   },
   computed: {
@@ -76,40 +70,54 @@ export default Vue.extend({
     },
   },
   methods: {
-    onFinish () {
+    validate () {
       this.loading = true
       this.$http.post('/auth/2fa', { "code": this.otp }).then(() => {
-        this.$http.get('/user/me').then((response) => {
-          this.user = response.data;
-          this.otpSetup = true;
+        this.$http.get('/auth/2fa/me').then((response) => {
+          this.otpSetup = response.data;
+          this.$toast.success('Two-factor authentication is enabled', {
+            position: 'top-center',
+            timeout: 3000,
+          });
           this.loading = false;
           this.otp = '';
         });
       }).catch(() => {
+        this.$toast.error('Invalid OTP code', {
+          position: 'top-center',
+          timeout: 3000,
+        });
         this.loading = false;
-        this.snackbarText = 'Invalid code';
-        this.snackbar = true;
+        this.otp = '';
       });
     },
     disableOtp() {
       this.$http.delete('auth/2fa').then(() => {
-        this.$http.get('/user/me').then((response) => {
-          this.user = response.data;
-          this.$http.get('/auth/2fa/qrcode').then(response => {
-            this.qrCode = response.data;
-            this.otpSetup = false;
-          });
+        this.$http.get('auth/2fa/me').then((response) => {
+          this.otpSetup = response.data;
+          if (!this.otpSetup) {
+            this.$toast.success('Two-factor authentication disabled', {
+              position: 'top-center',
+              timeout: 3000,
+            });
+            this.$http.get('/auth/2fa/qrcode').then(response => {
+              this.qrCode = response.data;
+            });
+          }
         });
       });
     }
   },
   mounted() {
-    this.otpSetup = this.user.otp ? true : false;
-    if (!this.otpSetup) {
-      this.$http.get('/auth/2fa/qrcode').then(response => {
-          this.qrCode = response.data;
-      });
-    }
+    // this.otpSetup = this.user.otp ? true : false;
+    this.$http.get('/auth/2fa/me').then(response => {
+      this.otpSetup = response.data;
+      if (!this.otpSetup) {
+        this.$http.get('/auth/2fa/qrcode').then(response => {
+            this.qrCode = response.data;
+        });
+      }
+    });
   }
 });
 </script>

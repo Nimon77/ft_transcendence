@@ -1,7 +1,9 @@
 
 <template>
   <v-app>
-    <img v-for="n in 15" :key="n" src="@/assets/banane-resize.png" class="bananane" style=""/>
+    <div name="banana-bg">
+      <img v-for="n in 15" :key="n" src="@/assets/banane-resize.png" class="bananane" style=""/>
+    </div>
     <Header v-if="isReady"/>
     <v-main class="yellow">
       <transition name="bounce" mode="out-in">
