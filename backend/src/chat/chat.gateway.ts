@@ -12,6 +12,8 @@ import { UserService } from 'src/user/services/user.service';
 import { TextChannel } from './entities/textChannel.entity';
 import { DMChannelService } from './services/dmChannel.service';
 import { TextChannelService } from './services/textChannel.service';
+import * as bcrypt from 'bcrypt';
+import { HttpException, HttpStatus } from '@nestjs/common';
 
 @WebSocketGateway({
   cors: {
@@ -126,12 +128,29 @@ export class ChatGateway implements OnGatewayConnection {
   }
 
   @SubscribeMessage('join')
-  async joinChannel(client: Socket, channel: TextChannel): Promise<void> {
+  async joinChannel(
+    client: Socket,
+    partialChannel: TextChannel,
+  ): Promise<void> {
     try {
+      let channel = await this.textChannelService.getChannel(partialChannel.id);
+      if (!channel.public) {
+        let valide = false;
+        if (partialChannel.password)
+          valide = await bcrypt.compare(
+            channel.password,
+            partialChannel.password,
+          );
+        this.emitChannel(channel, 'isjoin', valide);
+        if (!valide)
+          throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
+      }
+
       await this.textChannelService.addUserToChannel(
         channel,
         client.data.user.id,
       );
+
       channel = await this.textChannelService.getChannel(channel.id, ['users']);
       this.emitChannel(channel, 'join', { channel, user: client.data.user });
     } catch (e) {
