@@ -162,12 +162,11 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('admin')
   async toggleAdmin(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.textChannelService.getChannel(data.channelId, [
+      let channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
       ]);
       const owner = client.data.user;
       const admin = await this.userService.getUser(data.userId);
-      let is_admin = false;
 
       await this.textChannelService.toggleAdminRole(
         owner.id,
@@ -175,10 +174,12 @@ export class ChatGateway implements OnGatewayConnection {
         channel.id,
       );
 
-      if (channel.adminId.indexOf(admin.id) != -1) is_admin = true;
+      channel = await this.textChannelService.getChannel(data.channelId, [
+        'users',
+      ]);
+
       this.emitChannel(channel, 'admin', {
-        user: { id: admin.id, username: admin.username },
-        is_admin: is_admin,
+        channel: { id: channel.id, name: channel.name, admin: channel.adminId },
       });
     } catch (e) {
       console.error(e);
@@ -188,30 +189,32 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('mute')
   async toggleMute(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.textChannelService.getChannel(data.channelId, [
+      let channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
         'muted',
       ]);
       const curuser = await this.userService.getUser(data.userId);
       const admin = client.data.user;
-      let is_muted = false;
 
       const muted = channel.muted.find((muted) => muted.user.id == data.userId);
 
       if (muted)
         await this.textChannelService.unMuteUserInChannel(muted, channel);
-      else {
+      else
         await this.textChannelService.muteUserInChannel(
           curuser.id,
           channel.id,
           admin.id,
         );
-        is_muted = true;
-      }
+
+      channel = await this.textChannelService.getChannel(data.channelId, [
+        'users',
+        'muted',
+      ]);
+
       this.emitChannel(channel, 'mute', {
+        channel: { id: channel.id, name: channel.name, muted: channel.muted },
         user: { id: admin.id, username: admin.username },
-        muted_user: { id: curuser.id, username: curuser.username },
-        is_muted: is_muted,
       });
     } catch (e) {
       console.error(e);
@@ -221,13 +224,12 @@ export class ChatGateway implements OnGatewayConnection {
   @SubscribeMessage('ban')
   async toggleBan(client: Socket, data: any): Promise<void> {
     try {
-      const channel = await this.textChannelService.getChannel(data.channelId, [
+      let channel = await this.textChannelService.getChannel(data.channelId, [
         'users',
         'banned',
       ]);
       const curuser = await this.userService.getUser(data.userId);
       const admin = client.data.user;
-      let is_banned = false;
 
       const banned = channel.banned.find(
         (banned) => banned.user.id == data.user.id,
@@ -235,18 +237,21 @@ export class ChatGateway implements OnGatewayConnection {
 
       if (banned)
         await this.textChannelService.unBanUserInChannel(banned, channel);
-      else {
+      else
         await this.textChannelService.banUserInChannel(
           curuser.id,
           channel.id,
           admin.id,
         );
-        is_banned = true;
-      }
+
+      channel = await this.textChannelService.getChannel(data.channelId, [
+        'users',
+        'banned',
+      ]);
+
       this.emitChannel(channel, 'ban', {
+        channel: { id: channel.id, name: channel.name, banned: channel.banned },
         user: { id: admin.id, username: admin.username },
-        banned_user: { id: curuser.id, username: curuser.username },
-        is_banned: is_banned,
       });
     } catch (e) {
       console.error(e);
