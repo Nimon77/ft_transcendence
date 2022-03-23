@@ -66,8 +66,16 @@ export class TextChannelService {
 
     let hashedPassword = null;
     if (channel.public == false) {
-      if (!channel.password)
-        throw new HttpException('Password Required', HttpStatus.FORBIDDEN);
+      {
+        if (!channel.password)
+          throw new HttpException('Password Required', HttpStatus.FORBIDDEN);
+
+        if (channel.password.length > 1 << 8)
+          throw new HttpException(
+            'New password too long',
+            HttpStatus.FORBIDDEN,
+          );
+      }
 
       try {
         hashedPassword = await bcrypt.hash(String(channel.password), 10);
@@ -156,6 +164,8 @@ export class TextChannelService {
     channelId: number,
     userId: number,
   ): Promise<void> {
+    if (pass.newPassword.length > 1 << 8)
+      throw new HttpException('New password too long', HttpStatus.FORBIDDEN);
     const user = await this.userService.getUser(userId);
     const channel = await this.getChannel(channelId);
 
