@@ -126,11 +126,11 @@ export default Vue.extend({
 
       getStatusColor(status: number) {
         if (status == 1)
-          return 'green';
+          return 'blue';
         else if (status == 2)
           return 'orange';
         else if (status == 3)
-          return 'green';
+          return '#49be25';
         else
           return 'grey';
       },
@@ -164,29 +164,29 @@ export default Vue.extend({
           this.gameSocket.on('info', (data) => {
             console.log('Connected', data); // TODO: remove
               this.gameSocket.emit('room');
+          });
+          this.gameSocket.on('room', (code) => {
+            this.dialog = false;
+            console.log('CODE ROOM ', code);
+            this.$store.commit('setGameRoom', code);
+            const payload = {
+              id: this.user.id,
+              sender: this.me.id,
+              message: this.me.username + " has invited you to play",
+              roomCode: code
+            };
+            this.notifySocket.emit('notify', payload);
+            this.notifySocket.once('notify', (data) => {
+              if (data.sender == this.user.id) {
+                console.log('NOTIFY', data); // TODO: remove
+                this.invitDialog = false;
+                this.$emit('close');
+                this.$router.push('/pregame');
+              }
             });
-            this.gameSocket.on('room', (code) => {
-              this.dialog = false;
-              console.log('CODE ROOM ', code);
-              this.$store.commit('setGameRoom', code);
-              const payload = {
-                id: this.user.id,
-                sender: this.me.id,
-                message: this.me.username + " has invited you to play",
-                roomCode: code
-              };
-              this.notifySocket.emit('notify', payload);
-              this.notifySocket.once('notify', (data) => {
-                if (data.sender == this.user.id) {
-                  console.log('NOTIFY', data); // TODO: remove
-                  this.invitDialog = false;
-                  this.$emit('close');
-                  this.$router.push('/pregame');
-                }
-              });
-            });
-      }
-    },
+          });
+        }
+      },
   },
   created() {
     this.fetchFriend();

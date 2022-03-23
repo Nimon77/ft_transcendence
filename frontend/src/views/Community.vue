@@ -50,14 +50,6 @@ export default Vue.extend({
           this.$store.commit('setIdCurrentChannel', id);
         }
       },
-      currentChannel: {
-        get() {
-          return this.$store.getters.getCurrentChannel;
-        },
-        set(channel: unknown) {
-          this.$store.commit('setCurrentChannel', channel);
-        }
-      },
       myChannels: {
         get() {
           return this.$store.getters.getMyChannels;
@@ -66,26 +58,35 @@ export default Vue.extend({
           this.$store.commit('setMyChannels', channels);
         }
       },
+      channels: {
+        get() {
+          return this.$store.getters.getChannels;
+        },
+        set(channels: unknown) {
+          this.$store.commit('setChannels', channels);
+        }
+      },
     },
 
     methods: {
-      fetchCurrentChannelInfos() {
-        if (this.idCurrentChannel != 0) {
-          this.$http.get('/channel/' + this.idCurrentChannel).then(response => {
-            this.currentChannel = response.data;
-          });
-        }
-      },
+      // fetchCurrentChannelInfos() {
+      //   if (this.idCurrentChannel != 0) {
+      //     this.$http.get('/channel/' + this.idCurrentChannel).then(response => {
+      //       this.currentChannel = response.data;
+      //     });
+      //   }
+      // },
       fetchChannelsList() {
         this.$http.get('/channel').then(response => {
-          this.$store.commit('setChannels', response.data);
+          this.channels = response.data;
         });
-        this.$http.get('/channel/me').then(response => {
-          this.myChannels = response.data;
-        });
-        this.fetchCurrentChannelInfos();
+      if (this.socket.connected)
+        this.socket.emit('channelMe');
+      //   this.$http.get('/channel/me').then(response => {
+      //     this.myChannels = response.data;
+      //   });
+      //   this.fetchCurrentChannelInfos();
       }
-      
     },
 
     created() {
@@ -95,26 +96,42 @@ export default Vue.extend({
         },
       });
       this.$watch(() => this.fetchChannels, () => {this.fetchChannelsList()}, { immediate: true });
-      this.$watch(() => this.idCurrentChannel, () => {this.fetchChannelsList()}, { immediate: true });
-      this.socket.on("info", () => {
-        this.fetchCurrentChannelInfos();
+      // this.$watch(() => this.idCurrentChannel, () => {this.fetchChannelsList()}, { immediate: true });
+      this.socket.on("info", (data) => {
+        // console.log('Connected', data); // TODO: remove
+        this.myChannels = data.channels_user;
+        this.channels = data.channels_all;
+        // this.fetchCurrentChannelInfos();
       });
+
+      // this.socket.on("channel", (data) => {
+        // return channel by id;
+      // })
+
+      this.socket.on("channelMe", (data) => {
+        this.myChannels = data;
+      })
 
       this.socket.on('join', (data) => {
         console.log('JOIN', data); // TODO: remove
-        if (data.user.id == this.user.id)
-          this.idCurrentChannel = data.channel.id;
         this.fetchChannelsList();
+        // this.socket.emit('channelMe');
       });
       this.socket.on('leave', (data) => {
-        console.log('LEAVE', data); // TODO: remove
-        if (this.idCurrentChannel == data.channel.id && data.user.id == this.user.id)
+        // console.log('LEAVE', data); // TODO: remove
+        if (this.idCurrentChannel === data.channel.id && (data.user.id === this.user.id || data.is_delete === true))
           this.idCurrentChannel = 0;
+        // this.$emit('channel', data);
+        // this.socket.emit('channelMe');
         this.fetchChannelsList();
       });
       this.socket.on('mute', data => {
         if (data.muted_user.id == this.user.id) {
-          const message = data.is_muted ? "You have been muted by " + data.user.username : "You have been unmuted by " + data.user.username;
+          // const message = data.is_muted ? "You have been muted by " + data.user.username : "You have been unmuted by " + data.user.username;
+          console.log("data", data);
+          const message = data.channel.muted.some(mute => mute.user.id === this.user.id) ?
+            "You have been muted from " + data.channel.name + " by " + data.user.username :
+            "You have been unmuted from " + data.channel.name + " by " + data.user.username;
           this.$toast.warning(message, {
             position: POSITION.TOP_RIGHT,
             timeout: 3000,
@@ -130,11 +147,39 @@ export default Vue.extend({
             rtl: false
           });
         }
-        this.fetchCurrentChannelInfos();
+        this.myChannels.find(channel => channel.id == data.channel.id).muted = data.channel.muted;
+        // this.fetchCurrentChannelInfos();
       });
       this.socket.on('ban', data => {
+        console.log("BAN", data);
         if (data.banned_user.id == this.user.id) {
-          this.$toast.error("You have been banned by " + data.user.username, {
+          this.$toast.error("You have been banned from " + data.channel.name + " by " + data.user.username, {
+            position: "top-right",
+            timeout: 3000,
+            closeOnClick: true,
+            pauseOnFocusLoss: true,
+            pauseOnHover: true,
+            draggable: true,
+            draggablePercent: 0.6,
+            showCloseButtonOnHover: false,
+            hideProgressBar: false,
+            closeButton: "button",
+            icon: true,
+            rtl: false
+          });
+          if (this.idCurrentChannel == data.channel.id)
+            this.idCurrentChannel = 0;
+        }
+        // this.myChannels.find(channel => channel.id == data.channel.id).banned = data.channel.banned;
+        this.fetchChannelsList();
+      });
+      this.socket.on("admin", (data) => {
+        // console.log('ADMIN', data); // TODO: remove
+        if (data.admin_user.id == this.user.id) {
+          const message = data.channel.admin.includes(this.user.id) ?
+            "You are now an admin of " + data.channel.name :
+            "You are no longer an admin of " + data.channel.name;
+          this.$toast.success(message, {
             position: "top-right",
             timeout: 3000,
             closeOnClick: true,
@@ -149,12 +194,11 @@ export default Vue.extend({
             rtl: false
           });
         }
-        this.fetchChannelsList();
-      });
-      this.socket.on("admin", () => {
-        this.fetchChannelsList();
+        this.myChannels.find(channel => channel.id == data.channel.id).adminId = data.channel.admin;
+        // this.fetchChannelsList();
       });
     },
+
     beforeRouteLeave(to, from, next) {
       this.socket.disconnect();
       next();
