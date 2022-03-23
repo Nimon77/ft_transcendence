@@ -292,45 +292,45 @@ export class ChatGateway implements OnGatewayConnection {
 
   //direct message :D ----------------------------------------------------------------------
 
-  @SubscribeMessage('channeldm')
+  @SubscribeMessage('channelDM')
   async getDMChannel(client: Socket, channelid: number): Promise<void> {
     try {
       const channel = await this.dmChannelService.getChannel(channelid, [
         'logs',
         'users',
       ]);
-      this.emitChannel(channel, 'channeldm', channel);
+      client.emit('channelDM', channel);
     } catch (e) {
       console.error(e);
     }
   }
 
-  @SubscribeMessage('channelMedm')
+  @SubscribeMessage('channelMeDM')
   async getDMChannelMe(client: Socket): Promise<void> {
     try {
       const channel = await this.dmChannelService.getChannels(
         client.data.user.id,
       );
-      this.emitChannel(channel, 'channelMedm', channel);
+      client.emit('channelMeDM', channel);
     } catch (e) {
       console.error(e);
     }
   }
 
-  @SubscribeMessage('joindm')
+  @SubscribeMessage('joinDM')
   async joinDM(client: Socket, userId: number): Promise<void> {
     try {
       const channel = await this.dmChannelService.joinChannel(
         client.data.user.id,
         userId,
       );
-      this.emitChannel(channel, 'dm');
+      this.emitChannel(channel, 'joinDM');
     } catch (e) {
       console.error(e);
     }
   }
 
-  @SubscribeMessage('textdm')
+  @SubscribeMessage('textDM')
   async sendMessageDM(client: Socket, data: any): Promise<void> {
     try {
       const channel = await this.dmChannelService.getChannel(data.channelId);

@@ -4,7 +4,7 @@
       <v-divider class="pt-7"></v-divider>
       <span class="span"> PLAYERS </span>
       </v-sheet>
-      <v-list v-if="idCurrentChannel != 0">
+      <v-list v-if="idCurrentChannel != 0 && !chatDirect">
         <div class="d-flex justify-left">
         <v-list-item-content  class="mt-n4 ml-4 yellow--text text-h6">
           <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{user.username}} </v-list-item-title>
@@ -41,7 +41,7 @@
             </v-dialog>
           </v-list-item>
           <v-list-item dense>
-              <v-list-item-title class="d-flex justify-center text-button">
+              <v-list-item-title class="d-flex justify-center text-button" @click="directMessage(player.id)">
                 <v-btn color="blue" tile dark min-width="100%"> DIRECT MSG </v-btn>
               </v-list-item-title>
           </v-list-item>
@@ -113,6 +113,9 @@ export default Vue.extend({
           this.$store.commit('setGameSock', value);
         },
       },
+      chatDirect() {
+        return this.$store.getters.getChatDirect;
+      },
     },
 
     methods: {
@@ -145,6 +148,16 @@ export default Vue.extend({
         this.gameSocket.disconnect();
         // destroy roomCode ?
         this.invitDialog = false;
+      },
+      directMessage(playerId: number) {
+        this.socket.once('channelMeDM', (channelMeDM) => {
+          console.log('channelMeDM', channelMeDM);
+          if (!channelMeDM.some(dm => dm.users.some(user => user.id === playerId)))
+            this.socket.emit('joinDM', playerId);
+          this.chatDirect = true;
+          this.idCurrentChannel = channelMeDM.find(dm => dm.users.some(user => user.id === playerId)).id;
+        });
+        this.socket.emit('channelMeDM');
       },
       invite(id: number) {
         console.log("invite");

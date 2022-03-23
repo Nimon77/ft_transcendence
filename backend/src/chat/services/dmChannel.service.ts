@@ -79,10 +79,10 @@ export class DMChannelService {
     userId: number,
     text: string,
   ): Promise<Log> {
-    const channel = await this.getChannel(channelId, ['logs']);
+    const channel = await this.getChannel(channelId, ['logs', 'users']);
     const user = await this.userService.getUser(userId);
 
-    if (!channel.users.includes(user))
+    if (!channel.users.some(user => user.id == userId))
       throw new HttpException('User not in channel', HttpStatus.NOT_FOUND);
 
     const log = this.logRepository.create({ message: text, user });

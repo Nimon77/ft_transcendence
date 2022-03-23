@@ -66,6 +66,14 @@ export default Vue.extend({
           this.$store.commit('setChannels', channels);
         }
       },
+      directChannels: {
+        get() {
+          return this.$store.getters.getDirectChannels;
+        },
+        set(channels: unknown) {
+          this.$store.commit('setDirectChannels', channels);
+        }
+      },
     },
 
     methods: {
@@ -98,9 +106,11 @@ export default Vue.extend({
       this.$watch(() => this.fetchChannels, () => {this.fetchChannelsList()}, { immediate: true });
       // this.$watch(() => this.idCurrentChannel, () => {this.fetchChannelsList()}, { immediate: true });
       this.socket.on("info", (data) => {
-        // console.log('Connected', data); // TODO: remove
+        console.log('Connected', data); // TODO: remove
         this.myChannels = data.channels_user;
         this.channels = data.channels_all;
+        this.directChannels = data.dmChannel;
+        console.log(this.directChannels);
         // this.fetchCurrentChannelInfos();
       });
 
