@@ -49,6 +49,11 @@ export class DMChannelService {
   }
 
   async createChannel(users: User[]): Promise<DMChannel> {
+    if (users.length > 2)
+      throw new HttpException(
+        'Too many users in Channel',
+        HttpStatus.NOT_ACCEPTABLE,
+      );
     const channel = this.dmChannelRepository.create({ users });
 
     try {
