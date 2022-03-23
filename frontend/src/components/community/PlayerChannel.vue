@@ -1,25 +1,23 @@
 <template>
-    <v-card dark flat tile min-width="18%" class="d-flex flex-column" height="80%">
-      <v-sheet color="green" min-height="100" dark width="100%" class="text-center">
+  <v-card dark flat tile min-width="18%" class="d-flex flex-column" height="80%">
+    <v-sheet color="green" min-height="100" dark width="100%" class="text-center">
       <v-divider class="pt-7"></v-divider>
       <span class="span"> PLAYERS </span>
-      </v-sheet>
-      <v-list v-if="idCurrentChannel != 0 && !chatDirect">
-        <div class="d-flex justify-left">
+    </v-sheet>
+    <v-list v-if="idCurrentChannel != 0">
+      <div class="d-flex justify-left">
         <v-list-item-content  class="mt-n4 ml-4 yellow--text text-h6">
           <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{user.username}} </v-list-item-title>
         </v-list-item-content>
-        </div>
-        <v-divider></v-divider>
-        <div v-for="player in currentChannel.users" :key="player.id">
+      </div>
+      <v-divider></v-divider>
+      <div v-for="player in currentChannel.users" :key="player.id">
         <v-list-group v-if="player.id != user.id">
           <template v-slot:activator>
             <v-list-item-content class="mt-n4">
               <v-list-item-title> <v-badge dot inline :color="status(player.status)"> </v-badge> {{player.username}} </v-list-item-title>
             </v-list-item-content>
-
           </template>
-
           <v-list-item dense>
             <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
               <template v-slot:activator="{ on, attrs }">
@@ -28,48 +26,49 @@
                 </v-list-item-title>
               </template>
               <v-card>
-              <v-card-title>
-                <div style="margin-left: 120px">
-                <h3 class="headline">Waiting for player...</h3>
-                <div style="margin-left: 95px; margin-top: 30px; margin-bottom: 20px;"> <v-progress-circular indeterminate color="grey"></v-progress-circular> </div>
-                </div>
-              </v-card-title>
-              <v-card-actions>
-                <v-btn @click="cancelInvit" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
-              </v-card-actions>
+                <v-card-title>
+                  <div style="margin-left: 120px">
+                    <h3 class="headline">Waiting for player...</h3>
+                    <div style="margin-left: 95px; margin-top: 30px; margin-bottom: 20px;"> <v-progress-circular indeterminate color="grey"></v-progress-circular> </div>
+                  </div>
+                </v-card-title>
+                <v-card-actions>
+                  <v-btn @click="cancelInvit" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
+                </v-card-actions>
               </v-card>
             </v-dialog>
           </v-list-item>
           <v-list-item dense>
-              <v-list-item-title class="d-flex justify-center text-button" @click="directMessage(player.id)">
-                <v-btn color="blue" tile dark min-width="100%"> DIRECT MSG </v-btn>
-              </v-list-item-title>
+            <v-list-item-title class="d-flex justify-center text-button" @click="directMessage(player.id)">
+              <v-btn color="blue" tile dark min-width="100%"> DIRECT MSG </v-btn>
+            </v-list-item-title>
           </v-list-item>
           <v-list-item dense>
             <v-list-item-title class="d-flex justify-center text-button">
               <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="100%"> PROFILE </v-btn>
             </v-list-item-title>
           </v-list-item>
-          <v-list-item dense v-if="currentChannel.adminId.includes(user.id)">
-            <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn @click="mutePlayer(player.id)" color="red" tile dark min-width="50%" >{{isPlayerMuted(player.id)}}</v-btn>
-              <v-btn @click="banPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" >{{isPlayerBanned(player.id)}}</v-btn>
-            </v-list-item-title>
-          </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
-          <v-list-item dense v-if="currentChannel.owner.id === user.id">
-            <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn @click="setAdmin(player.id)" color="blue" tile dark min-width="100%" >
-                <div id="admin">{{isPlayerAdmin(player.id)}}</div>
-              </v-btn>
-            </v-list-item-title>
-          </v-list-item>
+          <div v-if="!chatDirect">
+            <v-list-item dense v-if="currentChannel.adminId.includes(user.id)">
+              <v-list-item-title class="d-flex justify-center text-button">
+                <v-btn @click="mutePlayer(player.id)" color="red" tile dark min-width="50%" >{{isPlayerMuted(player.id)}}</v-btn>
+                <v-btn @click="banPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" >{{isPlayerBanned(player.id)}}</v-btn>
+              </v-list-item-title>
+            </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
+            <v-list-item dense v-if="currentChannel.owner.id === user.id">
+              <v-list-item-title class="d-flex justify-center text-button">
+                <v-btn @click="setAdmin(player.id)" color="blue" tile dark min-width="100%" >
+                  <div id="admin">{{isPlayerAdmin(player.id)}}</div>
+                </v-btn>
+              </v-list-item-title>
+            </v-list-item>
+          </div>
         </v-list-group>
         <v-divider></v-divider>
       </div>
-      </v-list>
-      <v-sheet v-else color="rgb(79,85,89)" height="100%" dark width="100%" class="text-center"></v-sheet>
-    </v-card>
-
+    </v-list>
+    <v-sheet v-else color="rgb(79,85,89)" height="100%" dark width="100%" class="text-center"></v-sheet>
+  </v-card>
 </template>
 
 
@@ -125,6 +124,9 @@ export default Vue.extend({
         set(value: boolean) {
           this.$store.commit('setChatDirect', value);
         },
+      },
+      directChannels() {
+        return this.$store.getters.getDirectChannels;
       },
     },
 

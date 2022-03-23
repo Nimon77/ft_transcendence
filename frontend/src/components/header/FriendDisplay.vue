@@ -21,7 +21,7 @@
 
           <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
             <template v-slot:activator="{ on, attrs }">
-              <v-list-item v-bind="attrs" v-on="on" slot="activator" @click="invite">
+              <v-list-item v-if="user.status != 2" v-bind="attrs" v-on="on" slot="activator" @click="invite">
                 <v-list-item-title>Invite to Game</v-list-item-title>
               </v-list-item>
             </template>
@@ -37,11 +37,11 @@
             </v-card-actions>
             </v-card>
           </v-dialog>
-          <v-list-item>
+          <v-list-item v-if="user.status == 2">
             <v-list-item-title @click="spectate">Spectate</v-list-item-title>
           </v-list-item>
           <v-list-item>
-            <v-list-item-title>Chat</v-list-item-title>
+            <v-list-item-title @click="directMessage">Direct Message</v-list-item-title>
           </v-list-item>
           <v-list-item @click="removeFriend">
             <v-list-item-title>Remove Player</v-list-item-title>
@@ -83,12 +83,36 @@ export default Vue.extend({
         },
       },
       notifySocket() { return this.$store.getters.getNotifySocket; },
+      chatDirect: {
+        get() {
+          return this.$store.getters.getChatDirect;
+        },
+        set(value: undefined) {
+          this.$store.commit('setChatDirect', value);
+        }
+      },
+      idCurrentChannel: {
+        get() {
+          return this.$store.getters.getIdCurrentChannel;
+        },
+        set(value: number) {
+          this.$store.commit('setIdCurrentChannel', value);
+        }
+      },
+      directChannels: {
+        get() {
+          return this.$store.getters.getDirectChannels;
+        },
+        set(value: undefined) {
+          this.$store.commit('setDirectChannels', value);
+        }
+      },
     },
     methods: {
       spectate(): void {
         console.log("spectate");
         // vérifier que le user n'est pas deja in game
-        if (this.status != 'orange') {
+        if (this.user.status == 2) {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
               transportOptions: {
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
@@ -155,7 +179,7 @@ export default Vue.extend({
       invite() {
         console.log("invite");
         // vérifier que le user n'est pas deja in game
-        if (this.status != 'orange') {
+        if (this.user.status != 2) {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
               transportOptions: {
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
@@ -186,6 +210,28 @@ export default Vue.extend({
             });
           });
         }
+      },
+      directMessage() {
+        const chatSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/chat`, {
+            transportOptions: {
+            polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+            },
+        });
+        chatSocket.on('info', (data) => {
+          console.log('Connected', data); // TODO: remove
+          chatSocket.once('channelMeDM', (channelMeDM) => {
+            this.chatDirect = true;
+            this.directChannels = channelMeDM;
+            if (!channelMeDM.some(dm => dm.users.some(user => user.id === this.user.id)))
+              chatSocket.emit('joinDM', this.user.id);
+            else
+              this.idCurrentChannel = channelMeDM.find(dm => dm.users.some(user => user.id === this.user.id)).id;
+            chatSocket.disconnect();
+            this.$emit('close');
+            this.$router.push({ name: 'community' });
+          });
+          chatSocket.emit('channelMeDM');
+        });
       },
   },
   created() {
