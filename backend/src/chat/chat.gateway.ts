@@ -130,8 +130,7 @@ export class ChatGateway implements OnGatewayConnection {
         true,
       );
       if (!channel.public && partialChannel.password)
-        this.emitChannel(
-          channel,
+        client.emit(
           'passwordValide',
           bcrypt.compareSync(partialChannel.password, channel.password),
         );

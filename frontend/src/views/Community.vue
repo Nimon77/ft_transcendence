@@ -112,6 +112,10 @@ export default Vue.extend({
       this.socket.on('joinDM', () => {
         this.socket.emit('channelMeDM');
       });
+      this.socket.on('passwordValide', (data) => {
+        if (!data)
+          this.$toast.error('Channel password is incorrect');
+      });
       this.socket.on('leave', (data) => {
         if (this.idCurrentChannel === data.channel.id && (data.user.id === this.user.id || data.is_delete === true))
           this.idCurrentChannel = 0;
