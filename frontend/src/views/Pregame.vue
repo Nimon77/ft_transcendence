@@ -11,7 +11,7 @@
           </p>
           </v-col>
           <v-btn-toggle v-model="gameMap" mandatory tile group>
-          <v-btn > Banana </v-btn> <v-btn> Orange </v-btn> <v-btn> Blueberry </v-btn>
+          <v-btn > Banana </v-btn> <v-btn> Blueberry </v-btn> <v-btn> Orange </v-btn>
           </v-btn-toggle>
         </v-row>
         </v-card-text>
