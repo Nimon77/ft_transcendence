@@ -16,10 +16,10 @@
         </template>
         <v-list class="text-center">
           <v-list-item @click="toProfile">
-            <v-list-item-title>Profile Player</v-list-item-title>
+            <v-list-item-title>Profile</v-list-item-title>
           </v-list-item>
 
-          <div v-if="user.status != 2">
+          <div v-if="user.status != 2 && user.status != 0">
             <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-list-item v-bind="attrs" v-on="on" slot="activator" @click="invite">
@@ -39,14 +39,14 @@
               </v-card>
             </v-dialog>
           </div>
-          <v-list-item v-if="user.status == 2">
-            <v-list-item-title @click="spectate">Spectate</v-list-item-title>
+          <v-list-item  @click="spectate" v-if="user.status == 2">
+            <v-list-item-title>Spectate</v-list-item-title>
           </v-list-item>
-          <v-list-item>
-            <v-list-item-title @click="directMessage">Direct Message</v-list-item-title>
+          <v-list-item @click="directMessage">
+            <v-list-item-title>Direct Message</v-list-item-title>
           </v-list-item>
           <v-list-item @click="removeFriend">
-            <v-list-item-title>Remove Player</v-list-item-title>
+            <v-list-item-title>Remove</v-list-item-title>
           </v-list-item>
         </v-list>
       </v-menu>
@@ -124,9 +124,9 @@ export default Vue.extend({
       spectate(): void {
         if (this.user.status == 2) {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
-              transportOptions: {
+            transportOptions: {
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
-              },
+            },
           });
           this.gameSocket.on('info', () => {
             this.$http.get('/pong/' + this.user.id).then(response => {

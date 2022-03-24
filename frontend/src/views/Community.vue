@@ -77,23 +77,12 @@ export default Vue.extend({
     },
 
     methods: {
-      // fetchCurrentChannelInfos() {
-      //   if (this.idCurrentChannel != 0) {
-      //     this.$http.get('/channel/' + this.idCurrentChannel).then(response => {
-      //       this.currentChannel = response.data;
-      //     });
-      //   }
-      // },
       fetchChannelsList() {
         this.$http.get('/channel').then(response => {
           this.channels = response.data;
         });
-      if (this.socket.connected)
-        this.socket.emit('channelMe');
-      //   this.$http.get('/channel/me').then(response => {
-      //     this.myChannels = response.data;
-      //   });
-      //   this.fetchCurrentChannelInfos();
+        if (this.socket.connected)
+          this.socket.emit('channelMe');
       }
     },
 

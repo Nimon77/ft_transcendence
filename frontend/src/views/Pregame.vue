@@ -95,7 +95,7 @@ export default Vue.extend({
     this.gameSock.on('stop', () => {
       this.endDialog = true;
       this.gameSock.disconnect();
-      this.$toast.warning("Other player leave", {
+      this.$toast.warning("Other player left", {
         position: 'top-center',
         pauseOnHover: false,
       })
