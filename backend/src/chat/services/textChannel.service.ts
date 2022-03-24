@@ -60,7 +60,7 @@ export class TextChannelService {
     const admin = await this.userService.getUser(userId);
 
     channel.name = channel.name.replace(/\s+/g, '');
- 
+
     if (channel.name == undefined)
       throw new HttpException(
         'TextChannel name needs to be specified',
@@ -81,7 +81,7 @@ export class TextChannelService {
       }
 
       try {
-        hashedPassword = await bcrypt.hash(String(channel.password), 10);
+        hashedPassword = bcrypt.hashSync(channel.password, 10);
       } catch (error) {
         throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
       }
@@ -237,12 +237,13 @@ export class TextChannelService {
       ['users', 'banned'],
       true,
     );
-    if (!curchannel.public)
-      if (
-        channel.password == undefined ||
-        !(await bcrypt.compare(channel.password, curchannel.password))
-      )
+    if (!curchannel.public) {
+      let valide = false;
+      if (curchannel.password)
+        valide = bcrypt.compareSync(channel.password, curchannel.password);
+      if (!valide)
         throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
+    }
 
     for (const banned of curchannel.banned)
       if (banned.user.id == user.id) {
