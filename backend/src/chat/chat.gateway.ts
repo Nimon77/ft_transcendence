@@ -48,8 +48,7 @@ export class ChatGateway implements OnGatewayConnection {
       client.data.user = user;
 
       client.emit('info', { user, channels_user, channels_all, dmChannel });
-    } catch {
-    }
+    } catch {}
   }
 
   handleDisconnect(client: Socket): Promise<any> {
@@ -57,8 +56,7 @@ export class ChatGateway implements OnGatewayConnection {
       if (!client.data.user) return;
 
       return this.userService.setStatus(client.data.user.id, Status.ONLINE);
-    } catch {
-    }
+    } catch {}
   }
 
   emitChannel(channel: any, event: string, ...args: any): void {
@@ -70,8 +68,7 @@ export class ChatGateway implements OnGatewayConnection {
         if (channel.users.find((user) => user.id == socket.data.user.id))
           socket.emit(event, ...args);
       });
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('channel')
@@ -84,8 +81,7 @@ export class ChatGateway implements OnGatewayConnection {
         'banned',
       ]);
       client.emit('channel', channel);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('channelMe')
@@ -96,8 +92,7 @@ export class ChatGateway implements OnGatewayConnection {
       );
 
       client.emit('channelMe', channels);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('text')
@@ -120,8 +115,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: user.id, username: user.username },
         ...data,
       });
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('join')
@@ -150,8 +144,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       channel = await this.textChannelService.getChannel(channel.id, ['users']);
       this.emitChannel(channel, 'join', { channel, user: client.data.user });
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('leave')
@@ -175,8 +168,7 @@ export class ChatGateway implements OnGatewayConnection {
         user,
         is_delete: is_delete,
       });
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('admin')
@@ -202,8 +194,7 @@ export class ChatGateway implements OnGatewayConnection {
         channel: { id: channel.id, name: channel.name, admin: channel.adminId },
         admin_user: { id: admin.id, username: admin.username },
       });
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('mute')
@@ -237,8 +228,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         muted_user: { id: curuser.id, username: curuser.username },
       });
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('ban')
@@ -278,8 +268,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         banned_user: { id: curuser.id, username: curuser.username },
       });
-    } catch {
-    }
+    } catch {}
   }
 
   //direct message :D ----------------------------------------------------------------------
@@ -292,8 +281,7 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
       ]);
       client.emit('channelDM', channel);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('channelMeDM')
@@ -303,8 +291,7 @@ export class ChatGateway implements OnGatewayConnection {
         client.data.user.id,
       );
       client.emit('channelMeDM', channel);
-    } catch  {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('joinDM')
@@ -315,8 +302,7 @@ export class ChatGateway implements OnGatewayConnection {
         userId,
       );
       this.emitChannel(channel, 'joinDM');
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('textDM')
@@ -331,7 +317,7 @@ export class ChatGateway implements OnGatewayConnection {
       );
       if (other && other.blocked.includes(client.data.user.id))
         client.emit('blocked');
-      
+
       if (data.text.length >= 1 << 8)
         throw new HttpException('text is too long', HttpStatus.BAD_REQUEST);
 
@@ -345,7 +331,6 @@ export class ChatGateway implements OnGatewayConnection {
         text: log.message,
         channelId: channel.id,
       });
-    } catch {
-    }
+    } catch {}
   }
 }
