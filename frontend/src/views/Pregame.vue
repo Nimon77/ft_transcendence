@@ -92,6 +92,7 @@ export default Vue.extend({
     }
   },
   created() {
+    this.$toast.clear();
     this.gameSock.on('stop', () => {
       this.endDialog = true;
       this.gameSock.disconnect();
