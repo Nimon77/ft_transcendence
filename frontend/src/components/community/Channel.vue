@@ -25,7 +25,7 @@
               </v-col>
               <v-col cols="12">
                 <v-form @submit.prevent="createChannel">
-                  <v-text-field v-model="password" label="Password*" type="password"></v-text-field>
+                  <v-text-field v-model="password" :rules="rulesPassword" label="Password*" type="password"></v-text-field>
                 </v-form>
               </v-col>
             </v-row>
@@ -215,8 +215,16 @@ export default Vue.extend({
       rules.push(rule);
       let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
       rules.push(rule2);
+      let rule3 = v => !this.channels.some(channel => channel.name === v) || 'already exists';
+      rules.push(rule3);
       return rules;
     },
+    rulesPassword() {
+      const rules = [];
+      let rule = v => v.length <= 16 || 'must be less than 16 characters';
+      rules.push(rule);
+      return rules;
+    }
   },
 
   methods: {

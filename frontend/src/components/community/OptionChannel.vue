@@ -75,9 +75,11 @@ export default Vue.extend({
             oldPassword: this.oldPassword, newPassword: this.newPassword
           }).catch(error => {
             if (error.response.status == 403) {
-              this.$toast.error('Wrong password', { position: 'bottom-left' });
+              this.$toast.error('Wrong password', { position: 'top-left' });
             }
           });
+          this.oldPassword = '';
+          this.newPassword = '';
           this.dialog =! this.dialog;
         }
     },
