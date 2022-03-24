@@ -3,58 +3,54 @@ import VueRouter, { RouteConfig } from 'vue-router';
 import axios from 'axios';
 import jwt_decode from 'jwt-decode';
 
-import Login from '@/views/Login.vue';
-import Community from '@/views/Community.vue';
-import Profile from '@/views/Profile.vue';
-import Pregame from '@/views/Pregame.vue';
-import Game from '@/views/Game.vue';
-import Main from '@/views/Main.vue';
-import UpdateProfile from '@/views/UpdateProfile.vue';
-import Otp from '@/views/Otp.vue';
 import store from '@/store';
 
 Vue.use(VueRouter)
+
+function lazyLoad(view){
+  return() => import(`@/views/${view}.vue`)
+}
 
 const routes: Array<RouteConfig> = [
   {
     path: '/',
     name: 'Main',
-    component: Main
+    component: lazyLoad('Main'),
   },
   {
     path: '/community',
     name: 'community',
-    component: Community
+    component: lazyLoad('Community'),
   },
   {
     path: '/profile/:id',
     name: 'profile',
-    component: Profile,
+    component: lazyLoad('Profile'),
   },
   {
     path: '/preGame',
     name: 'preGame',
-    component: Pregame
+    component: lazyLoad('Pregame'),
   },
   {
     path: '/game',
     name: 'game',
-    component: Game,
+    component: lazyLoad('Game'),
   },
   {
     path: '/login',
     name: 'Login',
-    component: Login,
+    component: lazyLoad('Login'),
   },
   {
     path: '/otp',
     name: 'Otp',
-    component: Otp,
+    component: lazyLoad('Otp'),
   },
   {
     path: '/updateprofile',
     name: 'UpdateProfile',
-    component: UpdateProfile,
+    component: lazyLoad('UpdateProfile'),
   },
 ]
 
