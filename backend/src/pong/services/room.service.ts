@@ -130,7 +130,7 @@ export class RoomService {
   }
 
   startGame(room: Room): void {
-    if (room.state != State.STARTING) return;
+    if (room.state != State.COUNTDOWN) return;
     for (const player of room.players) if (!player.input) return;
 
     room.options.input.plan =
@@ -150,7 +150,6 @@ export class RoomService {
       room.options,
       room.players.map((player) => player.user),
     );
-
     room.state = State.COUNTDOWN;
   }
 
