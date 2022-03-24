@@ -199,9 +199,11 @@ export default Vue.extend({
               roomCode: code
             };
             this.notifySocket.emit('notify', payload);
-            this.notifySocket.once('notify', (data) => {
+            this.notifySocket.on('notify', (data) => {
               if (data.sender == this.user.id && this.gameSocket.connected) {
                 this.invitDialog = false;
+				this.notifySocket.off('notify');
+				this.$store.dispatch('enableNotify');
                 this.$emit('close');
                 this.$router.push('/pregame');
               }
