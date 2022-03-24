@@ -205,49 +205,6 @@ export class TextChannelService {
     return await bcrypt.compare(password, currentChannel.password);
   }
 
-  async updateChannel(
-    id: number,
-    channel: TextChannel,
-    userId: number,
-  ): Promise<void> {
-    {
-      const user = await this.userService.getUser(userId);
-      const updatedChannel = await this.getChannel(id);
-      if (updatedChannel.owner.id != user.id)
-        throw new HttpException(
-          'User isnt owner of TextChannel',
-          HttpStatus.FORBIDDEN,
-        );
-    }
-
-    const partial: TextChannel = {
-      public: channel.public !== false,
-    } as TextChannel;
-
-    if (channel.name) partial.name = channel.name;
-
-    if (channel.hasOwnProperty('public')) {
-      partial.public = channel.public !== false;
-      if (partial.public) partial.password = null;
-      else {
-        if (!channel.password)
-          throw new HttpException('Password Required', HttpStatus.FORBIDDEN);
-
-        try {
-          partial.password = await bcrypt.hash(String(channel.password), 10);
-        } catch (error) {
-          throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-        }
-      }
-    }
-
-    try {
-      await this.textChannelRepository.update(channel.id, partial);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
-  }
-
   async getAllChannels(): Promise<TextChannel[]> {
     const channels = await this.textChannelRepository.find();
     channels.forEach((chat) => delete chat.password);
@@ -491,15 +448,5 @@ export class TextChannelService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-  }
-
-  async getLogsForChannel(id: number, userId: number): Promise<Log[]> {
-    const user = await this.userService.getUser(userId);
-    const currentChannel = await this.getChannel(id, ['logs']);
-    const logs = [];
-    for (const log of currentChannel.logs) {
-      if (user.blocked.indexOf(log.user.id) == -1) logs.push(log);
-    }
-    return logs;
   }
 }

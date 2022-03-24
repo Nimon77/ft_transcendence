@@ -32,6 +32,10 @@
     {
       "name": "user id",
       "description": "Everything about the users for any user"
+    },
+    {
+      "name": "testing",
+      "description": "Useful routes for testing that are disabled by default (commented)"
     }
   ],
   "servers": [],
@@ -49,7 +53,13 @@
         "properties": {
           "id": {
             "type": "number",
-            "example": 65000
+            "example": 1
+          },
+          "connection": {
+            "$ref": "#/components/schemas/Connection"
+          },
+          "avatar": {
+            "$ref": "#/components/schemas/Avatar"
           },
           "username": {
             "type": "string",
@@ -83,24 +93,17 @@
               65379
             ]
           },
-          "otp": {
-            "type": "string",
-            "example": "lnrtuvcbdefghijk"
-          },
-          "avatarId": {
+          "status": {
             "type": "number",
-            "example": 65000
+            "example": 1
           },
-          "avatar": {
-            "$ref": "#/components/schemas/Avatar"
-          },
-          "rooms": {
+          "won": {
             "type": "array",
             "items": {
-              "$ref": "#/components/schemas/Channel"
+              "$ref": "#/components/schemas/Match"
             }
           },
-          "matches": {
+          "lost": {
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/Match"
@@ -108,16 +111,39 @@
           }
         }
       },
-      "Channel": {
+      "TextChannel": {
         "type": "object",
         "properties": {
           "id": {
             "type": "number",
             "example": 1
           },
+          "user": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
+            }
+          },
+          "log": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/Log"
+            }
+          },
           "name": {
             "type": "string",
             "example": "les bgs"
+          },
+          "public": {
+            "type": "boolean",
+            "example": "false"
+          },
+          "password": {
+            "type": "string",
+            "example": "password"
+          },
+          "owner": {
+            "$ref": "#/components/schemas/User"
           },
           "adminId": {
             "type": "array",
@@ -129,24 +155,6 @@
               65350
             ]
           },
-          "ownerId": {
-            "type": "number",
-            "example": 65000
-          },
-          "users": {
-            "type": "array",
-            "items": {
-              "$ref": "#/components/schemas/User"
-            }
-          },
-          "public": {
-            "type": "boolean",
-            "example": "false"
-          },
-          "password": {
-            "type": "string",
-            "example": "password"
-          },
           "muted": {
             "type": "array",
             "items": {
@@ -157,6 +165,21 @@
             "type": "array",
             "items": {
               "$ref": "#/components/schemas/BannedUser"
+            }
+          }
+        }
+      },
+      "DMChannel": {
+        "type": "object",
+        "properties": {
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "user": {
+            "type": "array",
+            "items": {
+              "$ref": "#/components/schemas/User"
             }
           },
           "log": {
@@ -174,16 +197,15 @@
             "type": "number",
             "example": 1
           },
-          "userId": {
-            "type": "number",
-            "example": 65000
+          "user": {
+            "$ref": "#/components/schemas/User"
           },
           "endOfBan": {
             "type": "string",
             "example": "2022-06-29"
           },
           "room": {
-            "$ref": "#/components/schemas/Channel"
+            "$ref": "#/components/schemas/TextChannel"
           }
         }
       },
@@ -194,16 +216,15 @@
             "type": "number",
             "example": 1
           },
-          "userId": {
-            "type": "number",
-            "example": 65000
+          "user": {
+            "$ref": "#/components/schemas/User"
           },
           "endOfMute": {
             "type": "string",
             "example": "2022-06-29"
           },
           "room": {
-            "$ref": "#/components/schemas/Channel"
+            "$ref": "#/components/schemas/TextChannel"
           }
         }
       },
@@ -231,20 +252,9 @@
             "type": "number",
             "example": 1
           },
-          "userId": {
-            "type": "number",
-            "example": 65000
-          },
           "message": {
             "type": "string",
             "example": "salut"
-          },
-          "time": {
-            "type": "string",
-            "example": "2022-06-29"
-          },
-          "room": {
-            "$ref": "#/components/schemas/Channel"
           },
           "user": {
             "$ref": "#/components/schemas/User"
@@ -272,10 +282,16 @@
             "example": 1
           },
           "score": {
-            "type": "string",
-            "example": "5-4"
+            "type": "array",
+            "items": {
+              "type": "number"
+            },
+            "example": [
+              2,
+              5
+            ]
           },
-          "time": {
+          "date": {
             "type": "string",
             "example": "2022-06-29"
           },
@@ -284,6 +300,26 @@
           },
           "loser": {
             "$ref": "#/components/schemas/User"
+          }
+        }
+      },
+      "Connection": {
+        "type": "object",
+        "properties": {
+          "42": {
+            "type": "number",
+            "example": 65000
+          },
+          "id": {
+            "type": "number",
+            "example": 1
+          },
+          "user": {
+            "$ref": "#/components/schemas/User"
+          },
+          "otp": {
+            "type": "string",
+            "example": "DMBEA62FLR5UGNSD"
           }
         }
       }
@@ -500,50 +536,10 @@
         }
       }
     },
-    "/auth/2fa/check": {
-      "put": {
-        "tags": [
-          "auth"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "The current user verifies his 2fa authentification",
-        "operationId": "IdController_Check2FA",
-        "parameters": [],
-        "requestBody": {
-          "description": "code for 2fa to check",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "code": {
-                    "type": "string",
-                    "example": 123456
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      }
-    },
     "/auth/generate/{id}": {
       "get": {
         "tags": [
-          "auth"
+          "testing"
         ],
         "summary": "Generates a JWT token for the user (specified by id), if that user doesn't exist it will get created",
         "operationId": "AuthController_generateJWT",
@@ -658,260 +654,6 @@
         }
       }
     },
-    "/channel/me": {
-      "get": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns all the channels objects the current user is in",
-        "operationId": "MeController_getAllChannels",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
-          }
-        }
-      }
-    },
-    "/channel/join": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Makes the current user join the channel (specified in body)",
-        "operationId": "MeController_joinChannel",
-        "parameters": [],
-        "requestBody": {
-          "description": "Channel object (only id necessary, password aswell if room isnt public)",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 10
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "uwu"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the channel object (specified by id)",
-        "operationId": "IdController_updateChannel",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Updated channel object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "uwu"
-                  },
-                  "public": {
-                    "type": "boolean",
-                    "example": true
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/admin": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the channel object (specified by id) (more specifically the adminId)",
-        "operationId": "MeController_changeUserAdmin",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "in": "path",
-            "required": true,
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Id of the user whom you wish to make admin of the channel",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 65000
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/ban": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the banneduser object of the channel object (specified by id)",
-        "operationId": "IdController_banUserFromRoom",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "New BannedUser object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 65000
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
     "/channel/{id}/change": {
       "post": {
         "tags": [
@@ -965,251 +707,6 @@
         }
       }
     },
-    "/channel/{id}/mute": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the muteduser object of the channel object (specified by id)",
-        "operationId": "IdController_muteUserFromRoom",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "New MutedUser object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 65000
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/leave": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Makes the current user leave the channel (specified by id)",
-        "operationId": "MeController_leaveChannel",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/log": {
-      "get": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns the log object of the channel object (specified by id)",
-        "operationId": "IdController_getLogsFromRoom",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the log object of the channel object (specified by id)",
-        "operationId": "IdController_addLogToRoom",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "New message",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "hello"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/kick/{userid}": {
-      "put": {
-        "tags": [
-          "channel me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Makes the current user kick the user (specified by userid) from the channel (specified by id)",
-        "operationId": "MeController_kickUserFromChannel",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "userid",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          }
-        }
-      }
-    },
     "/channel/": {
       "get": {
         "tags": [
@@ -1229,325 +726,6 @@
           },
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      }
-    },
-    "/channel/{id}/": {
-      "get": {
-        "tags": [
-          "channel id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns the channel object (specified by id)",
-        "operationId": "IdController_getRoom",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "channel id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Creates a channel object for the user (specified by id)",
-        "operationId": "IdController_createChannelForUser",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "New channel object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "name": {
-                    "type": "string",
-                    "example": "le gang"
-                  },
-                  "public": {
-                    "type": "boolean",
-                    "example": "false"
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "password"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "channel id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Delete the channel object (specified by id)",
-        "operationId": "IdController_deleteChannel",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/add": {
-      "put": {
-        "tags": [
-          "channel id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the user object of the channel object",
-        "operationId": "IdController_addUserToRoom",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Id of the room where you want to add the user into (and password if room is private)",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 10
-                  },
-                  "password": {
-                    "type": "string",
-                    "example": "uwu"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
-          },
-          "409": {
-            "$ref": "#/components/responses/AlreadyExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/check": {
-      "put": {
-        "tags": [
-          "channel id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Checks the channel object with the password given in the body",
-        "operationId": "IdController_checkPass",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "password you which to check with the channel object password",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "password": {
-                    "type": "string",
-                    "example": "uwu"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/ChannelNotExist"
-          }
-        }
-      }
-    },
-    "/channel/{id}/{userid}/log": {
-      "put": {
-        "tags": [
-          "channel id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the log object of the channel object (specified by id) (for the user specified by userid)",
-        "operationId": "IdController_addLogToRoom2",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the channel",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          },
-          {
-            "name": "userid",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "New message",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "message": {
-                    "type": "string",
-                    "example": "hello"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "403": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          },
-          "404": {
-            "$ref": "#/components/responses/NotExist"
           }
         }
       }
@@ -1636,35 +814,8 @@
           "401": {
             "$ref": "#/components/responses/UnauthorizedError"
           },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          },
-          "409": {
+          "403": {
             "$ref": "#/components/responses/UnauthorizedValue"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "user me"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Deletes the current user object",
-        "operationId": "MeController_deleteUser",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
           },
           "404": {
             "$ref": "#/components/responses/UserNotExist"
@@ -1869,77 +1020,6 @@
         }
       }
     },
-    "/user": {
-      "get": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns all the users of the server",
-        "operationId": "IdController_getAllUsers",
-        "parameters": [],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          }
-        }
-      },
-      "post": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Creates a user object",
-        "operationId": "IdController_createUser",
-        "parameters": [],
-        "requestBody": {
-          "description": "New user object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "id": {
-                    "type": "number",
-                    "example": 1
-                  },
-                  "log": {
-                    "type": "string",
-                    "example": "droge"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "201": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "409": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          }
-        }
-      }
-    },
     "/user/{id}": {
       "get": {
         "tags": [
@@ -1974,225 +1054,6 @@
             "$ref": "#/components/responses/UserNotExist"
           }
         }
-      },
-      "put": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Modifies the user object (specified by id)",
-        "operationId": "IdController_updateUser",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Updated user object",
-          "required": true,
-          "content": {
-            "application/json": {
-              "schema": {
-                "type": "object",
-                "properties": {
-                  "username": {
-                    "type": "string",
-                    "example": "dimitri"
-                  },
-                  "followed": {
-                    "type": "array",
-                    "items": {
-                      "type": "number"
-                    },
-                    "example": [
-                      65255,
-                      65350
-                    ]
-                  },
-                  "blocked": {
-                    "type": "array",
-                    "items": {
-                      "type": "number"
-                    },
-                    "example": [
-                      65243,
-                      65379
-                    ]
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          },
-          "409": {
-            "$ref": "#/components/responses/UnauthorizedValue"
-          }
-        }
-      },
-      "delete": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Delete the user object (specified by id)",
-        "operationId": "IdController_deleteUser",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "string"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          }
-        }
-      }
-    },
-    "/user/{id}/avatar": {
-      "get": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns the user's avatar (specified by id)",
-        "operationId": "IdController_getAvatar",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "description": "Expected response",
-            "content": {
-              "image/*": {
-                "schema": {
-                  "type": "string",
-                  "format": "binary"
-                }
-              }
-            }
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          }
-        }
-      },
-      "put": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns the user's avatar (specified by id)",
-        "operationId": "IdController_setAvatar",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "requestBody": {
-          "description": "Updated avatar",
-          "required": true,
-          "content": {
-            "multipart/form-data": {
-              "schema": {
-                "type": "object",
-                "required": [
-                  "file"
-                ],
-                "properties": {
-                  "file": {
-                    "description": "new Avatar",
-                    "type": "string",
-                    "format": "binary"
-                  }
-                }
-              }
-            }
-          }
-        },
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "400": {
-            "$ref": "#/components/responses/DatabaseError"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          },
-          "406": {
-            "$ref": "#/components/responses/AvatarNotExist"
-          }
-        }
       }
     },
     "/user/matches/{id}": {
@@ -2207,42 +1068,6 @@
         ],
         "summary": "Returns the user's matches (specified by id)",
         "operationId": "IdController_getMatches",
-        "parameters": [
-          {
-            "name": "id",
-            "description": "Id of the user",
-            "required": true,
-            "in": "path",
-            "schema": {
-              "type": "number"
-            }
-          }
-        ],
-        "responses": {
-          "200": {
-            "$ref": "#/components/responses/OK"
-          },
-          "401": {
-            "$ref": "#/components/responses/UnauthorizedError"
-          },
-          "404": {
-            "$ref": "#/components/responses/UserNotExist"
-          }
-        }
-      }
-    },
-    "/user/rank/{id}": {
-      "get": {
-        "tags": [
-          "user id"
-        ],
-        "security": [
-          {
-            "bearerAuth": []
-          }
-        ],
-        "summary": "Returns the user's rank (specified by id)",
-        "operationId": "IdController_getRank",
         "parameters": [
           {
             "name": "id",

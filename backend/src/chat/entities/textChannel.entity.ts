@@ -1,11 +1,4 @@
-import {
-  Column,
-  Entity,
-  PrimaryGeneratedColumn,
-  OneToMany,
-  JoinColumn,
-  ManyToOne,
-} from 'typeorm';
+import { Column, Entity, OneToMany, JoinColumn, ManyToOne } from 'typeorm';
 import { User } from 'src/user/entities/user.entity';
 import { Channel } from './channel.entity';
 import { MutedUser } from './mute.entity';
@@ -13,9 +6,6 @@ import { BannedUser } from './banned.entity';
 
 @Entity()
 export class TextChannel extends Channel {
-  @PrimaryGeneratedColumn()
-  id: number;
-
   @Column({ unique: true, length: 8 })
   name: string;
 
