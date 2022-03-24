@@ -100,7 +100,7 @@
               </v-card-text>
               <v-card-actions>
                 <v-spacer></v-spacer>
-                <v-btn color="blue darken-1 white--text" depressed tile  @click="joinDMChannel(channel.id)"> JOIN </v-btn>
+                <v-btn color="blue darken-1 white--text" depressed tile  @click="joinChannel(channel.id)"> JOIN </v-btn>
               </v-card-actions>
             </v-card>
           </v-dialog>
