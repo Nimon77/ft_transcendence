@@ -22,9 +22,11 @@ export class TextChannel extends Channel {
   @Column('int', { array: true, default: [] })
   adminId: number[];
 
-  @OneToMany(() => MutedUser, (mutedUser) => mutedUser.channel)
+  @OneToMany(() => MutedUser, (mutedUser) => mutedUser.channel, { eager: true })
   muted: MutedUser[];
 
-  @OneToMany(() => BannedUser, (bannedUser) => bannedUser.channel)
+  @OneToMany(() => BannedUser, (bannedUser) => bannedUser.channel, {
+    eager: true,
+  })
   banned: BannedUser[];
 }
