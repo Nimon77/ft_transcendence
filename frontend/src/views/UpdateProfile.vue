@@ -137,6 +137,8 @@ export default Vue.extend({
             this.$store.commit('setReady', true);
             this.$router.push({ name: 'Main' });
           });
+        }).catch(() => {
+          this.$toast.error('Username already exist');
         });
       }
     },
