@@ -48,16 +48,21 @@
               <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="100%"> PROFILE </v-btn>
             </v-list-item-title>
           </v-list-item>
-          <div v-if="!chatDirect">
-            <v-list-item dense v-if="currentChannel.adminId.includes(user.id)">
+          <div v-if="!chatDirect && currentChannel.adminId.includes(user.id)">
+            <v-list-item dense>
               <v-list-item-title class="d-flex justify-center text-button">
                 <v-btn @click="mutePlayer(player.id)" color="red" tile dark min-width="50%" >{{isPlayerMuted(player.id)}}</v-btn>
-                <v-btn @click="banPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" >{{isPlayerBanned(player.id)}}</v-btn>
+                <v-btn @click="kickPlayer(player.id)" color="red" class="ml-1" tile dark min-width="50%" >KICK</v-btn>
               </v-list-item-title>
             </v-list-item>                <!-- MUTE BAN FOR AMOUNT OF TIME!! -->
+            <v-list-item dense>
+              <v-list-item-title class="d-flex justify-center text-button">
+                <v-btn @click="banPlayer(player.id)" color="red" tile dark min-width="100%" >{{isPlayerBanned(player.id)}}</v-btn>
+              </v-list-item-title>
+            </v-list-item>
             <v-list-item dense v-if="currentChannel.owner.id === user.id">
               <v-list-item-title class="d-flex justify-center text-button">
-                <v-btn @click="setAdmin(player.id)" color="blue" tile dark min-width="100%" >
+                <v-btn @click="setAdmin(player.id)" color="green lighten-1" tile dark min-width="100%" >
                   <div id="admin">{{isPlayerAdmin(player.id)}}</div>
                 </v-btn>
               </v-list-item-title>
@@ -149,6 +154,9 @@ export default Vue.extend({
       },
       mutePlayer(idPlayer) {
         this.socket.emit('mute', {userId: idPlayer, channelId: this.idCurrentChannel});
+      },
+      kickPlayer(idPlayer) {
+        this.socket.emit('leave', {userId: idPlayer, channelId: this.idCurrentChannel});
       },
       banPlayer(idPlayer) {
         this.socket.emit('ban', {userId: idPlayer, channelId: this.idCurrentChannel});
