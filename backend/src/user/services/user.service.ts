@@ -57,6 +57,15 @@ export class UserService {
           HttpStatus.FORBIDDEN,
         );
 
+    if (user.username) {
+      user.username = user.username.replace(/\s+/g, '');
+      if (!user.username.length)
+        throw new HttpException(
+          'Username cannot be empty',
+          HttpStatus.FORBIDDEN,
+        );
+    }
+
     try {
       user.id = id;
       if (user.username) user.profileCompleted = true;
