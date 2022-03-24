@@ -95,6 +95,7 @@ export default Vue.extend({
     },
 
     mounted() {
+      this.$toast.clear();
       this.gameSock.off('ready');
       this.gameSock.on('ready', (options) => {
         if (this.pong) {
