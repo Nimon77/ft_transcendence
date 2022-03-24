@@ -18,7 +18,7 @@
               <v-list-item-title> <v-badge dot inline :color="status(player.status)"> </v-badge> {{player.username}} </v-list-item-title>
             </v-list-item-content>
           </template>
-          <v-list-item dense>
+          <v-list-item dense v-if="player.status !== 2">
             <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-list-item-title class="d-flex justify-center text-button" v-bind="attrs" v-on="on" slot="activator" @click="invite(player.id)">
