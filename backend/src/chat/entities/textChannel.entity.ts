@@ -22,7 +22,7 @@ export class TextChannel extends Channel {
   @Column({ default: true })
   public: boolean;
 
-  @Column({ nullable: true, length: 16 })
+  @Column({ nullable: true })
   password: string;
 
   @ManyToOne(() => User, { onDelete: 'CASCADE', eager: true })
