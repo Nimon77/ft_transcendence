@@ -102,6 +102,10 @@ export default Vue.extend({
       sendMsg() {
         if (this.input == '' || this.idCurrentChannel == 0)
           return;
+        if (this.input.length >= 256) {
+          this.$toast.error('Message too long');
+          return;
+        }
         if (this.chatDirect)
           this.socket.emit('textDM', {
             text: this.input,
