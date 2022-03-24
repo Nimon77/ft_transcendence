@@ -168,7 +168,6 @@ export default Vue.extend({
   created() {
     this.$http.get('/user').then(response => {
       this.users = response.data;
-      console.log('USERS : ', this.users);
     });
   }
 });

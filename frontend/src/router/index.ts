@@ -77,7 +77,6 @@ async function checkJWT() {
       headers: {
         Authorization: 'Bearer ' + token
     }}).then(res => {
-      // console.log(res); // TODO: remove
       status.JWTvalide = res.data;
     });
     if (status.JWTvalide) {
@@ -111,7 +110,6 @@ interface JWT {
 }
 
 router.beforeEach((to, from, next) => {
-  // console.log('to', to) // TODO: remove
   document.title = "BananaPong";
   checkJWT().then(Status => {
     if (Status.JWTvalide && (store.getters.getNotifySocket === null || !store.getters.getNotifySocket.connected)) {
@@ -122,7 +120,6 @@ router.beforeEach((to, from, next) => {
       axios.defaults.headers.common['Authorization'] = 'Bearer ' + to.query.code.toString();
       const decoded = jwt_decode(to.query.code.toString()) as JWT;
       if (decoded.otp === false) {
-        console.log(Status)
         return next({ name: 'Otp' });
       }
       axios.get("/user/me").then(res => {

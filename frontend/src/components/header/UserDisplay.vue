@@ -58,25 +58,20 @@ export default Vue.extend({
       },
     },
     methods: {
-      async block() {
-        await this.$http.put(`/user/me/block/${this.user.id}`).then(response => {
-          console.log('PUT REQUEST', response); // TODO: remove
-          });
+      block() {
+        this.$http.put(`/user/me/block/${this.user.id}`)
         this.disabledAdd = !this.disabledAdd;
         if (this.disabledAdd == false)
           document.getElementById('blockButton').innerHTML = "BLOCK";
         else
           document.getElementById('blockButton').innerHTML = "UNBLOCK";
       },
-      async addStat() {
+      addStat() {
         this.loader = !this.loader;
         this.color = 'green';
         setTimeout(this.setDone, 500);
-        await this.$http.put(`/user/me/follow/${this.user.id}`).then(response => {
-          console.log('PUT REQUEST', response); // TODO: remove
-          });
-        await this.$http.get('/user/me').then(response => {
-          console.log('GET REQUEST', response); // TODO: remove
+        this.$http.put(`/user/me/follow/${this.user.id}`)
+        this.$http.get('/user/me').then(response => {
           this.me = response.data;
         });
         this.$emit('added');

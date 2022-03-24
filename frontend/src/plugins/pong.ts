@@ -10,7 +10,6 @@ export class Pong {
   me: number;
 
   constructor(canvas: HTMLCanvasElement, options: IGameOptions, me: number, players: Array<IUser>) {
-    console.log('players', players);
     canvas.width = options.display.width;
     canvas.height = options.display.height;
 

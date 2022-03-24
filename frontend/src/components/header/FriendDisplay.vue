@@ -122,8 +122,6 @@ export default Vue.extend({
     },
     methods: {
       spectate(): void {
-        console.log("spectate");
-        // vérifier que le user n'est pas deja in game
         if (this.user.status == 2) {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
               transportOptions: {
@@ -131,9 +129,7 @@ export default Vue.extend({
               },
           });
           this.gameSocket.on('info', (data) => {
-            console.log('Connected', data); // TODO: remove
             this.$http.get('/pong/' + this.user.id).then(response => {
-              console.log('/pong/', response);
               this.gameSocket.emit('room', response.data); // RAJOUTER LE CODE DE LA ROOM
             }).catch(() => {
               this.gameSocket.disconnect();
@@ -144,7 +140,6 @@ export default Vue.extend({
             });
           });
           this.gameSocket.on('ready', (options, players) => {
-            console.log(options, players);
             this.$store.commit('setGameOptions', options);
             this.$store.commit('setUsersInGame', players);
           });
@@ -185,21 +180,17 @@ export default Vue.extend({
       },
 
       invite() {
-        console.log("invite");
-        // vérifier que le user n'est pas deja in game
         if (this.user.status != 2) {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
               transportOptions: {
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
               },
           });
-          this.gameSocket.on('info', (data) => {
-            console.log('Connected', data); // TODO: remove
+          this.gameSocket.on('info', () => {
               this.gameSocket.emit('room');
           });
           this.gameSocket.on('room', (code) => {
             this.dialog = false;
-            console.log('CODE ROOM ', code);
             this.$store.commit('setGameRoom', code);
             const payload = {
               id: this.user.id,
@@ -210,7 +201,6 @@ export default Vue.extend({
             this.notifySocket.emit('notify', payload);
             this.notifySocket.once('notify', (data) => {
               if (data.sender == this.user.id && this.gameSocket.connected) {
-                console.log('NOTIFY', data); // TODO: remove
                 this.invitDialog = false;
                 this.$emit('close');
                 this.$router.push('/pregame');
@@ -226,7 +216,6 @@ export default Vue.extend({
             },
         });
         chatSocket.on('info', (data) => {
-          console.log('Connected', data); // TODO: remove
           chatSocket.once('channelMeDM', (channelMeDM) => {
             this.chatDirect = true;
             this.directChannels = channelMeDM;

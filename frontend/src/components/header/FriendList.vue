@@ -84,7 +84,6 @@ export default Vue.extend({
         return this.$store.getters.getUser;
       },
       set(value) {
-        console.log("set me", value); // TODO: remove
         this.$store.commit('setUser', value);
       }
     },

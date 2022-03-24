@@ -195,7 +195,6 @@ export default Vue.extend({
       },
       directMessage(playerId: number) {
         this.socket.once('channelMeDM', (channelMeDM) => {
-          console.log('channelMeDM', channelMeDM);
           if (!channelMeDM.some(dm => dm.users.some(user => user.id === playerId)))
             this.socket.emit('joinDM', playerId);
           else
@@ -206,8 +205,6 @@ export default Vue.extend({
         this.socket.emit('channelMeDM');
       },
       invite(id: number) {
-        console.log("invite");
-        // vérifier que le user n'est pas deja in game
         if (this.status != 'orange') {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
             transportOptions: {
@@ -215,12 +212,10 @@ export default Vue.extend({
             },
           });
           this.gameSocket.on('info', (data) => {
-            console.log('Connected', data); // TODO: remove
               this.gameSocket.emit('room');
           });
           this.gameSocket.on('room', (code) => {
             this.dialog = false;
-            console.log('CODE ROOM ', code);
             this.$store.commit('setGameRoom', code);
             const payload = {
               id: id,
@@ -231,9 +226,7 @@ export default Vue.extend({
             this.notifySocket.emit('notify', payload);
             this.notifySocket.once('notify', (data) => {
               if (data.sender == id && this.gameSocket.connected) {
-                console.log('NOTIFY', data); // TODO: remove
                 this.invitDialog = false;
-                // this.$emit('close');
                 this.$router.push('/pregame');
               }
             });

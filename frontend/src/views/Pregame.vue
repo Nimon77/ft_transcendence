@@ -80,11 +80,9 @@ export default Vue.extend({
         this.endDialog = true;
         this.gameSock.disconnect();
       });
-      console.log("PLAYER READY");
       this.loader = !this.loader;
       this.color = 'green';
       this.gameSock.on('ready', (options, users) => {
-        console.log('Game ready!', options);
         this.$store.commit('setGameOptions', options);
         this.$store.commit('setUsersInGame', users);
         this.gameSock.off('stop');
@@ -94,8 +92,6 @@ export default Vue.extend({
     }
   },
   created() {
-    console.log("PREGAME");
-    console.log("ROOM", this.$store.getters.getGameRoom);
     this.gameSock.on('stop', () => {
       this.endDialog = true;
       this.gameSock.disconnect();
