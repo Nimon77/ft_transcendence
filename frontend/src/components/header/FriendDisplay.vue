@@ -39,7 +39,7 @@
               </v-card>
             </v-dialog>
           </div>
-          <v-list-item  @click="spectate" v-if="user.status == 2">
+          <v-list-item  @click="spectate" v-if="user.status === 2 && me.status !== 2">
             <v-list-item-title>Spectate</v-list-item-title>
           </v-list-item>
           <v-list-item @click="directMessage">
