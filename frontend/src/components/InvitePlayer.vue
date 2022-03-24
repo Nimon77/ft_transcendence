@@ -22,6 +22,7 @@ import router from '@/router';
 
 export default Vue.extend({
   name: 'InvitePlayer',
+
   computed: {
     message() {
       return store.getters.getNotify.message;
@@ -52,6 +53,7 @@ export default Vue.extend({
     },
     socket() { return store.getters.getNotifySocket; },
   },
+
   methods: {
     clicked() {
       this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
@@ -73,6 +75,6 @@ export default Vue.extend({
       })
       // alert(store.getters.getNotify.roomCode);
     }
-  }
+  },
 });
 </script>

@@ -27,6 +27,8 @@ export default new Vuex.Store({
     avatar: null,
     ready: false,
 
+    listUsers: <IUser[]> [],
+
     notifySocket: <Socket> null,
     notify: {
       id: Number,
@@ -52,6 +54,7 @@ export default new Vuex.Store({
   getters: {
     getReady: state => state.ready,
     getUser: state => state.user,
+    getListUsers: state => state.listUsers,
     getAvatar: state => state.avatar,
     getNotifySocket: state => state.notifySocket,
     getNotify: state => state.notify,
@@ -76,6 +79,9 @@ export default new Vuex.Store({
   mutations: {
     setUser(state, user) {
       state.user = user;
+    },
+    setListUsers(state, listUsers) {
+      state.listUsers = listUsers;
     },
     setAvatar(state, avatar) {
       state.avatar = avatar;
@@ -119,9 +125,9 @@ export default new Vuex.Store({
         console.log(state.notify); // TODO: remove
         Vue.$toast(InvitePlayer, {
           position: POSITION.TOP_LEFT,
-          timeout: false,
+          timeout: 10000,
           closeOnClick: true,
-          pauseOnFocusLoss: true,
+          pauseOnFocusLoss: false,
           pauseOnHover: true,
           draggable: true,
           draggablePercent: 0.6,
@@ -137,13 +143,6 @@ export default new Vuex.Store({
       if (payload.userId == state.user.id) {
         state.user.status = payload.status;
       }
-      // const currentChannel = state.chat.myChannels.find(channel => channel.id === state.chat.idCurrentChannel);
-      // if (state.chat.idCurrentChannel != 0 &&
-      //   state.chat.socket.connected &&
-      //   currentChannel.users &&
-      //   currentChannel.users.some(user => user.id == payload.userId)) {
-      //   currentChannel.users.find(user => user.id == payload.userId).status = payload.status;
-      // }
       state.chat.myChannels.forEach(channel => {
         if (channel.users &&
           channel.users.some(user => user.id == payload.userId)) {
@@ -154,6 +153,11 @@ export default new Vuex.Store({
         if (channel.users &&
           channel.users.some(user => user.id == payload.userId)) {
           channel.users.find(user => user.id == payload.userId).status = payload.status;
+        }
+      });
+      state.listUsers.forEach(user => {
+        if (user.id == payload.userId) {
+          user.status = payload.status;
         }
       });
     }
@@ -171,6 +175,11 @@ export default new Vuex.Store({
       this.state.notifySocket.on('status', (data) => {
         commit('NOTIFY_status', data);
       });
+    },
+    enableNotify({ commit }) {
+      this.state.notifySocket.on('notify', (data) => {
+        commit('NOTIFY_notify', data);
+      })
     }
   },
   modules: {

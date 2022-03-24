@@ -5,7 +5,7 @@
         <img v-if="user.id !== undefined" v-auth-image="'/user/'+ user.id +'/avatar'"/>
       </v-avatar>
 
-      <v-badge class="ml-3" inline left :color="status">
+      <v-badge class="ml-3" inline left :color="getStatusColor(user.status)">
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
@@ -19,24 +19,26 @@
             <v-list-item-title>Profile Player</v-list-item-title>
           </v-list-item>
 
-          <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
-            <template v-slot:activator="{ on, attrs }">
-              <v-list-item v-if="user.status != 2" v-bind="attrs" v-on="on" slot="activator" @click="invite">
-                <v-list-item-title>Invite to Game</v-list-item-title>
-              </v-list-item>
-            </template>
-            <v-card>
-            <v-card-title>
-              <div style="margin-left: 120px">
-              <h3 class="headline">Waiting for player...</h3>
-              <div style="margin-left: 95px; margin-top: 30px; margin-bottom: 20px;"> <v-progress-circular indeterminate color="grey"></v-progress-circular> </div>
-              </div>
-            </v-card-title>
-            <v-card-actions>
-              <v-btn @click="cancelInvit" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
-            </v-card-actions>
-            </v-card>
-          </v-dialog>
+          <div v-if="user.status != 2">
+            <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
+              <template v-slot:activator="{ on, attrs }">
+                <v-list-item v-bind="attrs" v-on="on" slot="activator" @click="invite">
+                  <v-list-item-title>Invite to Game</v-list-item-title>
+                </v-list-item>
+              </template>
+              <v-card dark>
+                <v-card-title>
+                  <div style="margin-left: 120px">
+                  <h3 class="headline">Waiting for player...</h3>
+                  <div style="margin-left: 95px; margin-top: 30px; margin-bottom: 20px;"> <v-progress-circular indeterminate color="grey"></v-progress-circular> </div>
+                  </div>
+                </v-card-title>
+              <v-card-actions>
+                <v-btn @click="cancelInvite" style="margin-left: 200px" elevation="0" dark color="red">CANCEL</v-btn>
+              </v-card-actions>
+              </v-card>
+            </v-dialog>
+          </div>
           <v-list-item v-if="user.status == 2">
             <v-list-item-title @click="spectate">Spectate</v-list-item-title>
           </v-list-item>
@@ -68,7 +70,6 @@ export default Vue.extend({
     },
     data() {
       return {
-        user: [],
         status: 'grey',
         invitDialog: false,
       }
@@ -107,6 +108,17 @@ export default Vue.extend({
           this.$store.commit('setDirectChannels', value);
         }
       },
+      listUsers: {
+        get() {
+          return this.$store.getters.getListUsers;
+        },
+        set(value: undefined) {
+          this.$store.commit('setListUsers', value);
+        }
+      },
+      user() {
+        return this.listUsers.find(user => user.id == this.id);
+      },
     },
     methods: {
       spectate(): void {
@@ -121,8 +133,14 @@ export default Vue.extend({
           this.gameSocket.on('info', (data) => {
             console.log('Connected', data); // TODO: remove
             this.$http.get('/pong/' + this.user.id).then(response => {
-              console.log(response);
+              console.log('/pong/', response);
               this.gameSocket.emit('room', response.data); // RAJOUTER LE CODE DE LA ROOM
+            }).catch(() => {
+              this.gameSocket.disconnect();
+              this.$toast.warning('Can\'t connect to the game', {
+                position: 'top-center',
+              });
+              return ;
             });
           });
           this.gameSocket.on('ready', (options, players) => {
@@ -159,20 +177,10 @@ export default Vue.extend({
           return 'grey';
       },
 
-      async fetchFriend() {
-        return (await this.$http.get('/user/' + this.id).then(response => {
-          this.user = response.data;
-          this.status = this.getStatusColor(this.user.status);
-          console.log('STATUS', this.status); // TODO: remove
-        }))
-      },
-
-      cancelInvit() {
-        this.gameSocket.on("disconnect", (reason) => {
-          console.log(reason); // TODO: remove
-        });
+      cancelInvite() {
         this.gameSocket.disconnect();
-        // destroy roomCode ?
+        this.notifySocket.off('notify');
+        this.$store.dispatch('enableNotify');
         this.invitDialog = false;
       },
 
@@ -201,7 +209,7 @@ export default Vue.extend({
             };
             this.notifySocket.emit('notify', payload);
             this.notifySocket.once('notify', (data) => {
-              if (data.sender == this.user.id) {
+              if (data.sender == this.user.id && this.gameSocket.connected) {
                 console.log('NOTIFY', data); // TODO: remove
                 this.invitDialog = false;
                 this.$emit('close');
@@ -235,9 +243,6 @@ export default Vue.extend({
           chatSocket.emit('channelMeDM');
         });
       },
-  },
-  created() {
-    this.fetchFriend();
   },
 });
 </script>

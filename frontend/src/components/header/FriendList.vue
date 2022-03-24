@@ -19,14 +19,14 @@
           </v-card-title>
 
           <v-list v-if="searchInput == null || searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
-                <v-list-item-group>
-                  <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
-                    <v-list-item-content>
-                      <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog" :parentDialog="dialog" @close="dialog = false"/>
-                      <v-divider class="mt-2"></v-divider>
-                    </v-list-item-content>
-                  </v-list-item>
-                </v-list-item-group>
+            <v-list-item-group>
+              <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
+                <v-list-item-content>
+                  <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog" :parentDialog="dialog" @close="dialog = false"/>
+                  <v-divider class="mt-2"></v-divider>
+                </v-list-item-content>
+              </v-list-item>
+            </v-list-item-group>
           </v-list>
 
           <v-list v-else> <!-- "si je cherche un truc, j'affiche tout le monde sauf les amis" -->
@@ -56,7 +56,6 @@ export default Vue.extend({
     return {
       searchInput: null,
       dialog: false,
-      users: [],
       added: false,
     }
   },
@@ -64,18 +63,16 @@ export default Vue.extend({
     closeDialog() {
       this.dialog=false;
     },
-    async rmFriend(rmId: number) {
-      console.log("rmId = ", rmId); // TODO: remove
-      await this.$http.put(`/user/me/follow/${rmId}`).then(response => {
-        console.log('PUT REQUEST', response); // TODO: remove
+    rmFriend(rmId: number) {
+      this.$http.put(`/user/me/follow/${rmId}`).then(() => {
+        this.$http.get('/user/me').then(response => {
+          this.me = response.data;
         });
-      await this.$http.get('/user/me').then(response => {
-        this.me = response.data;
       });
     },
     fetchUsers() {
       this.$http.get('/user').then(response => {
-        this.users = response.data;
+        this.listUsers = response.data;
       });
     }
   },
@@ -92,9 +89,17 @@ export default Vue.extend({
         this.$store.commit('setUser', value);
       }
     },
+    listUsers: {
+      get() {
+        return this.$store.getters.getListUsers;
+      },
+      set(value) {
+        this.$store.commit('setListUsers', value);
+      }
+    },
     filteredUsers(): unknown {
       let cleanUsers;
-      cleanUsers = this.users.filter((user) => {
+      cleanUsers = this.listUsers.filter((user) => {
         if (this.me.followed.indexOf(user.id) == -1 && user.id != this.me.id)
           return true;
         else
