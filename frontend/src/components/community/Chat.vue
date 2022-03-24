@@ -103,6 +103,7 @@ export default Vue.extend({
         if (this.input == '' || this.idCurrentChannel == 0)
           return;
         if (this.input.length >= 256) {
+          this.input = '';
           this.$toast.error('Message too long');
           return;
         }
