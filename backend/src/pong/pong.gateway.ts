@@ -23,7 +23,7 @@ export class PongGateway {
     private readonly authService: AuthService,
     private readonly userService: UserService,
     private readonly roomService: RoomService,
-  ) { }
+  ) {}
   @WebSocketServer()
   server: any;
 
@@ -36,8 +36,7 @@ export class PongGateway {
 
       client.data.user = user;
       client.emit('info', { user });
-    } catch {
-    }
+    } catch {}
   }
 
   async handleDisconnect(client: Socket): Promise<any> {
@@ -46,8 +45,7 @@ export class PongGateway {
 
       await this.roomService.removeSocket(client);
       await this.userService.setStatus(client.data.user.id, Status.ONLINE);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('queue')
@@ -55,8 +53,7 @@ export class PongGateway {
     try {
       if (!client.data.user) return;
       this.roomService.addQueue(client);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('room')
@@ -68,7 +65,7 @@ export class PongGateway {
       if (!room) room = this.roomService.createRoom(code);
 
       this.roomService.joinRoom(client, room);
-    } catch { }
+    } catch {}
   }
 
   @SubscribeMessage('ready')
@@ -80,8 +77,7 @@ export class PongGateway {
       if (!player) return;
 
       this.roomService.ready(player, input);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('start')
@@ -93,8 +89,7 @@ export class PongGateway {
       if (!player || !player.room) return;
 
       this.roomService.startCalc(player.room);
-    } catch {
-    }
+    } catch {}
   }
 
   @SubscribeMessage('tray')
@@ -107,7 +102,6 @@ export class PongGateway {
 
       player.tray = tray * player.room.options.display.height;
       RoomService.emit(player.room, 'tray', player.socket.data.user.id, tray);
-    } catch {
-    }
+    } catch {}
   }
 }

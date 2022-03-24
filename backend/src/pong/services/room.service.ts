@@ -15,13 +15,13 @@ export class RoomService {
     private readonly pong: PongService,
     private readonly userService: UserService,
   ) {}
-  static options: Option = {
+  static options: Option = Object.freeze({
     display: { width: 1920, height: 1080 },
     ball: { speed: 20, radius: 20 },
     tray: { width: 20, height: 200, x: 50 },
     score: { y: 15, max: 10 },
     input: { plan: Plan.DEFAULT, mode: Mode.NONE },
-  };
+  });
 
   queue: Array<Socket> = [];
   rooms: Map<string, Room> = new Map();
@@ -80,7 +80,7 @@ export class RoomService {
       code,
       state: State.WAITING,
       players: [],
-      options: RoomService.options,
+      options: JSON.parse(JSON.stringify(RoomService.options)),
       ball: { position: { x: 0, y: 0 }, velocity: { x: 0, y: 0 } },
       speed: 0,
     };

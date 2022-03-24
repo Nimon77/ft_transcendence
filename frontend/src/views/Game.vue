@@ -85,11 +85,11 @@ export default Vue.extend({
         this.gameSock.emit('tray', tray);
       },
       changeColor(colorId: number) {
-        if (this.input.plan == 0)
+        if (colorId == 0)
           this.mapColor = '#121212';
-        if (this.input.plan == 1)
+        if (colorId == 1)
           this.mapColor = '#040a80';
-        if (this.input.plan == 2)
+        if (colorId == 2)
           this.mapColor = '#db9c14';
       }
     },
@@ -104,12 +104,7 @@ export default Vue.extend({
       });
       this.canvas = document.getElementById('pong');
       this.input = this.options.input;
-      if (this.input.plan == 0)
-        this.mapColor = '#121212';
-      if (this.input.plan == 1)
-        this.mapColor = '#040a80';
-      if (this.input.plan == 2)
-        this.mapColor = '#db9c14';
+      this.changeColor(this.input.plan);
 
       if (this.input.mode == 1)
       {
