@@ -1,5 +1,5 @@
 <template>
-  <v-container transition="scale-transition" fill-height fluid>
+  <v-container transition="scale-transition" fill-height class="justify-center" fluid>
     <v-card max-width="400" class="center" dark>
       <v-toolbar color="primary" dark>
         <v-toolbar-title>Two-factor authentication</v-toolbar-title>
