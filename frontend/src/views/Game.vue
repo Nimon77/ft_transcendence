@@ -87,8 +87,8 @@ export default Vue.extend({
     },
 
     mounted() {
-      this.gameSocket.off('ready');
-      this.gameSocket.on('ready', (options) => {
+      this.gameSock.off('ready');
+      this.gameSock.on('ready', (options) => {
         if (this.pong)
           this.pong.options = options;
       });
