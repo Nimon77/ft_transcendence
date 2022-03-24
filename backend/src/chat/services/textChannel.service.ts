@@ -58,6 +58,9 @@ export class TextChannelService {
     userId: number,
   ): Promise<TextChannel> {
     const admin = await this.userService.getUser(userId);
+
+    channel.name = channel.name.replace(/\s+/g, '');
+ 
     if (channel.name == undefined)
       throw new HttpException(
         'TextChannel name needs to be specified',
