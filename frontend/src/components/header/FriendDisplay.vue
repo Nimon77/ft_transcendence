@@ -180,7 +180,6 @@ export default Vue.extend({
       },
 
       invite() {
-        console.log(this.me.status);
         if (this.me.status === 2) {
           setTimeout(() => {
             this.invitDialog = false;
