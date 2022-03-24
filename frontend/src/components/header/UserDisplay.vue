@@ -71,28 +71,21 @@ export default Vue.extend({
       addStat() {
         this.loader = !this.loader;
         this.color = 'green';
-        setTimeout(this.setDone, 500);
-        this.$http.put(`/user/me/follow/${this.user.id}`)
-        this.$http.get('/user/me').then(response => {
-          this.me = response.data;
+        this.$http.put(`/user/me/follow/${this.user.id}`).then(() => {
+          this.$http.get('/user/me').then(response => {
+            this.me = response.data;
+            this.loader = false;
+          });
         });
         this.$emit('added');
-      },
-      setDone(): void {
-        // document.getElementById(this.user.id).innerHTML = "DONE!";
-        this.loader = false;
       },
 
     },
     mounted() {
-      // for (let i in this.me.blocked)
-      // {
-        if (this.me.blocked.indexOf(this.user.id) != -1) // si le user est bloque
-        {
-          this.disabledAdd = true;
-          document.getElementById('blockButton').innerHTML = "UNBLOCK";
-        }
-      // }
+      if (this.me.blocked.indexOf(this.user.id) != -1) // si le user est bloque
+      {
+        this.disabledAdd = true;
+      }
     }
 })
 </script>
