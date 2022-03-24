@@ -19,7 +19,7 @@
             <v-list-item-title>Profile</v-list-item-title>
           </v-list-item>
 
-          <div v-if="user.status !== 2 && user.status !== 0 && me.status !== 2">
+          <div v-if="user.status !== 2 && user.status !== 0">
             <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-list-item v-bind="attrs" v-on="on" slot="activator" @click="invite">
@@ -180,7 +180,14 @@ export default Vue.extend({
       },
 
       invite() {
-        if (this.user.status != 2) {
+        console.log(this.me.status);
+        if (this.me.status === 2) {
+          setTimeout(() => {
+            this.invitDialog = false;
+          }, 100);
+          return;
+        }
+        if (this.user.status !== 2) {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
               transportOptions: {
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
@@ -202,8 +209,8 @@ export default Vue.extend({
             this.notifySocket.on('notify', (data) => {
               if (data.sender == this.user.id && this.gameSocket.connected) {
                 this.invitDialog = false;
-				this.notifySocket.off('notify');
-				this.$store.dispatch('enableNotify');
+                this.notifySocket.off('notify');
+                this.$store.dispatch('enableNotify');
                 this.$emit('close');
                 this.$router.push('/pregame');
               }
