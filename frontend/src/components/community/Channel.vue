@@ -51,11 +51,11 @@
               <v-list-item-title > {{channel.name}} </v-list-item-title>
               <v-list-item-subtitle v-if="channel.public"> public
                 <v-icon v-if="isAdmin(channel.adminId)" small color="yellow"> mdi-account </v-icon>
-                <v-icon v-if="channel.owner.id == user.id" small color="blue"> mdi-account-child-circle </v-icon>
+                <v-icon v-if="channel.owner.id == user.id" small color="blue"> mdi-crown </v-icon>
               </v-list-item-subtitle>
               <v-list-item-subtitle v-else> private
                 <v-icon v-if="isAdmin(channel.adminId)" small color="yellow"> mdi-account </v-icon>
-                <v-icon v-if="channel.owner.id == user.id" small color="blue"> mdi-account-child-circle </v-icon>
+                <v-icon v-if="channel.owner.id == user.id" small color="blue"> mdi-crown </v-icon>
               </v-list-item-subtitle>
             </v-list-item-content>
             <OptionChannel @leaveChannel="leaveChannel(channel.id)" :channel="channel"/>

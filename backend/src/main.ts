@@ -22,4 +22,4 @@ async function bootstrap(): Promise<void> {
 
   await app.listen(configService.get('PORT', 3000));
 }
-bootstrap().catch(console.error);
+bootstrap().catch(() => null);

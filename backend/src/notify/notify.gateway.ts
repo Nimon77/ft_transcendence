@@ -36,8 +36,7 @@ export class NotifyGateway {
       await this.userService.setStatus(user.id, Status.ONLINE);
 
       client.data.user = user;
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -59,8 +58,8 @@ export class NotifyGateway {
         if (user.status == Status.ONLINE)
           await this.userService.setStatus(user.id, Status.OFFLINE);
       }, 5 * 1000);
-    } catch (e) {
-      console.error(e);
+    } catch {
+
     }
   }
 
@@ -79,8 +78,7 @@ export class NotifyGateway {
         data.id = user.id;
         socket.emit('notify', data);
       }
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 }
