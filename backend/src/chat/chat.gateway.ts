@@ -48,8 +48,7 @@ export class ChatGateway implements OnGatewayConnection {
       client.data.user = user;
 
       client.emit('info', { user, channels_user, channels_all, dmChannel });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -58,8 +57,7 @@ export class ChatGateway implements OnGatewayConnection {
       if (!client.data.user) return;
 
       return this.userService.setStatus(client.data.user.id, Status.ONLINE);
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -72,8 +70,7 @@ export class ChatGateway implements OnGatewayConnection {
         if (channel.users.find((user) => user.id == socket.data.user.id))
           socket.emit(event, ...args);
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -87,8 +84,7 @@ export class ChatGateway implements OnGatewayConnection {
         'banned',
       ]);
       client.emit('channel', channel);
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -100,8 +96,7 @@ export class ChatGateway implements OnGatewayConnection {
       );
 
       client.emit('channelMe', channels);
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -122,8 +117,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: user.id, username: user.username },
         ...data,
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -153,8 +147,7 @@ export class ChatGateway implements OnGatewayConnection {
 
       channel = await this.textChannelService.getChannel(channel.id, ['users']);
       this.emitChannel(channel, 'join', { channel, user: client.data.user });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -179,8 +172,7 @@ export class ChatGateway implements OnGatewayConnection {
         user,
         is_delete: is_delete,
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -207,8 +199,7 @@ export class ChatGateway implements OnGatewayConnection {
         channel: { id: channel.id, name: channel.name, admin: channel.adminId },
         admin_user: { id: admin.id, username: admin.username },
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -243,8 +234,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         muted_user: { id: curuser.id, username: curuser.username },
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -285,8 +275,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         banned_user: { id: curuser.id, username: curuser.username },
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -300,8 +289,7 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
       ]);
       client.emit('channelDM', channel);
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -312,8 +300,7 @@ export class ChatGateway implements OnGatewayConnection {
         client.data.user.id,
       );
       client.emit('channelMeDM', channel);
-    } catch (e) {
-      console.error(e);
+    } catch  {
     }
   }
 
@@ -325,8 +312,7 @@ export class ChatGateway implements OnGatewayConnection {
         userId,
       );
       this.emitChannel(channel, 'joinDM');
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 
@@ -353,8 +339,7 @@ export class ChatGateway implements OnGatewayConnection {
         text: log.message,
         channelId: channel.id,
       });
-    } catch (e) {
-      console.error(e);
+    } catch {
     }
   }
 }
