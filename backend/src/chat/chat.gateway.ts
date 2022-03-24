@@ -108,6 +108,9 @@ export class ChatGateway implements OnGatewayConnection {
         'users',
       ]);
 
+      if (data.value.length >= 1 << 8)
+        throw new HttpException('text is too long', HttpStatus.BAD_REQUEST);
+
       await this.textChannelService.addLogForChannel(
         data.id,
         data.value,
@@ -328,6 +331,9 @@ export class ChatGateway implements OnGatewayConnection {
       );
       if (other && other.blocked.includes(client.data.user.id))
         client.emit('blocked');
+      
+      if (data.text.length >= 1 << 8)
+        throw new HttpException('text is too long', HttpStatus.BAD_REQUEST);
 
       const log = await this.dmChannelService.createMessage(
         channel.id,
