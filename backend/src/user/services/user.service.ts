@@ -21,22 +21,6 @@ export class UserService {
     private readonly matchRepository: Repository<Match>,
   ) {}
 
-  getAllUsers(): Promise<User[]> {
-    return this.userRepository.find();
-  }
-
-  async getUserByConnection(connectionId: number): Promise<User> {
-    let user = null;
-    if (connectionId)
-      user = await this.userRepository.find({
-        where: { connection: connectionId },
-      });
-
-    if (!user) throw new HttpException('User not found', HttpStatus.NOT_FOUND);
-
-    return user;
-  }
-
   async getUser(id: number, relations = [] as string[]): Promise<User> {
     let user = null;
     if (id) user = await this.userRepository.findOne(id, { relations });
@@ -66,7 +50,7 @@ export class UserService {
       if (can.indexOf(key) == -1)
         throw new HttpException(
           'Value cannot be modified',
-          HttpStatus.CONFLICT,
+          HttpStatus.FORBIDDEN,
         );
 
     try {
@@ -78,15 +62,6 @@ export class UserService {
     }
     delete user.id;
     return user;
-  }
-
-  async deleteUser(id: number): Promise<void> {
-    await this.getUser(id);
-    try {
-      await this.userRepository.delete(id);
-    } catch (error) {
-      throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
-    }
   }
 
   async setAvatar(userId: number, file: Express.Multer.File): Promise<void> {
@@ -131,10 +106,6 @@ export class UserService {
     } catch (error) {
       throw new HttpException(error.message, HttpStatus.BAD_REQUEST);
     }
-  }
-
-  async getRank(userId: number): Promise<number> {
-    return (await this.getUser(userId)).rank;
   }
 
   async createMatchHistory(data: Match): Promise<void> {

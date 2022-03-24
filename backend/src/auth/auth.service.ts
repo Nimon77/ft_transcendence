@@ -74,9 +74,7 @@ export class AuthService {
     const payload = this.verifyJWT(token);
     if (!payload) return null;
 
-    const user = await this.userService
-      .getUser(payload.sub)
-      .catch(() => null);
+    const user = await this.userService.getUser(payload.sub).catch(() => null);
     if (!user) return null;
     return user;
   }

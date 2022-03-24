@@ -3,10 +3,7 @@ import {
   Controller,
   Delete,
   Get,
-  Param,
-  ParseIntPipe,
   Post,
-  Put,
   Req,
   Res,
   UseGuards,
@@ -14,7 +11,6 @@ import {
 import { Response } from 'express';
 import { Request } from 'src/user/interfaces/request.interface';
 import { ConnectionService } from 'src/user/services/connection.service';
-import { UserService } from 'src/user/services/user.service';
 import { AuthService } from './auth.service';
 import { Public } from './decorators/public.decorator';
 import { FortyTwoAuthGuard } from './guards/42-auth.guard';
@@ -24,7 +20,6 @@ import { FortyTwoUser } from './interfaces/42user.interface';
 export class AuthController {
   constructor(
     private readonly authService: AuthService,
-    private readonly userService: UserService,
     private readonly connectionService: ConnectionService,
   ) {}
 
@@ -86,15 +81,10 @@ export class AuthController {
   }
 
   //for testing ----------------------------------------------------
-  @Public()
-  @Get('generate/:id')
-  generateJWT(@Param('id', ParseIntPipe) id: number): Promise<any> {
-    return this.authService.login({ id } as FortyTwoUser);
-  }
-
-  @Put('2fa/check')
-  check2FA(@Req() req: Request, @Body('code') code: string): any {
-    return this.authService.verifyCode(req.user.userId, code);
-  }
+  // @Public()
+  // @Get('generate/:id')
+  // generateJWT(@Param('id', ParseIntPipe) id: number): Promise<any> {
+  //   return this.authService.login({ id } as FortyTwoUser);
+  // }
   //----------------------------------------------------------------
 }
