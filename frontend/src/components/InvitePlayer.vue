@@ -52,26 +52,29 @@ export default Vue.extend({
       },
     },
     socket() { return store.getters.getNotifySocket; },
+    user() { return store.getters.getUser; },
   },
 
   methods: {
     clicked() {
-      this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
-        transportOptions: {
-          polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
-        },
-      });
-      this.room = this.notify.roomCode;
-      this.socket.emit('notify', {
-        id: this.notify.sender,
-        sender: store.getters.getUser.id,
-        type: 'accept',
-        response: true,
-      });
-      this.gameSocket.on('info', () => {
-        this.gameSocket.emit('room', this.notify.roomCode);
-        router.push('/pregame');
-      })
+      if (this.user.status !== 2) {
+        this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
+          transportOptions: {
+            polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
+          },
+        });
+        this.room = this.notify.roomCode;
+        this.socket.emit('notify', {
+          id: this.notify.sender,
+          sender: store.getters.getUser.id,
+          type: 'accept',
+          response: true,
+        });
+        this.gameSocket.on('info', () => {
+          this.gameSocket.emit('room', this.notify.roomCode);
+          router.push('/pregame');
+        })
+      }
     }
   },
 });
