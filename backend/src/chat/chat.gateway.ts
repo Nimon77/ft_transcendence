@@ -266,9 +266,7 @@ export class ChatGateway implements OnGatewayConnection {
         user: { id: admin.id, username: admin.username },
         banned_user: { id: curuser.id, username: curuser.username },
       });
-    } catch (error) {
-      console.error(error);
-    }
+    } catch {}
   }
 
   //direct message :D ----------------------------------------------------------------------
