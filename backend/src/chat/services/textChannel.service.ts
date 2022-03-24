@@ -70,7 +70,7 @@ export class TextChannelService {
         if (!channel.password)
           throw new HttpException('Password Required', HttpStatus.FORBIDDEN);
 
-        if (channel.password.length > 1 << 8)
+        if (channel.password.length > 16)
           throw new HttpException(
             'New password too long',
             HttpStatus.FORBIDDEN,
@@ -140,6 +140,9 @@ export class TextChannelService {
           HttpStatus.FORBIDDEN,
         );
 
+      if (user.id == channel.owner.id)
+        throw new HttpException('Cannot kick an owner', HttpStatus.FORBIDDEN);
+
       const index = channel.adminId.indexOf(user.id);
       if (index != -1) channel.adminId.splice(index, 1);
     } else if (user.id == channel.owner.id)
@@ -164,7 +167,7 @@ export class TextChannelService {
     channelId: number,
     userId: number,
   ): Promise<void> {
-    if (pass.newPassword.length > 1 << 8)
+    if (pass.newPassword.length > 16)
       throw new HttpException('New password too long', HttpStatus.FORBIDDEN);
     const user = await this.userService.getUser(userId);
     const channel = await this.getChannel(channelId);
