@@ -57,7 +57,7 @@ export default Vue.extend({
           polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
         },
       });
-      this.socket.on('info', (data) => {
+      this.socket.on('info', () => {
         this.socket.emit('queue');
       });
       this.socket.on('room', (code) => {

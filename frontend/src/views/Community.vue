@@ -120,7 +120,7 @@ export default Vue.extend({
       this.socket.on('join', () => {
         this.fetchChannelsList();
       });
-      this.socket.on('joinDM', (data) => {
+      this.socket.on('joinDM', () => {
         this.socket.emit('channelMeDM');
       });
       this.socket.on('leave', (data) => {

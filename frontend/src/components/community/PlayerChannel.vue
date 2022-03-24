@@ -211,7 +211,7 @@ export default Vue.extend({
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
             },
           });
-          this.gameSocket.on('info', (data) => {
+          this.gameSocket.on('info', () => {
               this.gameSocket.emit('room');
           });
           this.gameSocket.on('room', (code) => {

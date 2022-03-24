@@ -128,7 +128,7 @@ export default Vue.extend({
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
               },
           });
-          this.gameSocket.on('info', (data) => {
+          this.gameSocket.on('info', () => {
             this.$http.get('/pong/' + this.user.id).then(response => {
               this.gameSocket.emit('room', response.data); // RAJOUTER LE CODE DE LA ROOM
             }).catch(() => {
@@ -215,7 +215,7 @@ export default Vue.extend({
             polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
             },
         });
-        chatSocket.on('info', (data) => {
+        chatSocket.on('info', () => {
           chatSocket.once('channelMeDM', (channelMeDM) => {
             this.chatDirect = true;
             this.directChannels = channelMeDM;
