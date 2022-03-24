@@ -25,7 +25,7 @@
                   <v-btn color="yellow darken-1" tile dark min-width="100%"> INVITE TO GAME </v-btn>
                 </v-list-item-title>
               </template>
-              <v-card>
+              <v-card dark>
                 <v-card-title>
                   <div style="margin-left: 120px">
                     <h3 class="headline">Waiting for player...</h3>
@@ -153,20 +153,30 @@ export default Vue.extend({
           return "SET ADMIN";
       },
       mutePlayer(idPlayer) {
-        this.socket.emit('mute', {userId: idPlayer, channelId: this.idCurrentChannel});
+        if (idPlayer !== this.currentChannel.owner.id)
+          this.socket.emit('mute', {userId: idPlayer, channelId: this.idCurrentChannel});
+        else
+          this.$toast.error('You cannot mute the owner of the channel');
       },
       kickPlayer(idPlayer) {
-        this.socket.emit('leave', {userId: idPlayer, channelId: this.idCurrentChannel});
+        if (idPlayer !== this.currentChannel.owner.id)
+          this.socket.emit('leave', {userId: idPlayer, channelId: this.idCurrentChannel});
+        else
+          this.$toast.error('You can\'t kick the owner of the channel');
       },
       banPlayer(idPlayer) {
-        this.socket.emit('ban', {userId: idPlayer, channelId: this.idCurrentChannel});
+        if (idPlayer !== this.currentChannel.owner.id)
+          this.socket.emit('ban', {userId: idPlayer, channelId: this.idCurrentChannel});
+        else
+          this.$toast.error('You can\'t ban the owner of the channel');
       },
       setAdmin(idPlayer) {
         this.socket.emit('admin', {userId: idPlayer, channelId: this.idCurrentChannel});
       },
       cancelInvit() {
         this.gameSocket.disconnect();
-        // destroy roomCode ?
+        this.notifySocket.off('notify');
+        this.$store.dispatch('enableNotify');
         this.invitDialog = false;
       },
       directMessage(playerId: number) {
@@ -186,9 +196,9 @@ export default Vue.extend({
         // vérifier que le user n'est pas deja in game
         if (this.status != 'orange') {
           this.gameSocket = io(`http://${window.location.hostname}:${process.env.VUE_APP_BACKEND_PORT}/pong`, {
-              transportOptions: {
+            transportOptions: {
               polling: { extraHeaders: { Authorization: 'Bearer ' + localStorage.getItem('token') } },
-              },
+            },
           });
           this.gameSocket.on('info', (data) => {
             console.log('Connected', data); // TODO: remove
@@ -206,7 +216,7 @@ export default Vue.extend({
             };
             this.notifySocket.emit('notify', payload);
             this.notifySocket.once('notify', (data) => {
-              if (data.sender == id) {
+              if (data.sender == id && this.gameSocket.connected) {
                 console.log('NOTIFY', data); // TODO: remove
                 this.invitDialog = false;
                 // this.$emit('close');
