@@ -33,6 +33,10 @@ export default Vue.extend({
 <style>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
+html, body {
+	overflow: hidden !important
+}
+
 .btn {
   font-family: "lemon_milkmedium";
   font-size: 30px !important;

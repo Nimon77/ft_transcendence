@@ -102,4 +102,8 @@ export default Vue.extend({
 <style scoped>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
+html, body {
+	overflow: hidden !important
+}
+
 </style>
