@@ -95,7 +95,7 @@ export default Vue.extend({
         return "25%"
       },
       isBlocked(idPlayer) {
-        if (this.user.blocked.indexOf(idPlayer) == -1)
+        if (this.user.blocked.indexOf(idPlayer) == -1 || this.chatDirect)
           return false;
         return true;
       },

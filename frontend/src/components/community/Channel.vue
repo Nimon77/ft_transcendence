@@ -127,8 +127,8 @@
       </v-list-item-group>
     </v-list>
     <v-card-actions class="justify-center">
-        <v-btn color="blue darken-1" class="ma-1" dark depressed tile @click="chatDirect = false; idCurrentChannel = 0">General</v-btn>
-        <v-btn color="blue darken-1" class="ma-1" dark depressed tile @click="chatDirect = true; idCurrentChannel = 0">Direct</v-btn>
+        <v-btn color="blue darken-1" class="ma-1" min-width="50%" dark depressed tile @click="chatDirect = false; idCurrentChannel = 0">General</v-btn>
+        <v-btn color="blue darken-1" class="ma-1" min-width="50%" dark depressed tile @click="chatDirect = true; idCurrentChannel = 0">DM</v-btn>
     </v-card-actions>
   </v-card>
 </template>

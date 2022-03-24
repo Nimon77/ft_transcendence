@@ -1,9 +1,9 @@
 <template>
-<div>
+  <div>
     <v-dialog style="margin-top: 12px !important" v-model="dialog" transition="dialog-top-transition"
     width="800" height="200" scrollable multiple>
 
-      <template v-slot:activator="{ on, attrs}">
+      <template v-slot:activator="{ on, attrs }">
         <v-btn elevation="0" width="130" text dark style="font-size:20px" plain
         v-bind="attrs"
         v-on="on"
@@ -14,33 +14,32 @@
       </template>
 
       <v-card dark>
-          <v-card-title class="text-h5 grey darken-4">
-            <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="searchInput = null" autofocus></v-text-field>
-          </v-card-title>
+        <v-card-title class="text-h5 grey darken-4">
+          <v-text-field label="Search player" v-model="searchInput" clearable @click:clear="searchInput = null" autofocus></v-text-field>
+        </v-card-title>
 
-          <v-list v-if="searchInput == null || searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
-            <v-list-item-group>
-              <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
-                <v-list-item-content>
-                  <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog" :parentDialog="dialog" @close="dialog = false"/>
-                  <v-divider class="mt-2"></v-divider>
-                </v-list-item-content>
-              </v-list-item>
-            </v-list-item-group>
-          </v-list>
-
-          <v-list v-else> <!-- "si je cherche un truc, j'affiche tout le monde sauf les amis" -->
-            <v-list-item v-for="user in filteredUsers" v-bind:key="user.id">
+        <v-list v-if="searchInput == null || searchInput == ''"> <!-- "si je ne cherche rien, j'affiche les amis" -->
+          <v-list-item-group>
+            <v-list-item v-for="(friend) in me.followed" v-bind:key="friend">
               <v-list-item-content>
-                <UserDisplay :user="user"/>
-                <v-divider class="mt-1"></v-divider>
+                <FriendDisplay :id="friend" :me="me" v-on:rmFriend="rmFriend" v-on:closedialog="closeDialog" :parentDialog="dialog" @close="dialog = false"/>
+                <v-divider class="mt-2"></v-divider>
               </v-list-item-content>
             </v-list-item>
-          </v-list>
-        </v-card>
-    </v-dialog>
+          </v-list-item-group>
+        </v-list>
 
-</div>
+        <v-list v-else> <!-- "si je cherche un truc, j'affiche tout le monde sauf les amis" -->
+          <v-list-item v-for="user in filteredUsers" v-bind:key="user.id">
+            <v-list-item-content>
+              <UserDisplay :user="user"/>
+              <v-divider class="mt-1"></v-divider>
+            </v-list-item-content>
+          </v-list-item>
+        </v-list>
+      </v-card>
+    </v-dialog>
+  </div>
 </template>
 
 <script lang="ts">
