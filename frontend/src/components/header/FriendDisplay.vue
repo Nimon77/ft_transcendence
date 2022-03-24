@@ -19,7 +19,7 @@
             <v-list-item-title>Profile</v-list-item-title>
           </v-list-item>
 
-          <div v-if="user.status != 2 && user.status != 0">
+          <div v-if="user.status !== 2 && user.status !== 0 && me.status !== 2">
             <v-dialog width="500" max-height="500" v-model="invitDialog" persistent>
               <template v-slot:activator="{ on, attrs }">
                 <v-list-item v-bind="attrs" v-on="on" slot="activator" @click="invite">

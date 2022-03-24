@@ -151,7 +151,8 @@ export default Vue.extend({
           {
             this.messages.push( { sender: data.user, msg: data.value } );
             setTimeout(() => {
-              document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
+              if (document.getElementById('chat'))
+                document.getElementById('Chat').scrollTop = document.getElementById('Chat').scrollHeight;
             }, 100);
           }
         });
