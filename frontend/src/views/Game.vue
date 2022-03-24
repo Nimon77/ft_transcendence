@@ -160,6 +160,11 @@ export default Vue.extend({
 </script>
 
 <style scoped>
+
+html, body {
+	overflow: hidden !important
+}
+
 body {
   margin: 0;
   display: flex;

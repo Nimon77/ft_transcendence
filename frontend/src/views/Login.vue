@@ -39,7 +39,12 @@ export default Vue.extend({
 });
 </script>
 
-<style scoped lang="css">
+<style scoped>
+
+html, body {
+	overflow: hidden !important;
+}
+
   .text-h1 {
     font-size: 8rem;
   }

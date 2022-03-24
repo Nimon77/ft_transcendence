@@ -1,7 +1,7 @@
 
 <template>
   <v-app>
-    <div name="banana-bg">
+    <div style="overflow: hidden;">
       <img v-for="n in 15" :key="n" src="@/assets/banane-resize.png" class="bananane" style=""/>
     </div>
     <Header v-if="isReady"/>
@@ -57,6 +57,10 @@ export default {
 
 <style scoped>
 
+html, body {
+	overflow: hidden !important
+}
+
 .fade-enter-active, .fade-leave-active {
     transition: opacity .2s
 }
@@ -88,12 +92,11 @@ export default {
   /* margin-left: -45px; */
 }
 
-
 .bananane {
   position: absolute;
   top: -200px;
   height: auto;
-  overflow: hidden;
+  overflow: hidden !important;
   animation: chute 4s infinite linear;
 }
 

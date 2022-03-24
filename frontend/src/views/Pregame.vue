@@ -114,6 +114,10 @@ export default Vue.extend({
 <style scoped>
 @import '~@/assets/fonts/LEMONMILK/stylesheet.css';
 
+html, body {
+	overflow: hidden !important
+}
+
 p {
   font-family: "lemon_milkmedium";
   font-size: 30px;
