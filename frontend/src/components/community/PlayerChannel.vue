@@ -39,13 +39,15 @@
             </v-dialog>
           </v-list-item>
           <v-list-item dense>
-            <v-list-item-title class="d-flex justify-center text-button" @click="directMessage(player.id)">
-              <v-btn color="blue" tile dark min-width="100%"> DIRECT MSG </v-btn>
+            <v-list-item-title class="d-flex justify-center text-button">
+              <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="50%">PROFILE</v-btn>
+              <v-btn color="blue" tile dark min-width="50%" class="ml-1" @click="directMessage(player.id)">DM</v-btn>
             </v-list-item-title>
           </v-list-item>
           <v-list-item dense>
             <v-list-item-title class="d-flex justify-center text-button">
-              <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="100%"> PROFILE </v-btn>
+              <!-- BLOCK GLOBAL -->
+              <v-btn color="red" tile dark min-width="100%" @click="blockPlayer(player.id)">{{isPlayerBlocked(player.id)}}</v-btn>
             </v-list-item-title>
           </v-list-item>
           <div v-if="!chatDirect && currentChannel.adminId.includes(user.id)">
@@ -152,6 +154,11 @@ export default Vue.extend({
         else
           return "SET ADMIN";
       },
+      isPlayerBlocked(idPlayer) {
+        if (this.user.blocked.includes(idPlayer))
+          return "UNBLOCK";
+        return "BLOCK";
+      },
       mutePlayer(idPlayer) {
         if (idPlayer !== this.currentChannel.owner.id)
           this.socket.emit('mute', {userId: idPlayer, channelId: this.idCurrentChannel});
@@ -169,6 +176,13 @@ export default Vue.extend({
           this.socket.emit('ban', {userId: idPlayer, channelId: this.idCurrentChannel});
         else
           this.$toast.error('You can\'t ban the owner of the channel');
+      },
+      blockPlayer(idPlayer) {
+        this.$http.put(`/user/me/block/${idPlayer}`).then(() => {
+          this.$http.get('/user/me').then(({data}) => {
+            this.$store.commit('setUser', data);
+          });
+        });
       },
       setAdmin(idPlayer) {
         this.socket.emit('admin', {userId: idPlayer, channelId: this.idCurrentChannel});
