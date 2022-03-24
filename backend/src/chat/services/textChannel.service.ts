@@ -140,6 +140,9 @@ export class TextChannelService {
           HttpStatus.FORBIDDEN,
         );
 
+      if (user.id == channel.owner.id)
+        throw new HttpException('Cannot kick an owner', HttpStatus.FORBIDDEN);
+
       const index = channel.adminId.indexOf(user.id);
       if (index != -1) channel.adminId.splice(index, 1);
     } else if (user.id == channel.owner.id)
