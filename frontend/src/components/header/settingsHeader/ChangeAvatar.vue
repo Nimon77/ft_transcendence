@@ -91,7 +91,6 @@ export default Vue.extend({
         data(): unknown {
             return {
               isFound: false,
-              users: [],
               valid: true,
               username: '',
               image: {
@@ -102,7 +101,7 @@ export default Vue.extend({
             }
         },
         methods: {
-          async setNewInfos(dialog) {
+          setNewInfos(dialog) {
             if (this.valid) {
               dialog.value = false;
               if (this.image.src) {
@@ -121,11 +120,12 @@ export default Vue.extend({
                 }
               }
               if (this.username != '') {
-                this.$http.put('/user/me', {username: this.username});
+                this.$http.put('/user/me', {username: this.username}).then(() => {
+                  this.$http.get('/user/me').then(response => {
+                    this.$store.commit('setUser', response.data);
+                  });
+                });
               }
-              await this.$http.get('/user/me').then(response => {
-                this.$store.commit('setUser', response.data);
-              });
               this.username = '';
               this.$http.get('/user').then(response => {
                 this.users = response.data;
@@ -160,6 +160,14 @@ export default Vue.extend({
           });
         },
         computed: {
+          users: {
+            get() {
+              return this.$store.getters.getListUsers;
+            },
+            set(users: unknown) {
+              this.$store.commit('setListUsers', users);
+            },
+          },
           rules() {
             const rules = [];
             let existingName: string = null;
@@ -176,6 +184,8 @@ export default Vue.extend({
               }
               let rule2 = v => (v && v.length <= 8) || 'must be less than 8 characters';
               rules.push(rule2);
+              let rule3 = v => !(/\s/g.test(v)) || 'must not contain spaces';
+              rules.push(rule3);
             }
             return rules;
           }

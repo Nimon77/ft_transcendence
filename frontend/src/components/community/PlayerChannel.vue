@@ -7,7 +7,7 @@
     <v-list v-if="idCurrentChannel != 0">
       <div class="d-flex justify-left">
         <v-list-item-content  class="mt-n4 ml-4 yellow--text text-h6">
-          <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge> {{user.username}} </v-list-item-title>
+          <v-list-item-title> <v-badge dot inline :color="status(user.status)"> </v-badge>{{user.username}}</v-list-item-title>
         </v-list-item-content>
       </div>
       <v-divider></v-divider>
@@ -15,7 +15,7 @@
         <v-list-group v-if="player.id != user.id">
           <template v-slot:activator>
             <v-list-item-content class="mt-n4">
-              <v-list-item-title> <v-badge dot inline :color="status(player.status)"> </v-badge> {{player.username}} </v-list-item-title>
+              <v-list-item-title> <v-badge dot inline :color="status(player.status)"> </v-badge>{{player.username}}</v-list-item-title>
             </v-list-item-content>
           </template>
           <v-list-item dense v-if="player.status !== 2">

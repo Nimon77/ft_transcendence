@@ -9,10 +9,8 @@
       {{user.username}}
       </v-badge>
       <v-spacer></v-spacer>
-      <v-btn class="mr-3" @click="block" dark color="red" height="60" width="80">
-        <div id="blockButton"> BLOCK </div> 
-      </v-btn>
-      <v-btn @click="addStat" class="white--text" :id="user.id" :disabled="disabledAdd" :loading="loader" :color="color" height="60" width="60">
+      <v-btn class="mr-3" @click="block" dark color="red" height="60" width="80">{{isPlayerBlocked(user.id)}}</v-btn>
+      <v-btn @click="addStat" class="white--text" :id="user.id" :disabled="isPlayerBlocked(user.id) === 'UNBLOCK'" :loading="loader" :color="color" height="60" width="60">
         ADD
       </v-btn>
     </v-row>
@@ -32,7 +30,6 @@ export default Vue.extend({
     },
     data(): unknown {
       return {
-        disabledAdd: false,
         loader: false,
         color: 'blue',
       }
@@ -58,13 +55,18 @@ export default Vue.extend({
       },
     },
     methods: {
-      block() {
-        this.$http.put(`/user/me/block/${this.user.id}`)
-        this.disabledAdd = !this.disabledAdd;
-        if (this.disabledAdd == false)
-          document.getElementById('blockButton').innerHTML = "BLOCK";
+      isPlayerBlocked(id: number) {
+        if (this.me.blocked.includes(id))
+          return 'UNBLOCK';
         else
-          document.getElementById('blockButton').innerHTML = "UNBLOCK";
+          return 'BLOCK';
+      },
+      block() {
+        this.$http.put(`/user/me/block/${this.user.id}`).then(() => {
+          this.$http.get('/user/me').then((res) => {
+            this.me = res.data;
+          });
+        });
       },
       addStat() {
         this.loader = !this.loader;
