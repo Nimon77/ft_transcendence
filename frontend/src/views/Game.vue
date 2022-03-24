@@ -87,6 +87,11 @@ export default Vue.extend({
     },
 
     mounted() {
+      this.gameSocket.off('ready');
+      this.gameSocket.on('ready', (options) => {
+        if (this.pong)
+          this.pong.options = options;
+      });
       this.canvas = document.getElementById('pong');
       this.input = this.options.input;
       if (this.input.plan == 0)
