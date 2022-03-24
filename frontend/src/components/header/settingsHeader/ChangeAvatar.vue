@@ -121,9 +121,7 @@ export default Vue.extend({
                 }
               }
               if (this.username != '') {
-                await this.$http.put('/user/me', {username: this.username,}).then(response => {
-                  console.log('PUT REQUEST', response); // TODO: remove
-                  });
+                this.$http.put('/user/me', {username: this.username});
               }
               await this.$http.get('/user/me').then(response => {
                 this.$store.commit('setUser', response.data);
@@ -156,11 +154,10 @@ export default Vue.extend({
           },
         },
 
-        async created() {
-          await this.$http.get('/user').then(response => {
+        created() {
+          this.$http.get('/user').then(response => {
             this.users = response.data;
           });
-            console.log('USERS : ', this.users); // TODO: remove
         },
         computed: {
           rules() {

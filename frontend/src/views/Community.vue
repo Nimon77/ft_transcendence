@@ -104,19 +104,11 @@ export default Vue.extend({
         },
       });
       this.$watch(() => this.fetchChannels, () => {this.fetchChannelsList()}, { immediate: true });
-      // this.$watch(() => this.idCurrentChannel, () => {this.fetchChannelsList()}, { immediate: true });
       this.socket.on("info", (data) => {
-        console.log('Connected', data); // TODO: remove
         this.myChannels = data.channels_user;
         this.channels = data.channels_all;
         this.directChannels = data.dmChannel;
-        console.log(this.directChannels);
-        // this.fetchCurrentChannelInfos();
       });
-
-      // this.socket.on("channel", (data) => {
-        // return channel by id;
-      // })
 
       this.socket.on("channelMe", (data) => {
         this.myChannels = data;
@@ -125,27 +117,19 @@ export default Vue.extend({
         this.directChannels = data;
       })
 
-      this.socket.on('join', (data) => {
-        console.log('JOIN', data); // TODO: remove
+      this.socket.on('join', () => {
         this.fetchChannelsList();
-        // this.socket.emit('channelMe');
       });
       this.socket.on('joinDM', (data) => {
-        console.log('JOINDM', data); // TODO: remove
         this.socket.emit('channelMeDM');
       });
       this.socket.on('leave', (data) => {
-        // console.log('LEAVE', data); // TODO: remove
         if (this.idCurrentChannel === data.channel.id && (data.user.id === this.user.id || data.is_delete === true))
           this.idCurrentChannel = 0;
-        // this.$emit('channel', data);
-        // this.socket.emit('channelMe');
         this.fetchChannelsList();
       });
       this.socket.on('mute', data => {
         if (data.muted_user.id == this.user.id) {
-          // const message = data.is_muted ? "You have been muted by " + data.user.username : "You have been unmuted by " + data.user.username;
-          console.log("data", data);
           const message = data.channel.muted.some(mute => mute.user.id === this.user.id) ?
             "You have been muted from " + data.channel.name + " by " + data.user.username :
             "You have been unmuted from " + data.channel.name + " by " + data.user.username;
@@ -165,10 +149,8 @@ export default Vue.extend({
           });
         }
         this.myChannels.find(channel => channel.id == data.channel.id).muted = data.channel.muted;
-        // this.fetchCurrentChannelInfos();
       });
       this.socket.on('ban', data => {
-        console.log("BAN", data);
         if (data.banned_user.id == this.user.id) {
           this.$toast.error("You have been banned from " + data.channel.name + " by " + data.user.username, {
             position: "top-right",
@@ -187,11 +169,9 @@ export default Vue.extend({
           if (this.idCurrentChannel == data.channel.id)
             this.idCurrentChannel = 0;
         }
-        // this.myChannels.find(channel => channel.id == data.channel.id).banned = data.channel.banned;
         this.fetchChannelsList();
       });
       this.socket.on("admin", (data) => {
-        // console.log('ADMIN', data); // TODO: remove
         if (data.admin_user.id == this.user.id) {
           const message = data.channel.admin.includes(this.user.id) ?
             "You are now an admin of " + data.channel.name :
@@ -212,7 +192,6 @@ export default Vue.extend({
           });
         }
         this.myChannels.find(channel => channel.id == data.channel.id).adminId = data.channel.admin;
-        // this.fetchChannelsList();
       });
     },
 

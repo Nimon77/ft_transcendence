@@ -106,7 +106,6 @@ export default Vue.extend({
         this.options.tray.height = 100;
         this.options.tray.width = 30;
       }
-      console.log("GAME OPTIONS", this.options);
       this.pong = new Pong(this.canvas, this.options, this.me.id, this.$store.getters.getUsersInGame);
       document.addEventListener('mousemove', this.handleMouseMove);
       this.gameSock.on('ball', (ball) => this.pong.updateBall(ball.x, ball.y));
@@ -124,7 +123,6 @@ export default Vue.extend({
       });
 
       this.gameSock.on('disconnect', ()=>{
-          console.log("disconnected");
           this.$store.commit('setGameRoom', '');
           this.gameSock.disconnect();
       });
@@ -151,7 +149,6 @@ export default Vue.extend({
     },
 
     beforeRouteLeave(to, from, next) {
-      console.log("before leave");
       if (this.pong) {
         delete this.pong;
         this.pong = null;

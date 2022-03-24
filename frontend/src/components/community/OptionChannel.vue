@@ -67,7 +67,6 @@ export default Vue.extend({
 
     methods: {
         leaveChannel() {
-          // console.log("LEAVE"); // TODO: remove
           this.$emit('leaveChannel');
         },
         changePassword() {

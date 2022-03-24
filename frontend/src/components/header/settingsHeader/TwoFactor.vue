@@ -64,7 +64,6 @@ export default Vue.extend({
         return this.$store.state.user;
       },
       set(value) {
-        console.log('set user', value);
         this.$store.commit('setUser', value);
       },
     },

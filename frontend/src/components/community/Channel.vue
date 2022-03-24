@@ -235,7 +235,6 @@ export default Vue.extend({
       return this.myChannels.some(channel => channel.id == toJoin);
     },
     joinChannel(idChannel) {
-      // console.log('Join ROOM', idChannel, this.password); // TODO: remove
       this.socket.emit('join', {id: idChannel, password: this.password});
       this.searchChannel = '';
       this.$emit('fetchChannels');
@@ -243,26 +242,19 @@ export default Vue.extend({
       this.passwordDialog = false;
     },
     leaveChannel(idChannel) {
-      console.log("leave ROOM ", idChannel); // TODO: remove
       this.socket.emit('leave', { channelId: idChannel })
       if (this.currentIdCR == idChannel)
         this.currentIdCR = 0;
-      // this.$emit('fetchChannels');
     },
     createChannel() {
-      // console.log('USER ID IN CHANNEL', this.user.id); //TODO: remove
       if (this.valid) {
         if (this.password == '')
           this.$http.post('/channel', {name: this.name, public: true}).then(() => {
-            // console.log(resp); //TODO: remove
             this.$emit('fetchChannels');
-            // this.idCurrentChannel = resp.data.id;
           });
         else
           this.$http.post('/channel', {name: this.name, public: false, password: this.password }).then(() => {
-            // console.log(resp); //TODO: remove
             this.$emit('fetchChannels');
-            // this.idCurrentChannel = resp.data.id;
           });
         this.dialog = false;
         this.name = '';

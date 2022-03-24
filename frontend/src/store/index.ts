@@ -122,7 +122,6 @@ export default new Vuex.Store({
     'NOTIFY_notify': (state, payload) => {
       if (payload.type === undefined) {
         state.notify = payload;
-        console.log(state.notify); // TODO: remove
         Vue.$toast(InvitePlayer, {
           position: POSITION.TOP_LEFT,
           timeout: 10000,

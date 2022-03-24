@@ -142,7 +142,6 @@ export default Vue.extend({
     created() {
         this.$watch(() => this.idCurrentChannel, () => { this.cleanLogs(); },{ immediate: true })
         this.socket.on("text", data => {
-          // console.log("TEXT EVENT", data); // TODO: remove
           if (data.id == this.idCurrentChannel && !this.chatDirect)
           {
             this.messages.push( { sender: data.user, msg: data.value } );
@@ -152,7 +151,6 @@ export default Vue.extend({
           }
         });
         this.socket.on("textDM", data => {
-          // console.log("TEXT DM EVENT", data); // TODO: remove
           if (data.channelId == this.idCurrentChannel && this.chatDirect)
           {
             this.messages.push( { sender: data.user, msg: data.text } );
@@ -174,7 +172,6 @@ export default Vue.extend({
           }
         });
         this.socket.on("channel", data => {
-          // console.log("CHANNEL EVENT", data); // TODO: remove
           if (data.id == this.idCurrentChannel && !this.chatDirect)
           {
             this.logs = data.logs;
@@ -182,7 +179,6 @@ export default Vue.extend({
           }
         });
         this.socket.on("channelDM", data => {
-          // console.log("CHANNELDM EVENT", data); // TODO: remove
           if (data.id == this.idCurrentChannel && this.chatDirect)
           {
             this.logs = data.logs;
