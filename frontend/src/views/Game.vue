@@ -84,13 +84,23 @@ export default Vue.extend({
         this.pong.updateTray(this.me, tray);
         this.gameSock.emit('tray', tray);
       },
+      changeColor(colorId: number) {
+        if (this.input.plan == 0)
+          this.mapColor = '#121212';
+        if (this.input.plan == 1)
+          this.mapColor = '#040a80';
+        if (this.input.plan == 2)
+          this.mapColor = '#db9c14';
+      }
     },
 
     mounted() {
       this.gameSock.off('ready');
       this.gameSock.on('ready', (options) => {
-        if (this.pong)
+        if (this.pong) {
           this.pong.options = options;
+          this.changeColor(options.input.plan);
+        }
       });
       this.canvas = document.getElementById('pong');
       this.input = this.options.input;
