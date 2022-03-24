@@ -21,6 +21,10 @@ export class UserService {
     private readonly matchRepository: Repository<Match>,
   ) {}
 
+  getAllUsers(): Promise<User[]> {
+    return this.userRepository.find();
+  }
+
   async getUser(id: number, relations = [] as string[]): Promise<User> {
     let user = null;
     if (id) user = await this.userRepository.findOne(id, { relations });
