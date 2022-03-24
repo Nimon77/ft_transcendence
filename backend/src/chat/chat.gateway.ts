@@ -129,16 +129,12 @@ export class ChatGateway implements OnGatewayConnection {
         [],
         true,
       );
-      if (!channel.public) {
-        let valide = false;
-        if (partialChannel.password)
-          valide = bcrypt.compareSync(
-            partialChannel.password,
-            channel.password,
-          );
-        if (!valide)
-          throw new HttpException('Incorrect password', HttpStatus.FORBIDDEN);
-      }
+      if (!channel.public && partialChannel.password)
+        this.emitChannel(
+          channel,
+          'passwordValide',
+          bcrypt.compareSync(partialChannel.password, channel.password),
+        );
 
       await this.textChannelService.addUserToChannel(
         partialChannel,
