@@ -27,10 +27,9 @@
                   <v-form ref="form" v-model="valid">
                     <v-text-field v-model="oldPassword" type="password" label="Old Password"></v-text-field>
                   </v-form>
-                  <v-text-field v-model="newPassword" type="password" label="New Password*"></v-text-field>
+                  <v-text-field v-model="newPassword" type="password" label="New Password"></v-text-field>
                 </v-col>
               </v-row>
-              <small>*leave empty for no password</small>
             </v-container>
           </v-card-text>
           <v-card-actions>
