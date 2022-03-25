@@ -15,4 +15,4 @@ RUN yarn global add @nestjs/cli
 
 EXPOSE 3000
 
-ENTRYPOINT [ "/bin/sh", "-c", "yarn install --non-interactive && exec yarn start:prod" ]
+ENTRYPOINT [ "/bin/sh", "-c", "yarn install --non-interactive && yarn run build && yarn start:prod" ]
