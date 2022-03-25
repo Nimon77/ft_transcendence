@@ -85,7 +85,12 @@ export default Vue.extend({
           this.playerHistory.sort((a, b) => { // sort by date
             return new Date(b.date).getTime() - new Date(a.date).getTime();
           });
+        }).catch(() => {
+          this.$toast.error('Error while fetching matches');
         });
+      }).catch(() => {
+          this.$toast.error('User not found');
+          this.$router.push({ name: 'Main' });
       });
     }
   },
