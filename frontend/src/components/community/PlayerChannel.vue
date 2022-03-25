@@ -41,7 +41,7 @@
           <v-list-item dense>
             <v-list-item-title class="d-flex justify-center text-button">
               <v-btn router :to="'/profile/' + player.id" color="blue" tile dark min-width="50%">PROFILE</v-btn>
-              <v-btn color="blue" tile dark min-width="50%" class="ml-1" :disabled="!chatDirect" @click="directMessage(player.id)">DM</v-btn>
+              <v-btn color="blue" tile dark min-width="50%" class="ml-1" :disabled="chatDirect" @click="directMessage(player.id)">DM</v-btn>
             </v-list-item-title>
           </v-list-item>
           <v-list-item dense>
