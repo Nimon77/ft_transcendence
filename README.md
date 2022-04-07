@@ -43,7 +43,7 @@ We used TypeORM for our database, it provides a lot of features such as migratio
 **VUEJS** (vuejs 2) documentation is available at `https://vuejs.org/v2/guide/`.<br>
 **VUEX** documentation is available at `https://vuex.vuejs.org/`.<br>
 **SWAGGER** (OAS 3.0) documentation is available at `https://swagger.io/specification/`. (I Heavily recommend the use of https://editor.swagger.io)<br>
-***TYPEORM** documentation is available at `https://typeorm.io/`.<br>
+**TYPEORM** documentation is available at `https://typeorm.io/`.<br>
 # Screenshots
 
 ![loginpng](files/login.png)
