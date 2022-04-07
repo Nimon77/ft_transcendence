@@ -18,9 +18,11 @@ Then, run the following command:
 ```bash
 docker-compose up --build
 ```
-> We also provided shell scripts you can use `start.sh` to start the project and `clean.sh` with the arguemnts `all` (to remove all the downloaded files) or `bbd` (only delete the database).
+> We also provided shell scripts, you can use `start.sh` to start the project and `clean.sh` with the arguments `all` (to delete all the downloaded files) or `bbd` (only delete the database).<br>
+
 If everything went well, you should be able to access the website at `http://localhost:8080`.
-> if you'd like to modify additional settings, please feel free to do so in the others environment files.<br>
+> if you'd like to modify additional settings, please feel free to do so in the others environment files.
+
 > Upon first launch, you will be asked to authenticate with your 42 account. If you don't have one, please uncomment the `@Get('generate/:id')` in `/backend/src/auth/auth.controller.ts` and then call that method with your desired id.
 
 # API
