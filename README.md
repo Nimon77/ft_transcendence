@@ -3,7 +3,7 @@
 
 Final project of the 42_cursus. (Version: 9)<br>
 
-BananaPong is a onepage fullstack website where you can play pong with others among other things such as  JWT / 2fa authentification, a chat, private messages, friends list, profiles, a match-making system, a spectating system and modifications to the pong game such as different background and gamemodes.
+BananaPong is a onepage fullstack website where you can play pong with players among other things such as  JWT / 2fa authentification, a chat, private messages, friends list, profiles, a match-making system, a spectating system and modifications to the pong game such as different background and gamemodes.
 
 BananaPong uses the following technologies:
 - **VueJS**
