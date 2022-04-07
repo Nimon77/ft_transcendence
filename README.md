@@ -33,7 +33,7 @@ Thanks to @Amoenus for the Swagger Dark Theme.
 
 We use pgadmin4 to manage our database, it's located at `http://localhost:5000/`.<br>
 The email is `transcendence@42paris.fr` and the password is `transcendence` you may change them in the `docker/pgadmin.env` file.
-> Once logging in, the database may send a lot of logs to the console. We tried disabling them, but it's not working everytime.
+> Once logging in, the database may send a lot of logs to the console. We tried disabling them, but it doesn't work everytime.
 
 We used TypeORM for our database, it provides a lot of features such as migrations, relations, and most importantly, security.
 
