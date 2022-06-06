@@ -63,7 +63,7 @@ We used TypeORM for our database, it provides a lot of features such as migratio
 
 ## MADE WITH LOVE BY :
 
-- [hallainea](https://github.com/hallainea/) aka **ahallain**
+- [execrate0](https://github.com/execrate0/) aka **ahallain**
 - [Assxios](https://github.com/assxios/) aka **droge**
 - [Nimon77](https://github.com/Nimon77/) aka **nsimon**
 - [ademjemaa](https://github.com/ademjemaa/) aka **adjemaa**
