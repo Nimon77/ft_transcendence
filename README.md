@@ -12,6 +12,8 @@ BananaPong uses the following technologies:
 
 # Usage
 
+### **Test server**: You can try our project on https://transcendence.nimon.fr/
+
 **Before starting**, please replace the `FORTYTWO_ID`, `FORTYTWO_SECRET` and `AUTH_CALLBACK` variables in `docker/backend.env` with your own (from the 42 API).<br>
 Then, run the following command:
 
