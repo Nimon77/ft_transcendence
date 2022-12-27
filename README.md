@@ -12,7 +12,7 @@ BananaPong uses the following technologies:
 
 # Usage
 
-### **Test server**: You can try our project on https://transcendence.nimon.fr/
+### **Test server**: You can try our project on https://transcendence.nimon.fr/ (if you have an error 500 at login contact me on slack : nimon or nsimon)
 
 **Before starting**, please replace the `FORTYTWO_ID`, `FORTYTWO_SECRET` and `AUTH_CALLBACK` variables in `docker/backend.env` with your own (from the 42 API).<br>
 Then, run the following command:
